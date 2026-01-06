@@ -6,6 +6,6 @@
 
 @section('content')
 <div class="max-w-lg mx-auto">
-    <x-transaction-form :transaction="$transaction" action="{{ route('transactions.update', $transaction) }}" method="PUT" buttonText="Update" />
+    <x-transaction-form :transaction="$transaction" :categories="$categories" :budgets="$budgets" action="{{ route('transactions.update', $transaction) }}" method="PUT" buttonText="Update" />
 </div>
 @endsection

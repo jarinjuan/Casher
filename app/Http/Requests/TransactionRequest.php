@@ -18,6 +18,8 @@ class TransactionRequest extends FormRequest
             'amount' => ['required', 'numeric'],
             'type' => ['required', 'in:income,expense'],
             'note' => ['nullable', 'string'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'currency' => ['required', 'string', 'size:3'],
         ];
     }
 }

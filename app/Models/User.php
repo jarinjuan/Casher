@@ -53,4 +53,30 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Transaction::class);
     }
+
+    public function categories()
+    {
+        return $this->hasMany(\App\Models\Category::class);
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(\App\Models\Budget::class);
+    }
+
+    public function ownedTeams()
+    {
+        return $this->hasMany(Team::class);
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class)->withPivot('role');
+    }
+
+    public function currentTeam()
+    {
+        return $this->belongsTo(Team::class, 'current_team_id');
+    }
+
 }
