@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('transactions', \App\Http\Controllers\TransactionController::class);
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::get('charts', [\App\Http\Controllers\ChartController::class, 'index'])->name('charts.index');
+    Route::get('currency/convert', [\App\Http\Controllers\CurrencyController::class, 'convert'])->name('currency.convert');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
