@@ -16,15 +16,16 @@
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
     @endif
 
+    @php $currencySymbols = ['CZK' => 'Kč', 'EUR' => '€', 'USD' => '$']; @endphp
     @foreach($transactions as $t)
-        <div class="p-4 mb-2 bg-white rounded shadow text-black">
+        <div class="p-4 mb-2 bg-white rounded shadow text-black w-[50%]">
             <div class="flex justify-between">
                 <div>
                     <strong>{{ $t->title }}</strong>
                     <div class="text-sm text-gray-500">{{ $t->note }}</div>
                 </div>
                 <div class="text-right">
-                    <div class="font-medium text-black">{{ number_format($t->amount, 2, ',', ' ') }} Kč</div>
+                    <div class="font-medium text-black">{{ number_format($t->amount, 2, ',', ' ') }} {{ $currencySymbols[$t->currency] ?? $t->currency }}</div>
                     <div class="text-xs text-gray-500">{{ $t->type }}</div>
                 </div>
             </div>
