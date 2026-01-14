@@ -10,11 +10,11 @@
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
     @endif
 
-    <div class="mb-6 p-4 bg-white rounded shadow">
-        <form method="POST" action="{{ route('categories.store') }}" class="flex gap-2">
+        <div class="mb-6 p-4 bg-white rounded shadow">
+        <form method="POST" action="{{ route('categories.store') }}" class="flex gap-2 items-center">
             @csrf
             <input name="name" placeholder="Nová kategorie" required class="border p-2 rounded flex-1">
-            <input name="color" placeholder="#ffcc00" class="border p-2 rounded w-32">
+            <input type="color" name="color" value="{{ old('color', '#4f46e5') }}" class="border p-1 rounded w-12 h-10" title="Vyber barvu">
             <button class="px-4 py-2 bg-indigo-600 text-white rounded">Přidat</button>
         </form>
     </div>

@@ -20,7 +20,7 @@
         <div class="container mx-auto flex items-center justify-between px-6 py-4">
             <div class="flex items-center gap-2">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">
-                    C
+                    C$
                 </div>
                 <span class="text-xl font-extrabold tracking-tight text-white italic">CASHER</span>
             </div>

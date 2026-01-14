@@ -18,7 +18,7 @@
 
             <div class="mb-3">
                 <label class="block text-sm font-medium">Barva</label>
-                <input name="color" value="{{ old('color', $category->color) }}" class="border p-2 w-full rounded">
+                <input type="color" name="color" value="{{ old('color', $category->color ?? '#4f46e5') }}" class="border p-1 rounded w-12 h-10" title="Vyber barvu">
             </div>
 
             <div>
