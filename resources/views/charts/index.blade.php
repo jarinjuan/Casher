@@ -28,7 +28,7 @@
                 type: 'pie',
                 data: {
                     labels: labels,
-                        datasets: [{
+                    datasets: [{
                         data: data,
                         backgroundColor: colors.length ? colors : labels.map((_,i)=>['#4f46e5','#06b6d4','#f59e0b','#ef4444','#10b981','#8b5cf6','#f97316','#60a5fa'][i%8])
                     }]
