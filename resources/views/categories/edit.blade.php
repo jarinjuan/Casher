@@ -21,6 +21,20 @@
                 <input type="color" name="color" value="{{ old('color', $category->color ?? '#4f46e5') }}" class="border p-1 rounded w-12 h-10" title="Vyber barvu">
             </div>
 
+            <div class="mb-3">
+                <label class="block text-sm font-medium">Měsíční rozpočet</label>
+                <input type="number" name="monthly_budget" placeholder="Např. 500" step="0.01" min="0" value="{{ old('monthly_budget', $category->monthly_budget) }}" class="border p-2 w-full rounded">
+            </div>
+
+            <div class="mb-3">
+                <label class="block text-sm font-medium">Měna rozpočtu</label>
+                <select name="budget_currency" class="border p-2 w-full rounded">
+                    <option value="CZK" {{ old('budget_currency', $category->budget_currency) === 'CZK' ? 'selected' : '' }}>CZK</option>
+                    <option value="EUR" {{ old('budget_currency', $category->budget_currency) === 'EUR' ? 'selected' : '' }}>EUR</option>
+                    <option value="USD" {{ old('budget_currency', $category->budget_currency) === 'USD' ? 'selected' : '' }}>USD</option>
+                </select>
+            </div>
+
             <div>
                 <button class="px-4 py-2 bg-indigo-600 text-white rounded">Uložit</button>
                 <a href="{{ route('categories.index') }}" class="ml-2 text-gray-600">Zpět</a>
