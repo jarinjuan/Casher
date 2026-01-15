@@ -12,7 +12,7 @@
             <canvas id="categoryPie" style="width:150px;height:150px;"></canvas>
         </div>
     </div>
-    <div class="mt-4 text-sm text-gray-600">Data are aggregated for `expenses` per category.</div>
+    
 </div>
 
 @push('scripts')

@@ -9,7 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        // Fetch ECB rates daily at 01:00
+        
         $schedule->command('fx:fetch-ecb')->dailyAt('01:00');
     }
 
