@@ -30,7 +30,13 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'color' => 'nullable|string|max:7',
+            'monthly_budget' => 'nullable|numeric|min:0',
+            'budget_currency' => 'nullable|string|size:3',
         ]);
+
+        if (!isset($data['budget_currency'])) {
+            $data['budget_currency'] = 'CZK';
+        }
 
         $request->user()->categories()->create($data);
 
@@ -58,7 +64,13 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'color' => 'nullable|string|max:7',
+            'monthly_budget' => 'nullable|numeric|min:0',
+            'budget_currency' => 'nullable|string|size:3',
         ]);
+
+        if (!isset($data['budget_currency'])) {
+            $data['budget_currency'] = 'CZK';
+        }
 
         $category->update($data);
         return redirect()->route('categories.index')->with('success', 'Kategorie aktualizována.');

@@ -9,8 +9,11 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700">Title</label>
-            <input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required
-                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 text-black">
+            {{--<input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 text-black">--}}
+            <x-text-input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required class="mt-1 block w-full" />
+            <x-input-error :messages="$errors->get('title')" class="mt-2" />
+
         </div>
 
         <div>

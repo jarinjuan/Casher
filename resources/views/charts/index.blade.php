@@ -12,7 +12,7 @@
             <canvas id="categoryPie" style="width:150px;height:150px;"></canvas>
         </div>
     </div>
-    <div class="mt-4 text-sm text-gray-600">Data are aggregated for `expenses` per category.</div>
+    
 </div>
 
 @push('scripts')
@@ -21,6 +21,7 @@
         (function(){
             const labels = @json($labels);
             const data = @json($data);
+            const colors = @json($colors ?? []);
 
             const ctx = document.getElementById('categoryPie').getContext('2d');
             new Chart(ctx, {
@@ -29,7 +30,7 @@
                     labels: labels,
                     datasets: [{
                         data: data,
-                        backgroundColor: labels.map((_,i)=>['#4f46e5','#06b6d4','#f59e0b','#ef4444','#10b981','#8b5cf6','#f97316','#60a5fa'][i%8])
+                        backgroundColor: colors.length ? colors : labels.map((_,i)=>['#4f46e5','#06b6d4','#f59e0b','#ef4444','#10b981','#8b5cf6','#f97316','#60a5fa'][i%8])
                     }]
                 },
                 options: {
