@@ -23,13 +23,89 @@
             </div>
 
             @php
+                $user = Auth::user();
+                $month = now()->month;
+                $year = now()->year;
+                
+                // Celkový zůstatek
+                $allTransactions = $user->transactions()->get();
+                $totalBalance = $allTransactions->sum(function($t) {
+                    return $t->type === 'income' ? $t->amount : -$t->amount;
+                });
+                
+                // Měsíční výdaje
+                $monthlyExpenses = $user->transactions()
+                    ->where('type', 'expense')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $month)
+                    ->sum('amount');
+                
+                // Měsíční příjmy
+                $monthlyIncome = $user->transactions()
+                    ->where('type', 'income')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $month)
+                    ->sum('amount');
+                
+                $transactionCount = $user->transactions()->count();
+                
+                // Trend výdajů - minulý měsíc
+                $lastMonthExpenses = $user->transactions()
+                    ->where('type', 'expense')
+                    ->whereYear('created_at', now()->subMonth()->year)
+                    ->whereMonth('created_at', now()->subMonth()->month)
+                    ->sum('amount');
+                
+                $expenseTrend = $lastMonthExpenses > 0 ? (($monthlyExpenses - $lastMonthExpenses) / $lastMonthExpenses * 100) : 0;
+                
+                // Trend příjmů - minulý měsíc
+                $lastMonthIncome = $user->transactions()
+                    ->where('type', 'income')
+                    ->whereYear('created_at', now()->subMonth()->year)
+                    ->whereMonth('created_at', now()->subMonth()->month)
+                    ->sum('amount');
+                
+                $incomeTrend = $lastMonthIncome > 0 ? (($monthlyIncome - $lastMonthIncome) / $lastMonthIncome * 100) : 0;
+            @endphp
+
+            <!-- Stats Cards Grid -->
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <p class="text-sm text-gray-500">Overall balance</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($totalBalance, 0) }} Kč</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <p class="text-sm text-gray-500">Monthly expenses</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($monthlyExpenses, 0) }} Kč</p>
+                    @if($expenseTrend !== 0)
+                        <p class="text-sm font-semibold mt-2 {{ $expenseTrend >= 0 ? 'text-red-600' : 'text-green-600' }}">
+                            {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? number_format(abs($expenseTrend), 1) : '0.0' }}% vs. minulý měsíc
+                        </p>
+                    @endif
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <p class="text-sm text-gray-500">Monthly income</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($monthlyIncome, 0) }} Kč</p>
+                    @if($incomeTrend !== 0)
+                        <p class="text-sm font-semibold mt-2 {{ $incomeTrend >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? number_format(abs($incomeTrend), 1) : '0.0' }}% vs. minulý měsíc
+                        </p>
+                    @endif
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <p class="text-sm text-gray-500">Transaction count</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ $transactionCount }}</p>
+                </div>
+            </div>
+
+            @php
                 $categories = Auth::user()->categories()->where('monthly_budget', '>', 0)->get();
                 $currencySymbols = ['CZK' => 'Kč', 'EUR' => '€', 'USD' => '$'];
             @endphp
 
             @if($categories->count() > 0)
             <div class="mt-6">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Monthy budget</h3>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Monthly budget</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($categories as $cat)
                         @php
