@@ -11,10 +11,20 @@
     @endif
 
     <div class="mb-6 p-4 bg-white rounded shadow">
-        <form method="POST" action="{{ route('categories.store') }}" class="flex gap-2">
+        <form method="POST" action="{{ route('categories.store') }}" class="space-y-3">
             @csrf
-            <input name="name" placeholder="Nová kategorie" required class="border p-2 rounded flex-1">
-            <input name="color" placeholder="#ffcc00" class="border p-2 rounded w-32">
+            <div class="flex gap-2 items-center">
+                <input name="name" placeholder="Nová kategorie" required class="border p-2 rounded flex-1">
+                <input type="color" name="color" value="{{ old('color', '#4f46e5') }}" class="border p-1 rounded w-12 h-10" title="Vyber barvu">
+            </div>
+            <div class="flex gap-2 items-center">
+                <input type="number" name="monthly_budget" placeholder="Měsíční rozpočet (Kč)" step="0.01" min="0" class="border p-2 rounded flex-1">
+                <select name="budget_currency" class="border p-2 rounded w-20">
+                    <option value="CZK">CZK</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
             <button class="px-4 py-2 bg-indigo-600 text-white rounded">Přidat</button>
         </form>
     </div>
