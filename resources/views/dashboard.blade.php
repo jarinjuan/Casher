@@ -50,7 +50,7 @@
                     ->whereMonth('created_at', $month)
                     ->sum('amount');
                 
-                $transactionCount = $user->transactions()->count();
+                
                 
                 // Trend výdajů - minulý měsíc
                 $lastMonthExpenses = $user->transactions()
@@ -94,10 +94,6 @@
                             {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? number_format(abs($incomeTrend), 1) : '0.0' }}% vs. minulý měsíc
                         </p>
                     @endif
-                </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <p class="text-sm text-gray-500">Transaction count</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ $transactionCount }}</p>
                 </div>
             </div>
 
