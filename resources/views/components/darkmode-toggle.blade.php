@@ -13,8 +13,8 @@
 <body class="transition-colors duration-500 bg-white dark:bg-black">
 
     <div>  
-        <button id="theme-toggle" class="group relative inline-flex h-9 w-12 items-center rounded-full border-2 border-black bg-white p-1 transition-colors duration-500 dark:border-white dark:bg-black">
-            <span id="toggle-circle" class="flex h-6 w-6 transform items-center justify-center rounded-full bg-black text-white transition-transform duration-500 ease-in-out dark:translate-x-12 dark:bg-white dark:text-black">
+        <button id="theme-toggle" class="group relative inline-flex h-12 w-24 items-center rounded-full border-2 border-black bg-white p-1 transition-colors duration-500 dark:border-white dark:bg-black">
+            <span id="toggle-circle" class="flex h-9 w-9 transform items-center justify-center rounded-full bg-black text-white transition-transform duration-500 ease-in-out dark:translate-x-12 dark:bg-white dark:text-black">
                 <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
