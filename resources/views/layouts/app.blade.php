@@ -38,6 +38,12 @@
             'icon' => 'fa-solid fa-tags',
             'active' => request()->routeIs('categories.*'),
         ],
+        [
+            'label' => 'Charts',
+            'route' => route('charts.index'),
+            'icon' => 'fa-solid fa-chart-pie',
+            'active' => request()->routeIs('charts.*'),
+        ],
     ];
 @endphp
 

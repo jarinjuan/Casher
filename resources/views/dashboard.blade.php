@@ -97,6 +97,96 @@
                 </div>
             </div>
 
+            <!-- Expenses vs Income Chart (6 months) -->
+            @php
+                $months = [];
+                $expenseData = [];
+                $incomeData = [];
+                
+                for ($i = 5; $i >= 0; $i--) {
+                    $date = now()->subMonths($i);
+                    $months[] = $date->format('M Y');
+                    
+                    $expenses = Auth::user()->transactions()
+                        ->where('type', 'expense')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->sum('amount');
+                    
+                    $income = Auth::user()->transactions()
+                        ->where('type', 'income')
+                        ->whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->sum('amount');
+                    
+                    $expenseData[] = $expenses;
+                    $incomeData[] = $income;
+                }
+            @endphp
+
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Expenses vs Income</h3>
+                <canvas id="expensesVsIncomeChart" height="80"></canvas>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const ctx = document.getElementById('expensesVsIncomeChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: {!! json_encode($months) !!},
+                            datasets: [
+                                {
+                                    label: 'Expenses',
+                                    data: {!! json_encode($expenseData) !!},
+                                    backgroundColor: '#3b82f6',
+                                    borderColor: '#1e40af',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Income',
+                                    data: {!! json_encode($incomeData) !!},
+                                    backgroundColor: '#eab308',
+                                    borderColor: '#ca8a04',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                                    },
+                                    grid: {
+                                        color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'
+                                    },
+                                    grid: {
+                                        color: document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+
             @php
                 $categories = Auth::user()->categories()->where('monthly_budget', '>', 0)->get();
                 $currencySymbols = ['CZK' => 'Kč', 'EUR' => '€', 'USD' => '$'];
