@@ -7,21 +7,30 @@
         <span class="text-2xl font-bold text-indigo-600">Casher</span>
     </div>
 
-    <nav class="flex-1 px-4 space-y-2 mt-4">
-        @foreach($menuItems as $item)
-            <a
-                href="{{ $item['route'] }}"
-                class="flex items-center px-4 py-3 rounded-lg transition
-                    {{ $item['active']
-                        ? 'bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400'
-                    }}"
-            >
-                <i class="{{ $item['icon'] }} mr-3"></i>
-                {{ $item['label'] }}
-            </a>
-        @endforeach
-    </nav>
+    <div class="flex-1 px-4 space-y-2 mt-4 flex flex-col">
+        <a href="{{ route('transactions.create') }}" class="block">
+            <button class="w-full bg-amber-400 hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-gray-900 font-semibold py-2 px-4 rounded-lg transition mb-4 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                Add transaction
+            </button>
+        </a>
+
+        <nav class="flex-1 space-y-2">
+            @foreach($menuItems as $item)
+                <a
+                    href="{{ $item['route'] }}"
+                    class="flex items-center px-4 py-3 rounded-lg transition
+                        {{ $item['active']
+                            ? 'bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400'
+                            : 'text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400'
+                        }}"
+                >
+                    <i class="{{ $item['icon'] }} mr-3"></i>
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
+        </nav>
+    </div>
 
     <div class="px-4">
     <a href="{{ route('profile.edit') }}" class="block">
