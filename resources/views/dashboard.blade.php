@@ -193,4 +193,8 @@
             @endif
         </div>
     </div>
+
+    {{-- Inserted cashflow dashboard component (DB-driven) --}}
+    <x-cashflow-dashboard />
+
 </x-app-layout>
