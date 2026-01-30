@@ -19,18 +19,19 @@
         $monthLabels = [];
         $incomeData = [];
         $expenseData = [];
+        $teamId = Auth::user()->currentTeam->id;
         
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $monthLabels[] = $date->format('M Y');
             
-            $income = Auth::user()->transactions()
+            $income = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'income')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');
             
-            $expense = Auth::user()->transactions()
+            $expense = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'expense')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
@@ -53,18 +54,19 @@
         $last6Months = [];
         $last6IncomeData = [];
         $last6ExpenseData = [];
+        $teamId = Auth::user()->currentTeam->id;
         
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $last6Months[] = $date->format('M Y');
             
-            $income = Auth::user()->transactions()
+            $income = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'income')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');
             
-            $expense = Auth::user()->transactions()
+            $expense = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'expense')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
@@ -84,12 +86,13 @@
 
     <!-- Income by Type Pie -->
     @php
-        $salaryIncome = Auth::user()->transactions()
+        $teamId = Auth::user()->currentTeam->id;
+        $salaryIncome = \App\Models\Transaction::where('team_id', $teamId)
             ->where('type', 'income')
             ->where('title', 'like', '%salary%')
             ->sum('amount');
         
-        $otherIncome = Auth::user()->transactions()
+        $otherIncome = \App\Models\Transaction::where('team_id', $teamId)
             ->where('type', 'income')
             ->whereNotLike('title', '%salary%')
             ->sum('amount');
@@ -105,20 +108,21 @@
 
         <!-- Top Spending Categories -->
         @php
-            $topCategories = Auth::user()->categories()
-                ->with(['transactions' => function($q) {
-                    $q->where('type', 'expense');
-                }])
+            $teamId = Auth::user()->currentTeam->id;
+            $topCategories = \App\Models\Transaction::where('team_id', $teamId)
+                ->where('type', 'expense')
+                ->groupBy('category_id')
+                ->selectRaw('category_id, SUM(amount) as total')
+                ->orderByDesc('total')
+                ->with('category')
+                ->limit(5)
                 ->get()
-                ->map(function($cat) {
+                ->map(function($tx) {
                     return [
-                        'name' => $cat->name,
-                        'total' => $cat->transactions->sum('amount')
+                        'name' => $tx->category->name ?? 'Uncategorized',
+                        'total' => $tx->total
                     ];
-                })
-                ->sortByDesc('total')
-                ->take(5)
-                ->values();
+                });
         @endphp
 
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">

@@ -27,24 +27,25 @@
 
             @php
                 $user = Auth::user();
+                $teamId = $user->currentTeam->id;
                 $month = now()->month;
                 $year = now()->year;
                 
                 // Celkový zůstatek
-                $allTransactions = $user->transactions()->get();
+                $allTransactions = \App\Models\Transaction::where('team_id', $teamId)->get();
                 $totalBalance = $allTransactions->sum(function($t) {
                     return $t->type === 'income' ? $t->amount : -$t->amount;
                 });
                 
                 // Měsíční výdaje
-                $monthlyExpenses = $user->transactions()
+                $monthlyExpenses = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'expense')
                     ->whereYear('created_at', $year)
                     ->whereMonth('created_at', $month)
                     ->sum('amount');
                 
                 // Měsíční příjmy
-                $monthlyIncome = $user->transactions()
+                $monthlyIncome = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'income')
                     ->whereYear('created_at', $year)
                     ->whereMonth('created_at', $month)
@@ -53,7 +54,7 @@
                 
                 
                 // Trend výdajů - minulý měsíc
-                $lastMonthExpenses = $user->transactions()
+                $lastMonthExpenses = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'expense')
                     ->whereYear('created_at', now()->subMonth()->year)
                     ->whereMonth('created_at', now()->subMonth()->month)
@@ -62,7 +63,7 @@
                 $expenseTrend = $lastMonthExpenses > 0 ? (($monthlyExpenses - $lastMonthExpenses) / $lastMonthExpenses * 100) : 0;
                 
                 // Trend příjmů - minulý měsíc
-                $lastMonthIncome = $user->transactions()
+                $lastMonthIncome = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'income')
                     ->whereYear('created_at', now()->subMonth()->year)
                     ->whereMonth('created_at', now()->subMonth()->month)
@@ -102,18 +103,19 @@
                 $months = [];
                 $expenseData = [];
                 $incomeData = [];
+                $teamId = Auth::user()->currentTeam->id;
                 
                 for ($i = 5; $i >= 0; $i--) {
                     $date = now()->subMonths($i);
                     $months[] = $date->format('M Y');
                     
-                    $expenses = Auth::user()->transactions()
+                    $expenses = \App\Models\Transaction::where('team_id', $teamId)
                         ->where('type', 'expense')
                         ->whereYear('created_at', $date->year)
                         ->whereMonth('created_at', $date->month)
                         ->sum('amount');
                     
-                    $income = Auth::user()->transactions()
+                    $income = \App\Models\Transaction::where('team_id', $teamId)
                         ->where('type', 'income')
                         ->whereYear('created_at', $date->year)
                         ->whereMonth('created_at', $date->month)
@@ -193,8 +195,4 @@
             @endif
         </div>
     </div>
-
-    {{-- Inserted cashflow dashboard component (DB-driven) --}}
-    <x-cashflow-dashboard />
-
 </x-app-layout>

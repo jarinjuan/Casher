@@ -15,6 +15,7 @@ class ChartController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
+        $teamId = $user->currentTeam->id;
 
         $categories = $user->categories()->orderBy('name')->get();
 
@@ -23,7 +24,7 @@ class ChartController extends Controller
         $colors = [];
 
         foreach ($categories as $cat) {
-            $sum = $cat->transactions()->where('type', 'expense')->sum('amount');
+            $sum = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->where('category_id', $cat->id)->sum('amount');
             if ($sum <= 0) continue;
             $labels[] = $cat->name;
             $data[] = (float) $sum;
@@ -31,7 +32,7 @@ class ChartController extends Controller
         }
 
         // uncategorized expenses
-        $uncat = $user->transactions()->where('type', 'expense')->whereNull('category_id')->sum('amount');
+        $uncat = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->whereNull('category_id')->sum('amount');
         if ($uncat > 0) {
             $labels[] = 'Uncategorized';
             $data[] = (float) $uncat;

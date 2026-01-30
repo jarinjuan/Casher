@@ -19,7 +19,10 @@ class TransactionController extends Controller
 
     public function index(Request $request): View
     {
-        $transactions = $request->user()->transactions()->latest()->paginate(15);
+        $currentTeam = $request->user()->currentTeam;
+        $transactions = Transaction::where('team_id', $currentTeam->id ?? null)
+            ->latest()
+            ->paginate(15);
         return view('transactions.index', compact('transactions'));
     }
 
@@ -35,6 +38,7 @@ class TransactionController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
+        $data['team_id'] = $request->user()->currentTeam->id;
         Transaction::create($data);
 
         return redirect()->route('transactions.index')->with('success', 'Záznam uložen.');
@@ -42,7 +46,7 @@ class TransactionController extends Controller
 
     public function edit(Transaction $transaction): View
     {
-        if ($transaction->user_id !== auth()->id()) abort(403);
+        if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
         $categories = auth()->user()->categories()->get();
         $budgets = auth()->user()->budgets()->with('category')->get();
         return view('transactions.edit', compact('transaction','categories','budgets'));
@@ -50,7 +54,7 @@ class TransactionController extends Controller
 
     public function update(TransactionRequest $request, Transaction $transaction): RedirectResponse
     {
-        if ($transaction->user_id !== auth()->id()) abort(403);
+        if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
         $transaction->update($request->validated());
 
         return redirect()->route('transactions.index')->with('success', 'Záznam aktualizován.');
@@ -58,7 +62,7 @@ class TransactionController extends Controller
 
     public function destroy(Transaction $transaction): RedirectResponse
     {
-        if ($transaction->user_id !== auth()->id()) abort(403);
+        if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
         $transaction->delete();
 
         return back()->with('success', 'Záznam smazán.');

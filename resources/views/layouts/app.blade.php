@@ -65,13 +65,27 @@
                                     @yield('header')
                                 @endif
                             </div>
-                            <x-darkmode-toggle></x-darkmode-toggle>
+                            <div class="flex gap-4 items-center">
+                                <x-darkmode-toggle></x-darkmode-toggle>
+                                <form method="POST" action="{{ route('logout') }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">
+                                        {{ __('Logout') }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </header>
                 @else
                     <header class="bg-white dark:bg-gray-800 shadow">
-                        <div class="flex flex-row justify-end items-center max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        <div class="flex flex-row justify-end items-center gap-4 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                             <x-darkmode-toggle></x-darkmode-toggle>
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">
+                                    {{ __('Logout') }}
+                                </button>
+                            </form>
                         </div>
                     </header>
                 @endif

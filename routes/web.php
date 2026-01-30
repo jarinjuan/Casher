@@ -23,6 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::get('charts', [\App\Http\Controllers\ChartController::class, 'index'])->name('charts.index');
     Route::get('currency/convert', [\App\Http\Controllers\CurrencyController::class, 'convert'])->name('currency.convert');
 
+    // Workspace routes
+    Route::get('workspace/settings', [\App\Http\Controllers\WorkspaceController::class, 'settings'])->name('workspace.settings');
+    Route::post('workspace/generate-invite', [\App\Http\Controllers\WorkspaceController::class, 'generateInviteCode'])->name('workspace.generate-invite');
+    Route::get('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'joinForm'])->name('workspace.join');
+    Route::post('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'join'])->name('workspace.join.submit');
+    Route::post('workspace/switch/{teamId}', [\App\Http\Controllers\WorkspaceController::class, 'switchWorkspace'])->name('workspace.switch');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
