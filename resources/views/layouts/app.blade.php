@@ -39,7 +39,7 @@
             'active' => request()->routeIs('categories.*'),
         ],
         [
-            'label' => 'Charts',
+            'label' => 'Data',
             'route' => route('charts.index'),
             'icon' => 'fa-solid fa-chart-pie',
             'active' => request()->routeIs('charts.*'),
