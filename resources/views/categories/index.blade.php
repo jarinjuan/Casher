@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-semibold text-xl text-black dark:text-gray-200 leading-tight">Kategorie</h2>
+    <h2 class="font-semibold text-xl text-black dark:text-gray-200 leading-tight">Categories</h2>
 @endsection
 
 @section('content')
@@ -14,23 +14,23 @@
         <form method="POST" action="{{ route('categories.store') }}" class="space-y-3">
             @csrf
             <div class="flex gap-2 items-center">
-                <input name="name" placeholder="Nová kategorie" required class="border p-2 rounded flex-1">
+                <input name="name" placeholder="New category" required class="border p-2 rounded flex-1">
                 <input type="color" name="color" value="{{ old('color', '#4f46e5') }}" class="border p-1 rounded w-12 h-10" title="Vyber barvu">
             </div>
             <div class="flex gap-2 items-center">
-                <input type="number" name="monthly_budget" placeholder="Měsíční rozpočet (Kč)" step="0.01" min="0" class="border p-2 rounded flex-1">
+                <input type="number" name="monthly_budget" placeholder="Monthly budget (CZK)" step="0.01" min="0" class="border p-2 rounded flex-1">
                 <select name="budget_currency" class="border p-2 rounded w-20">
                     <option value="CZK">CZK</option>
                     <option value="EUR">EUR</option>
                     <option value="USD">USD</option>
                 </select>
             </div>
-            <button class="px-4 py-2 bg-indigo-600 text-white rounded">Přidat</button>
+            <button class="px-4 py-2 bg-indigo-600 text-white rounded">Add</button>
         </form>
     </div>
 
     <div class="bg-white rounded shadow p-4">
-        <h3 class="font-medium mb-3">Seznam kategorií</h3>
+        <h3 class="font-medium mb-3">Category List</h3>
         <ul>
             @foreach($categories as $cat)
                 <li class="flex items-center justify-between py-2 border-b">
@@ -40,7 +40,7 @@
                     </div>
                     <div class="flex gap-2">
                         <a href="{{ route('categories.edit', $cat) }}" class="text-indigo-600">Edit</a>
-                        <form method="POST" action="{{ route('categories.destroy', $cat) }}" onsubmit="return confirm('Smazat kategorii?')">
+                        <form method="POST" action="{{ route('categories.destroy', $cat) }}" onsubmit="return confirm('Delete category?')">
                             @csrf
                             @method('DELETE')
                             <button class="text-red-600">Delete</button>
