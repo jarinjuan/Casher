@@ -57,13 +57,6 @@
             </div>
         @endforeach
     </div>
-    <div class="mt-4">{{ $transactions->links() }}</div>
-</div>
-    @if(session('success'))
-        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
-    @endif
-
-   
 
     <div class="mt-4">{{ $transactions->links() }}</div>
 </div>

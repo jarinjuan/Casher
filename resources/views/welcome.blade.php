@@ -16,14 +16,20 @@
 </head>
 <body class="antialiased bg-[#09090b] text-gray-200">
 
-    <nav class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
-        <div class="container mx-auto flex items-center justify-between px-6 py-4">
+    <nav x-data="{ open: false }" class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
+        <div class="container mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
             <div class="flex items-center gap-2">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">
                     C$
                 </div>
                 <span class="text-xl font-extrabold tracking-tight text-white italic">CASHER</span>
             </div>
+
+            <button @click="open = !open" class="md:hidden flex items-center px-3 py-2 border rounded text-gray-400 border-gray-600 hover:text-white hover:border-white focus:outline-none" aria-label="Open Menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
 
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                 <a href="#features" class="hover:text-[#fbbf24] transition">Features</a>
@@ -42,29 +48,45 @@
                 @endif
             </div>
         </div>
+        <!-- Mobile menu -->
+        <div x-show="open" class="md:hidden bg-black/95 border-t border-white/10 px-4 pb-4 pt-2">
+            <a href="#features" class="block py-2 text-gray-300 hover:text-[#fbbf24]">Features</a>
+            <a href="#investments" class="block py-2 text-gray-300 hover:text-[#fbbf24]">Investments</a>
+            <a href="#security" class="block py-2 text-gray-300 hover:text-[#fbbf24]">Security</a>
+            <div class="mt-2 flex flex-col gap-2">
+                @if (Route::has('login'))
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="rounded-full bg-white/10 px-6 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-[#fbbf24] transition">Sign In</a>
+                        <a href="{{ route('register') }}" class="rounded-full bg-[#fbbf24] px-6 py-2 text-sm font-bold text-black hover:bg-[#f59e0b] transition shadow-lg shadow-[#fbbf24]/20">Get Started</a>
+                    @endauth
+                @endif
+            </div>
+        </div>
     </nav>
 
-    <header class="relative overflow-hidden pt-20 pb-20 lg:pt-32 lg:pb-32">
+    <header class="relative overflow-hidden pt-20 pb-20 sm:pt-28 sm:pb-28 lg:pt-32 lg:pb-32">
         <div class="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
         <div class="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
 
-        <div class="container mx-auto px-6 text-center">
+        <div class="container mx-auto px-4 sm:px-6 text-center">
             
-            <h1 class="mx-auto max-w-5xl text-5xl font-extrabold leading-[1.1] text-white md:text-7xl lg:text-8xl">
+            <h1 class="mx-auto max-w-5xl text-3xl sm:text-5xl font-extrabold leading-[1.1] text-white md:text-7xl lg:text-8xl">
                 Expense tracking <br> 
                 <span class="bg-gradient-to-r from-[#fbbf24] to-[#a78bfa] bg-clip-text text-transparent">done right.</span>
             </h1>
             
-            <p class="mx-auto mt-8 max-w-2xl text-lg text-gray-400 md:text-xl">
+            <p class="mx-auto mt-8 max-w-2xl text-base sm:text-lg text-gray-400 md:text-xl">
                 The ultimate platform for monitoring, managing, and analyzing your personal cash flow. Scale your assets with professional tools.
             </p>
 
-            <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-                 <a href="{{ route('register') }}" class="w-full sm:w-auto rounded-full bg-white px-8 py-4 text-black font-bold hover:bg-gray-200 transition">Get Started Now</a>
-                 <a href="#features" class="w-full sm:w-auto rounded-full bg-white/5 border border-white/10 px-8 py-4 text-white font-semibold hover:bg-white/10 transition">View Features</a>
-            </div>
+              <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
+                  <a href="{{ route('register') }}" class="w-full sm:w-auto rounded-full bg-white px-8 py-4 text-black font-bold hover:bg-gray-200 transition">Get Started Now</a>
+                  <a href="#features" class="w-full sm:w-auto rounded-full bg-white/5 border border-white/10 px-8 py-4 text-white font-semibold hover:bg-white/10 transition">View Features</a>
+              </div>
 
-            <div class="mt-20 relative mx-auto max-w-4xl group">
+            <div class="mt-20 relative mx-auto max-w-full sm:max-w-4xl group px-2">
                 <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#fbbf24] to-[#8b5cf6] opacity-20 blur group-hover:opacity-30 transition duration-1000"></div>
                 <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-[#18181b] shadow-2xl">
                     <div class="flex items-center justify-between border-b border-white/5 bg-white/5 px-4 py-3 text-gray-500">
@@ -77,8 +99,8 @@
                         <div class="w-10"></div>
                     </div>
                     
-                    <div class="p-8 text-left">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-4 sm:p-8 text-left">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
                             <div class="space-y-1">
                                 <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Net Liquidity</span>
                                 <div class="text-3xl font-extrabold text-white">$12,450.00</div>
@@ -108,14 +130,14 @@
         </div>
     </header>
 
-    <section id="features" class="py-32 bg-[#09090b]">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section id="features" class="py-20 sm:py-32 bg-[#09090b]">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-20 items-center">
                 <div>
-                    <h2 class="text-4xl font-extrabold text-white mb-8 leading-tight">Advanced tools for <br> <span class="text-[#fbbf24]">modern investors.</span></h2>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-8 leading-tight">Advanced tools for <br> <span class="text-[#fbbf24]">modern investors.</span></h2>
                     
-                    <div class="space-y-10">
-                        <div class="flex gap-6">
+                    <div class="space-y-8 sm:space-y-10">
+                        <div class="flex gap-4 sm:gap-6">
                             <div class="shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-[#8b5cf6]/10 text-[#8b5cf6] border border-[#8b5cf6]/20">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </div>
@@ -125,7 +147,7 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-6">
+                        <div class="flex gap-4 sm:gap-6">
                             <div class="shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-[#fbbf24]/10 text-[#fbbf24] border border-[#fbbf24]/20">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             </div>
@@ -135,7 +157,7 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-6">
+                        <div class="flex gap-4 sm:gap-6">
                             <div class="shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-[#8b5cf6]/10 text-[#8b5cf6] border border-[#8b5cf6]/20">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m-3 9c0 4.97 1.343 9 3 9m-3-9c1.657 0-3-4.03-3-9s1.343-9 3-9m-3 9H3"></path></svg>
                             </div>
@@ -147,7 +169,7 @@
                     </div>
                 </div>
 
-                <div class="bg-[#18181b] p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden shadow-2xl">
+                <div class="bg-[#18181b] p-4 sm:p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden shadow-2xl mt-10 sm:mt-0">
                     <div class="absolute -right-20 -top-20 h-64 w-64 bg-[#8b5cf6]/10 rounded-full blur-3xl"></div>
                     <div class="relative">
                         <h3 class="text-2xl font-extrabold text-white mb-6">Master Your Data</h3>
@@ -169,8 +191,8 @@
         </div>
     </section>
 
-    <footer class="py-20 border-t border-white/5 bg-black">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+    <footer class="py-10 sm:py-20 border-t border-white/5 bg-black">
+        <div class="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-8">
             <div class="flex items-center gap-2">
                 <div class="h-8 w-8 rounded-md bg-[#fbbf24] flex items-center justify-center text-black font-black text-xs">C</div>
                 <span class="font-extrabold tracking-tight text-white italic">CASHER</span>

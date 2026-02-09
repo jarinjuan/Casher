@@ -59,6 +59,9 @@
             @endphp
 
             <!-- Stats Cards Grid -->
+            @php
+                $forecast = app(\App\Services\ExpenseForecastService::class)->forecastMonthly($user->id, $teamId, 6);
+            @endphp
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <p class="text-sm text-gray-500">Overall balance</p>
@@ -81,6 +84,13 @@
                             {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? number_format(abs($incomeTrend), 1) : '0.0' }}% vs. minulý měsíc
                         </p>
                     @endif
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                    <div>
+                        <p class="text-sm text-gray-500">Expense forecast</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-2 dark:text-white">{{ number_format($forecast, 0) }} Kč</h3>
+                        <p class="mt-2 text-xs text-slate-500">Průměr za posledních 6 měsíců</p>
+                    </div>
                 </div>
             </div>
 
