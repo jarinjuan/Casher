@@ -1,22 +1,13 @@
 @props(['transaction' => null, 'action' => null, 'method' => null, 'buttonText' => 'Add Transaction', 'categories' => [], 'budgets' => []])
 
 
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2">
-    <div class="relative w-full max-w-[480px] bg-slate-800 rounded-lg shadow-2xl overflow-hidden flex flex-col border border-slate-700">
-
-        <a href="{{ route('transactions.index') }}" class="absolute top-3 right-3 text-slate-400 hover:text-white transition-colors z-10 text-sm">
-            close
-        </a>
-
-
-        <div class="px-4 pt-3 pb-0.5">
-            <h1 class="text-white text-sm font-extrabold tracking-wider leading-tight uppercase">
-                {{ $buttonText === 'Save' ? 'Edit' : 'Add Transaction' }}
-            </h1>
-        </div>
-
-        
-        <form method="POST" action="{{ $action ?? url()->current() }}" class="px-4 py-1 flex flex-col gap-1.5 overflow-y-auto max-h-[calc(100vh-120px)]">
+<div class="w-full max-w-[480px] bg-slate-800 rounded-lg shadow-2xl overflow-hidden flex flex-col border border-slate-700 mx-auto my-6">
+    <div class="px-4 pt-3 pb-0.5">
+        <h1 class="text-white text-sm font-extrabold tracking-wider leading-tight uppercase">
+            {{ $buttonText === 'Save' ? 'Edit' : 'Add Transaction' }}
+        </h1>
+    </div>
+    <form method="POST" action="{{ $action ?? url()->current() }}" class="px-4 py-1 flex flex-col gap-1.5">
             @csrf
             @if(!empty($method) && strtoupper($method) !== 'POST')
                 @method($method)
@@ -38,17 +29,21 @@
 
 
             <div class="flex flex-col gap-0">
+                <label class="text-slate-400 text-xs font-bold uppercase tracking-widest">Title</label>
+                <input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required
+                       class="w-full bg-slate-700 border border-slate-600 rounded h-8 px-2 text-xs text-white placeholder:text-slate-500 focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="Description"/>
+                <x-input-error :messages="$errors->get('title')" class="mt-0.5 text-red-400 text-xs" />
+            </div>
+
+            <div class="flex flex-col gap-0">
                 <label class="text-slate-400 text-xs font-bold uppercase tracking-widest">Amount</label>
                 <div class="relative group">
-                    <input name="amount" type="number" step="0.01" value="{{ old('amount', $transaction->amount ?? '') }}" required
+                    <input name="amount" type="number" step="1" value="{{ old('amount', $transaction->amount ?? '') }}" required
                            class="w-full bg-slate-700 border border-slate-600 rounded h-10 px-2 text-lg font-bold text-white placeholder:text-slate-500 focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="0.00"/>
-                    <div class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
-                        {{ old('currency', $transaction->currency ?? 'CZK') }}
-                    </div>
+                    
                 </div>
                 <x-input-error :messages="$errors->get('amount')" class="mt-0.5 text-red-400 text-xs" />
             </div>
-
 
             <div class="grid grid-cols-2 gap-1.5">
 
@@ -70,13 +65,6 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
-
-            <div class="flex flex-col gap-0">
-                <label class="text-slate-400 text-xs font-bold uppercase tracking-widest">Title</label>
-                <input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required
-                       class="w-full bg-slate-700 border border-slate-600 rounded h-8 px-2 text-xs text-white placeholder:text-slate-500 focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="Description"/>
-                <x-input-error :messages="$errors->get('title')" class="mt-0.5 text-red-400 text-xs" />
             </div>
 
             
