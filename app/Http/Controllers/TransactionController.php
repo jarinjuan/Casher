@@ -41,7 +41,7 @@ class TransactionController extends Controller
         $data['team_id'] = $request->user()->currentTeam->id;
         Transaction::create($data);
 
-        return redirect()->route('transactions.index')->with('success', 'Záznam uložen.');
+        return redirect()->route('transactions.index')->with('success', 'Transaction saved.');
     }
 
     public function edit(Transaction $transaction): View

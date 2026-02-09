@@ -17,20 +17,20 @@
                 $month = now()->month;
                 $year = now()->year;
                 
-                // Celkový zůstatek
+                
                 $allTransactions = \App\Models\Transaction::where('team_id', $teamId)->get();
                 $totalBalance = $allTransactions->sum(function($t) {
                     return $t->type === 'income' ? $t->amount : -$t->amount;
                 });
                 
-                // Měsíční výdaje
+                
                 $monthlyExpenses = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'expense')
                     ->whereYear('created_at', $year)
                     ->whereMonth('created_at', $month)
                     ->sum('amount');
                 
-                // Měsíční příjmy
+                
                 $monthlyIncome = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'income')
                     ->whereYear('created_at', $year)
@@ -39,7 +39,7 @@
                 
                 
                 
-                // Trend výdajů - minulý měsíc
+                
                 $lastMonthExpenses = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'expense')
                     ->whereYear('created_at', now()->subMonth()->year)
@@ -48,7 +48,7 @@
                 
                 $expenseTrend = $lastMonthExpenses > 0 ? (($monthlyExpenses - $lastMonthExpenses) / $lastMonthExpenses * 100) : 0;
                 
-                // Trend příjmů - minulý měsíc
+                
                 $lastMonthIncome = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'income')
                     ->whereYear('created_at', now()->subMonth()->year)
