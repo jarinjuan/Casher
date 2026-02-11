@@ -44,6 +44,18 @@
             'icon' => 'fa-solid fa-chart-pie',
             'active' => request()->routeIs('charts.*'),
         ],
+        [
+            'label' => 'Investments',
+            'route' => route('investments.index'),
+            'icon' => 'fa-solid fa-coins',
+            'active' => request()->routeIs('investments.*'),
+        ],
+        [
+            'label' => 'Import / Export',
+            'route' => route('data.index'),
+            'icon' => 'fa-solid fa-exchange',
+            'active' => request()->routeIs('data.*'),
+        ],
     ];
 @endphp
 
@@ -67,12 +79,7 @@
                             </div>
                             <div class="flex gap-4 items-center">
                                 <x-darkmode-toggle></x-darkmode-toggle>
-                                <form method="POST" action="{{ route('logout') }}" class="inline">
-                                    @csrf
-                                    <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">
-                                        {{ __('Logout') }}
-                                    </button>
-                                </form>
+                                    
                             </div>
                         </div>
                     </header>

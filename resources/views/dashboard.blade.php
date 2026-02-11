@@ -38,8 +38,6 @@
                     ->sum('amount');
                 
                 
-                
-                
                 $lastMonthExpenses = \App\Models\Transaction::where('team_id', $teamId)
                     ->where('type', 'expense')
                     ->whereYear('created_at', now()->subMonth()->year)

@@ -21,7 +21,19 @@ Route::middleware('auth')->group(function () {
     Route::resource('transactions', \App\Http\Controllers\TransactionController::class);
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::get('charts', [\App\Http\Controllers\ChartController::class, 'index'])->name('charts.index');
+    Route::get('investments', [\App\Http\Controllers\InvestmentController::class, 'index'])->name('investments.index');
+    Route::get('investments/search', [\App\Http\Controllers\InvestmentController::class, 'search'])->name('investments.search');
+    Route::get('investments/{investment}/edit', [\App\Http\Controllers\InvestmentController::class, 'edit'])->name('investments.edit');
+    Route::post('investments', [\App\Http\Controllers\InvestmentController::class, 'store'])->name('investments.store');
+    Route::put('investments/{investment}', [\App\Http\Controllers\InvestmentController::class, 'update'])->name('investments.update');
+    Route::delete('investments/{investment}', [\App\Http\Controllers\InvestmentController::class, 'destroy'])->name('investments.destroy');
+    Route::post('investments/refresh', [\App\Http\Controllers\InvestmentController::class, 'refresh'])->name('investments.refresh');
     Route::get('currency/convert', [\App\Http\Controllers\CurrencyController::class, 'convert'])->name('currency.convert');
+
+    // Data Import/Export routes
+    Route::get('data', [\App\Http\Controllers\DataController::class, 'index'])->name('data.index');
+    Route::post('data/export', [\App\Http\Controllers\DataController::class, 'export'])->name('data.export');
+    Route::post('data/import', [\App\Http\Controllers\DataController::class, 'import'])->name('data.import');
 
     // Workspace routes
     Route::get('workspace/settings', [\App\Http\Controllers\WorkspaceController::class, 'settings'])->name('workspace.settings');

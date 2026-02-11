@@ -24,4 +24,9 @@ class Team extends Model
     {
         return $this->belongsToMany(User::class)->withPivot('role');
     }
+
+    public function investments()
+    {
+        return $this->hasMany(Investment::class);
+    }
 }

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'stocks' => [
+        'provider' => env('STOCK_API_PROVIDER', 'twelvedata'),
+        'key' => env('STOCK_API_KEY'),
+    ],
+
 ];

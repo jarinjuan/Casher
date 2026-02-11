@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\Budget::class);
     }
 
+    public function investments()
+    {
+        return $this->hasMany(\App\Models\Investment::class);
+    }
+
     public function ownedTeams()
     {
         return $this->hasMany(Team::class);

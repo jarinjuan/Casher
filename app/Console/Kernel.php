@@ -11,6 +11,7 @@ class Kernel extends ConsoleKernel
     {
         
         $schedule->command('fx:fetch-ecb')->dailyAt('01:00');
+        $schedule->command('investments:refresh')->hourly();
     }
 
     protected function commands(): void
