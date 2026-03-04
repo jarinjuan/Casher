@@ -72,7 +72,7 @@
                 options: getChartOptions()
             });
 
-            // Sledování změny dark modu
+            
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.attributeName === 'class' && chartInstance) {

@@ -23,7 +23,11 @@ class TransactionController extends Controller
         $transactions = Transaction::where('team_id', $currentTeam->id ?? null)
             ->latest()
             ->paginate(15);
-        return view('transactions.index', compact('transactions'));
+        
+        $defaultCurrency = $currentTeam->default_currency;
+        $currencySymbol = $currentTeam->getCurrencySymbol();
+        
+        return view('transactions.index', compact('transactions', 'currentTeam', 'defaultCurrency', 'currencySymbol'));
     }
 
     public function create(): View

@@ -143,7 +143,7 @@ class MarketDataService
         return null;
     }
 
-    protected function cryptoIdFromSymbol(string $symbol): ?string
+    public function cryptoIdFromSymbol(string $symbol): ?string
     {
         $map = [
             'BTC' => 'bitcoin',
@@ -156,6 +156,24 @@ class MarketDataService
             'DOGE' => 'dogecoin',
             'AVAX' => 'avalanche-2',
             'MATIC' => 'matic-network',
+            'USDT' => 'tether',
+            'USDC' => 'usd-coin',
+            'LTC' => 'litecoin',
+            'LINK' => 'chainlink',
+            'UNI' => 'uniswap',
+            'ATOM' => 'cosmos',
+            'XLM' => 'stellar',
+            'ALGO' => 'algorand',
+            'VET' => 'vechain',
+            'ICP' => 'internet-computer',
+            'FIL' => 'filecoin',
+            'TRX' => 'tron',
+            'ETC' => 'ethereum-classic',
+            'NEAR' => 'near',
+            'APT' => 'aptos',
+            'ARB' => 'arbitrum',
+            'OP' => 'optimism',
+            'SUI' => 'sui',
         ];
 
         $symbol = strtoupper($symbol);

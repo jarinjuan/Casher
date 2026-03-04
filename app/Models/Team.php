@@ -13,7 +13,41 @@ class Team extends Model
         'name',
         'user_id',
         'invite_code',
+        'default_currency',
     ];
+
+    /**
+     * Get currency symbol for the team's default currency
+     */
+    public function getCurrencySymbol(): string
+    {
+        return match($this->default_currency) {
+            'CZK' => 'Kč',
+            'EUR' => '€',
+            'USD' => '$',
+            'GBP' => '£',
+            'JPY' => '¥',
+            default => $this->default_currency,
+        };
+    }
+
+    /**
+     * Convert amount to team's default currency
+     */
+    public function convertToDefaultCurrency(float $amount, string $fromCurrency, $date = null): float
+    {
+        if ($fromCurrency === $this->default_currency) {
+            return $amount;
+        }
+
+        try {
+            $converter = app(\App\Services\CurrencyConverter::class);
+            return $converter->convert($amount, $fromCurrency, $this->default_currency, $date);
+        } catch (\Exception $e) {
+            logger()->warning("Currency conversion failed: {$e->getMessage()}");
+            return $amount;
+        }
+    }
 
     public function owner()
     {

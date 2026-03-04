@@ -21,7 +21,10 @@ class InvestmentController extends Controller
 
     public function index(Request $request, PortfolioAnalyticsService $analytics, MarketDataService $marketData): View
     {
-        $teamId = $request->user()->currentTeam->id ?? null;
+        $team = $request->user()->currentTeam;
+        $teamId = $team->id ?? null;
+        $defaultCurrency = $team->default_currency;
+        $currencySymbol = $team->getCurrencySymbol();
 
         $investments = Investment::where('team_id', $teamId)
             ->with('latestPrice')
@@ -58,10 +61,19 @@ class InvestmentController extends Controller
 
         foreach ($investments as $investment) {
             $latestPrice = $investment->latestPrice?->price;
+            $latestPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
+            
             if ($latestPrice) {
-                $totalValue += $latestPrice * $investment->quantity;
+                $valueInOriginal = $latestPrice * $investment->quantity;
+                // Convert to default currency
+                $valueInDefault = $team->convertToDefaultCurrency($valueInOriginal, $latestPriceCurrency);
+                $totalValue += $valueInDefault;
             }
-            $totalCost += $investment->average_price * $investment->quantity;
+            
+            $costInOriginal = $investment->average_price * $investment->quantity;
+            // Convert cost to default currency (using investment currency)
+            $costInDefault = $team->convertToDefaultCurrency($costInOriginal, $investment->currency);
+            $totalCost += $costInDefault;
         }
 
         $profit = $totalValue - $totalCost;
@@ -83,6 +95,9 @@ class InvestmentController extends Controller
             'monthlySeries' => $monthlySeries,
             'dailyChangePct' => $dailyChangePct,
             'monthlyChangePct' => $monthlyChangePct,
+            'defaultCurrency' => $defaultCurrency,
+            'currencySymbol' => $currencySymbol,
+            'team' => $team,
         ]);
     }
 
@@ -94,13 +109,23 @@ class InvestmentController extends Controller
         $data['symbol'] = strtoupper($data['symbol']);
         $data['currency'] = strtoupper($data['currency']);
 
+        $marketData = app(MarketDataService::class);
+
+        // Pro crypto: pokud nebyl zadán external_id, pokus se ho najít podle symbolu
+        if ($data['type'] === 'crypto' && empty($data['external_id'])) {
+            $externalId = $marketData->cryptoIdFromSymbol($data['symbol']);
+            if ($externalId) {
+                $data['external_id'] = $externalId;
+            }
+        }
+
         if (empty($data['average_price']) || $data['average_price'] <= 0) {
             $tmp = new Investment($data);
-            $price = app(MarketDataService::class)->getPrice($tmp);
+            $price = $marketData->getPrice($tmp);
             if ($price) {
                 $data['average_price'] = $price['price'];
             } else {
-                return back()->withErrors(['average_price' => 'Unable to fetch current price. Please try again or set average price manually.']);
+                return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu. Zkuste to znovu nebo zadejte průměrnou cenu ručně.']);
             }
         }
 
@@ -128,12 +153,12 @@ class InvestmentController extends Controller
                 'currency' => $data['currency'],
             ]);
 
-            return back()->with('success', 'Investment updated (merged).');
+            return back()->with('success', 'Investice byla aktualizována (sloučena s existující).');
         }
 
         Investment::create($data);
 
-        return back()->with('success', 'Investment added.');
+        return back()->with('success', 'Investice byla přidána.');
     }
 
     public function edit(Request $request, Investment $investment): View

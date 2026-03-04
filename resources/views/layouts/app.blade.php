@@ -7,16 +7,16 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
+        
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         
-        <!-- Scripts -->
+        
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
 
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-purple-50 dark:bg-gray-900 flex">
+        <div class="min-h-screen bg-purple-50 dark:bg-gray-900">
 
 @php
     $menuItems = [
@@ -60,13 +60,12 @@
 @endphp
 
 
-            {{-- SIDEBAR --}}
+
             <x-sidebar :menu-items="$menuItems" />
 
-            {{-- CONTENT --}}
             <div class="flex-1 ml-64">
 
-                {{-- PAGE HEADING --}}
+                
                 @if(isset($header) || View::hasSection('header'))
                     <header class="bg-white dark:bg-gray-800 shadow">
                         <div class="flex flex-row justify-between items-center max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">

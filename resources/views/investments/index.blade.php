@@ -25,15 +25,17 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
                 <p class="text-xs uppercase tracking-widest text-gray-500">Portfolio Value</p>
-                <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalValue, 2, '.', ' ') }} USD</p>
+                <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ $defaultCurrency }}</p>
             </div>
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
                 <p class="text-xs uppercase tracking-widest text-gray-500">Invested Capital</p>
-                <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalCost, 2, '.', ' ') }} USD</p>
+                <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalCost, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ $defaultCurrency }}</p>
             </div>
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
                 <p class="text-xs uppercase tracking-widest text-gray-500">Total P/L</p>
-                <p class="mt-2 text-2xl font-bold {{ $profit >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($profit, 2, '.', ' ') }} USD</p>
+                <p class="mt-2 text-2xl font-bold {{ $profit >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($profit, 2, '.', ' ') }} {{ $currencySymbol }}</p>
                 <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($profitPct, 2) }}%</p>
             </div>
             <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
@@ -87,9 +89,16 @@
                             @forelse($investments as $investment)
                                 @php
                                     $lastPrice = $investment->latestPrice?->price;
+                                    $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
+                                    
+                                    
                                     $value = $lastPrice ? $lastPrice * $investment->quantity : null;
                                     $pl = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
                                     $plPct = $investment->average_price > 0 && $lastPrice ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100 : null;
+                                    
+                                   
+                                    $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
+                                    $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
                                 @endphp
                                 <tr>
                                     <td class="py-3">
@@ -97,17 +106,31 @@
                                         <div class="text-xs text-gray-500">{{ $investment->name ?? ucfirst($investment->type) }}</div>
                                     </td>
                                     <td class="py-3 text-right text-gray-700 dark:text-gray-300">{{ number_format($investment->quantity, 8, '.', ' ') }}</td>
-                                    <td class="py-3 text-right text-gray-700 dark:text-gray-300">{{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}</td>
                                     <td class="py-3 text-right text-gray-700 dark:text-gray-300">
-                                        {{ $lastPrice ? number_format($lastPrice, 2, '.', ' ') . ' ' . $investment->currency : '—' }}
+                                        {{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}
                                     </td>
                                     <td class="py-3 text-right text-gray-700 dark:text-gray-300">
-                                        {{ $value ? number_format($value, 2, '.', ' ') . ' ' . $investment->currency : '—' }}
+                                        @if($lastPrice)
+                                            <div>{{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td class="py-3 text-right text-gray-700 dark:text-gray-300">
+                                        @if($valueInDefault)
+                                            <div class="font-semibold">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</div>
+                                            @if($lastPriceCurrency !== $defaultCurrency)
+                                                <div class="text-xs text-gray-500">{{ number_format($value, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
                                     </td>
                                     <td class="py-3 text-right">
-                                        @if($pl !== null)
-                                            <span class="font-semibold {{ $pl >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                                {{ number_format($pl, 2, '.', ' ') }} ({{ number_format($plPct, 2) }}%)
+                                        @if($plInDefault !== null)
+                                            <span class="font-semibold {{ $plInDefault >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                                {{ number_format($plInDefault, 2, '.', ' ') }} {{ $currencySymbol }}
+                                                ({{ number_format($plPct, 2) }}%)
                                             </span>
                                         @else
                                             —
@@ -146,40 +169,39 @@
                         </select>
                     </div>
 
-                    <div id="stockSearch" class="relative">
-                        <label class="block text-xs font-semibold text-gray-500">Search stock</label>
-                        <input type="text" id="stockQuery" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type company name or ticker">
-                        <div id="stockResults" class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow hidden"></div>
-                        <p class="mt-2 text-xs text-gray-500">Select a result to auto-fill the symbol and name.</p>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">Symbol / Zkratka</label>
+                        <input name="symbol" id="symbolInput" type="text" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="např. AAPL, BTC, ETH" required>
+                        <p class="mt-1 text-xs text-gray-500">Zadejte zkratku akcie nebo kryptoměny</p>
                     </div>
 
-                    <div id="cryptoSearch" class="relative hidden">
-                        <label class="block text-xs font-semibold text-gray-500">Search crypto</label>
-                        <input type="text" id="cryptoQuery" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type coin name">
-                        <div id="cryptoResults" class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow hidden"></div>
-                        <p class="mt-2 text-xs text-gray-500">Select a result to auto-fill the symbol.</p>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">Název (nepovinné)</label>
+                        <input name="name" id="nameInput" type="text" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="např. Apple Inc.">
                     </div>
 
-                    
                     <div id="externalIdRow" class="hidden">
-                        <label class="block text-xs font-semibold text-gray-500">External ID</label>
+                        <label class="block text-xs font-semibold text-gray-500">External ID (pro krypto)</label>
                         <input name="external_id" id="externalIdInput" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="coingecko id, e.g. bitcoin">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500">Quantity</label>
-                            <input name="quantity" type="number" step="0.00000001" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
-                        </div>
-                        <div id="avgPriceRow" class="hidden">
-                            <label class="block text-xs font-semibold text-gray-500">Avg Price (optional)</label>
-                            <input name="average_price" type="number" step="0.00000001" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        </div>
-                    </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Currency</label>
+                        <label class="block text-xs font-semibold text-gray-500">Množství</label>
+                        <input name="quantity" type="number" step="0.00000001" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="např. 1.5" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">Průměrná cena (nepovinné)</label>
+                        <input name="average_price" type="number" step="0.00000001" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="ponechte prázdné pro automatické stáhnutí">
+                        <p class="mt-1 text-xs text-gray-500">Pokud necháte prázdné, stáhne se aktuální cena</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">Měna</label>
                         <input name="currency" value="USD" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                     </div>
-                    <button class="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold py-2 rounded-lg">Add</button>
+
+                    <button class="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold py-2 rounded-lg">Přidat investici</button>
                 </form>
             </div>
         </div>
@@ -190,100 +212,20 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const typeSelect = document.getElementById('investmentType');
-        const stockSearch = document.getElementById('stockSearch');
-        const stockQuery = document.getElementById('stockQuery');
-        const stockResults = document.getElementById('stockResults');
-        const cryptoSearch = document.getElementById('cryptoSearch');
-        const cryptoQuery = document.getElementById('cryptoQuery');
-        const cryptoResults = document.getElementById('cryptoResults');
-        const symbolInput = document.getElementById('symbolInput');
-        const nameInput = document.getElementById('nameInput');
         const externalIdRow = document.getElementById('externalIdRow');
-        const avgPriceRow = document.getElementById('avgPriceRow');
 
         function toggleFields() {
-            const isStock = typeSelect.value === 'stock';
             const isCrypto = typeSelect.value === 'crypto';
-            stockSearch.classList.toggle('hidden', !isStock);
-            cryptoSearch.classList.toggle('hidden', !isCrypto);
-            externalIdRow.classList.add('hidden');
-            avgPriceRow.classList.add('hidden');
+             
+            if (isCrypto) {
+                externalIdRow.classList.remove('hidden');
+            } else {
+                externalIdRow.classList.add('hidden');
+            }
         }
 
         toggleFields();
         typeSelect.addEventListener('change', toggleFields);
-
-        let searchTimeout;
-        if (stockQuery) {
-            stockQuery.addEventListener('input', () => {
-                clearTimeout(searchTimeout);
-                const q = stockQuery.value.trim();
-                if (q.length < 1) {
-                    stockResults.innerHTML = '';
-                    stockResults.classList.add('hidden');
-                    return;
-                }
-                searchTimeout = setTimeout(async () => {
-                    const res = await fetch(`{{ route('investments.search') }}?q=${encodeURIComponent(q)}&type=stock`);
-                    const data = await res.json();
-                    stockResults.innerHTML = '';
-                    if (!data.length) {
-                        stockResults.classList.add('hidden');
-                        return;
-                    }
-                    data.forEach(item => {
-                        const div = document.createElement('button');
-                        div.type = 'button';
-                        div.className = 'w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition';
-                        div.innerHTML = `<div class="font-semibold">${item.symbol}</div><div class="text-xs text-gray-500">${item.name ?? ''}${item.exchange ? ' • ' + item.exchange : ''}</div>`;
-                        div.addEventListener('click', () => {
-                            symbolInput.value = item.symbol;
-                            nameInput.value = item.name ?? '';
-                            if (externalIdInput) externalIdInput.value = '';
-                            stockResults.classList.add('hidden');
-                        });
-                        stockResults.appendChild(div);
-                    });
-                    stockResults.classList.remove('hidden');
-                }, 300);
-            });
-        }
-
-        const externalIdInput = document.getElementById('externalIdInput');
-        if (cryptoQuery) {
-            cryptoQuery.addEventListener('input', () => {
-                clearTimeout(searchTimeout);
-                const q = cryptoQuery.value.trim();
-                if (q.length < 1) {
-                    cryptoResults.innerHTML = '';
-                    cryptoResults.classList.add('hidden');
-                    return;
-                }
-                searchTimeout = setTimeout(async () => {
-                    const res = await fetch(`{{ route('investments.search') }}?q=${encodeURIComponent(q)}&type=crypto`);
-                    const data = await res.json();
-                    cryptoResults.innerHTML = '';
-                    if (!data.length) {
-                        cryptoResults.classList.add('hidden');
-                        return;
-                    }
-                    data.forEach(item => {
-                        const div = document.createElement('button');
-                        div.type = 'button';
-                        div.className = 'w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition';
-                        div.innerHTML = `<div class="font-semibold">${item.symbol}</div><div class="text-xs text-gray-500">${item.name ?? ''}</div>`;
-                        div.addEventListener('click', () => {
-                            symbolInput.value = item.symbol;
-                            nameInput.value = item.name ?? '';
-                            if (externalIdInput) externalIdInput.value = item.external_id ?? '';
-                            cryptoResults.classList.add('hidden');
-                        });
-                        cryptoResults.appendChild(div);
-                    });
-                    cryptoResults.classList.remove('hidden');
-                }, 300);
-            });
-        }
 
         const dailyCtx = document.getElementById('dailyChart');
         const monthlyCtx = document.getElementById('monthlyChart');

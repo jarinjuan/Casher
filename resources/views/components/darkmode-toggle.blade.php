@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Nastavení Tailwindu pro přepínání pomocí třídy
         tailwind.config = {
             darkMode: 'class'
         }
@@ -31,14 +30,12 @@
         const toggleBtn = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
 
-        // 1. Kontrola při načtení: Pokud není v localStorage nic, necháme Light Mode
         if (localStorage.getItem('theme') === 'dark') {
             htmlElement.classList.add('dark');
         } else {
             htmlElement.classList.remove('dark');
         }
 
-        // 2. Funkce přepínání
         toggleBtn.addEventListener('click', () => {
             if (htmlElement.classList.contains('dark')) {
                 htmlElement.classList.remove('dark');

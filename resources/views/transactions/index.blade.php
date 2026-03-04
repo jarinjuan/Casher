@@ -23,9 +23,19 @@
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
     @endif
 
-    @php $currencySymbols = ['CZK' => 'Kč', 'EUR' => '€', 'USD' => '$']; @endphp
+    
+
     <div :class="'grid grid-cols-' + cols + ' gap-6'">
         @foreach($transactions as $t)
+            @php
+                
+                $amountInDefault = $t->amount;
+                $showOriginal = false;
+                if ($t->currency !== $defaultCurrency) {
+                    $amountInDefault = $currentTeam->convertToDefaultCurrency($t->amount, $t->currency, $t->created_at);
+                    $showOriginal = true;
+                }
+            @endphp
             <div class="transition group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-5 flex flex-col gap-2 hover:shadow-2xl hover:border-yellow-400 mx-2">
                 <div class="flex items-center gap-3 mb-1">
                     <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
@@ -42,7 +52,14 @@
                 </div>
                 <div class="flex items-end justify-between mt-2">
                     <div>
-                        <span class="font-extrabold text-2xl text-gray-900 dark:text-white group-hover:text-yellow-500 transition">{{ number_format($t->amount, 2, ',', ' ') }} {{ $currencySymbols[$t->currency] ?? $t->currency }}</span>
+                        <span class="font-extrabold text-2xl text-gray-900 dark:text-white group-hover:text-yellow-500 transition">
+                            {{ number_format($amountInDefault, 2, ',', ' ') }} {{ $currencySymbol }}
+                        </span>
+                        @if($showOriginal)
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Původně: {{ number_format($t->amount, 2, ',', ' ') }} {{ $t->currency }}
+                            </div>
+                        @endif
                         <div class="text-xs mt-1 font-semibold uppercase tracking-widest {{ $t->type === 'income' ? 'text-green-500' : 'text-red-500' }}">{{ $t->type }}</div>
                     </div>
                     <div class="flex gap-2">

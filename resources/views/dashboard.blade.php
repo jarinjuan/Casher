@@ -2,72 +2,22 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Dashboard') }}
-            
         </h2>
-
-        
     </x-slot>
 
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            @php
-                $user = Auth::user();
-                $teamId = $user->currentTeam->id;
-                $month = now()->month;
-                $year = now()->year;
-                
-                
-                $allTransactions = \App\Models\Transaction::where('team_id', $teamId)->get();
-                $totalBalance = $allTransactions->sum(function($t) {
-                    return $t->type === 'income' ? $t->amount : -$t->amount;
-                });
-                
-                
-                $monthlyExpenses = \App\Models\Transaction::where('team_id', $teamId)
-                    ->where('type', 'expense')
-                    ->whereYear('created_at', $year)
-                    ->whereMonth('created_at', $month)
-                    ->sum('amount');
-                
-                
-                $monthlyIncome = \App\Models\Transaction::where('team_id', $teamId)
-                    ->where('type', 'income')
-                    ->whereYear('created_at', $year)
-                    ->whereMonth('created_at', $month)
-                    ->sum('amount');
-                
-                
-                $lastMonthExpenses = \App\Models\Transaction::where('team_id', $teamId)
-                    ->where('type', 'expense')
-                    ->whereYear('created_at', now()->subMonth()->year)
-                    ->whereMonth('created_at', now()->subMonth()->month)
-                    ->sum('amount');
-                
-                $expenseTrend = $lastMonthExpenses > 0 ? (($monthlyExpenses - $lastMonthExpenses) / $lastMonthExpenses * 100) : 0;
-                
-                
-                $lastMonthIncome = \App\Models\Transaction::where('team_id', $teamId)
-                    ->where('type', 'income')
-                    ->whereYear('created_at', now()->subMonth()->year)
-                    ->whereMonth('created_at', now()->subMonth()->month)
-                    ->sum('amount');
-                
-                $incomeTrend = $lastMonthIncome > 0 ? (($monthlyIncome - $lastMonthIncome) / $lastMonthIncome * 100) : 0;
-            @endphp
-
             <!-- Stats Cards Grid -->
-            @php
-                $forecast = app(\App\Services\ExpenseForecastService::class)->forecastMonthly($user->id, $teamId, 6);
-            @endphp
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <p class="text-sm text-gray-500">Overall balance</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($totalBalance, 0) }} Kč</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($totalBalance, 0) }} {{ $currencySymbol }}</p>
+                    <p class="text-xs text-gray-500 mt-1">In {{ $defaultCurrency }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <p class="text-sm text-gray-500">Monthly expenses</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($monthlyExpenses, 0) }} Kč</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($monthlyExpenses, 0) }} {{ $currencySymbol }}</p>
                     @if($expenseTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $expenseTrend >= 0 ? 'text-red-600' : 'text-green-600' }}">
                             {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? number_format(abs($expenseTrend), 1) : '0.0' }}% vs. minulý měsíc
@@ -76,7 +26,7 @@
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <p class="text-sm text-gray-500">Monthly income</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($monthlyIncome, 0) }} Kč</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ number_format($monthlyIncome, 0) }} {{ $currencySymbol }}</p>
                     @if($incomeTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $incomeTrend >= 0 ? 'text-green-600' : 'text-red-600' }}">
                             {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? number_format(abs($incomeTrend), 1) : '0.0' }}% vs. minulý měsíc
@@ -86,69 +36,20 @@
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                     <div>
                         <p class="text-sm text-gray-500">Expense forecast</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-2 dark:text-white">{{ number_format($forecast, 0) }} Kč</h3>
+                        <p class="text-2xl font-bold text-gray-900 mt-2 dark:text-white">{{ number_format($forecast, 0) }} {{ $currencySymbol }}</p>
                         <p class="mt-2 text-xs text-slate-500">Průměr za posledních 6 měsíců</p>
                     </div>
                 </div>
             </div>
 
             <!-- Expenses vs Income Chart (6 months) -->
-            @php
-                $months = [];
-                $expenseData = [];
-                $incomeData = [];
-                $teamId = Auth::user()->currentTeam->id;
-                
-                for ($i = 5; $i >= 0; $i--) {
-                    $date = now()->subMonths($i);
-                    $months[] = $date->format('M Y');
-                    
-                    $expenses = \App\Models\Transaction::where('team_id', $teamId)
-                        ->where('type', 'expense')
-                        ->whereYear('created_at', $date->year)
-                        ->whereMonth('created_at', $date->month)
-                        ->sum('amount');
-                    
-                    $income = \App\Models\Transaction::where('team_id', $teamId)
-                        ->where('type', 'income')
-                        ->whereYear('created_at', $date->year)
-                        ->whereMonth('created_at', $date->month)
-                        ->sum('amount');
-                    
-                    $expenseData[] = $expenses;
-                    $incomeData[] = $income;
-                }
-                
-                $chartDatasets = [
-                    [
-                        'label' => 'Expenses',
-                        'data' => $expenseData,
-                        'backgroundColor' => '#3b82f6',
-                        'borderColor' => '#1e40af',
-                        'borderWidth' => 1
-                    ],
-                    [
-                        'label' => 'Income',
-                        'data' => $incomeData,
-                        'backgroundColor' => '#eab308',
-                        'borderColor' => '#ca8a04',
-                        'borderWidth' => 1
-                    ]
-                ];
-            @endphp
-
             <x-chart 
-                title="Expenses vs Income"
+                title="Expenses vs Income ({{ $defaultCurrency }})"
                 type="bar"
                 :labels="$months"
                 :datasets="$chartDatasets"
                 height="80"
             />
-
-            @php
-                $categories = Auth::user()->categories()->where('monthly_budget', '>', 0)->get();
-                $currencySymbols = ['CZK' => 'Kč', 'EUR' => '€', 'USD' => '$'];
-            @endphp
 
             @if($categories->count() > 0)
             <div class="mt-6">
@@ -160,7 +61,14 @@
                             $budget = $cat->monthly_budget;
                             $percentage = $cat->getMonthlyBudgetPercentage();
                             $isExceeded = $spent > $budget;
-                            $symbol = $currencySymbols[$cat->budget_currency] ?? $cat->budget_currency;
+                            $symbol = match($cat->budget_currency) {
+                                'CZK' => 'Kč',
+                                'EUR' => '€',
+                                'USD' => '$',
+                                'GBP' => '£',
+                                'JPY' => '¥',
+                                default => $cat->budget_currency
+                            };
                         @endphp
                         <div class="bg-white dark:bg-gray-800 rounded shadow p-4">
                             <div class="flex items-center gap-2 mb-2">

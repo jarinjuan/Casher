@@ -96,4 +96,26 @@ class WorkspaceController extends Controller
 
         return back()->with('success', 'Switched to workspace: ' . $team->name);
     }
+
+    /**
+     * Update workspace currency
+     */
+    public function updateCurrency(Request $request)
+    {
+        $team = auth()->user()->currentTeam;
+
+        if ($team->user_id !== auth()->id()) {
+            return back()->with('error', 'Only workspace owner can change currency settings');
+        }
+
+        $request->validate([
+            'default_currency' => 'required|string|size:3|in:CZK,EUR,USD,GBP,JPY,CHF,PLN,SEK,NOK,DKK',
+        ]);
+
+        $team->update([
+            'default_currency' => strtoupper($request->default_currency),
+        ]);
+
+        return back()->with('success', 'Default currency updated to ' . $request->default_currency);
+    }
 }
