@@ -11,7 +11,7 @@
         document.documentElement.classList.toggle('dark', this.dark);
     }
 }">
-    <button @click="toggle()" class="group relative inline-flex h-8 w-16 items-center rounded-full border border-white/10 p-0.5 transition-colors hover:border-white/20 bg-white/5">
+    <button @click="toggle()" class="group relative inline-flex h-8 w-16 items-center rounded-full border border-gray-300 dark:border-white/10 p-0.5 transition-colors hover:border-gray-400 dark:hover:border-white/20 bg-gray-100 dark:bg-white/5">
         <span class="flex h-7 w-7 transform items-center justify-center rounded-full text-gray-400 transition-transform duration-300 ease-in-out"
               :class="dark ? 'translate-x-8' : 'translate-x-0'">
             <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
