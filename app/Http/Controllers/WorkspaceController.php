@@ -41,7 +41,7 @@ class WorkspaceController extends Controller
             'invite_code' => Str::random(12),
         ]);
 
-        return back()->with('success', 'New invite code generated: ' . $team->invite_code);
+        return back()->with('success', 'Invite code generated: ' . $team->invite_code);
     }
 
     /**

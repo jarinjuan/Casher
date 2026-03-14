@@ -1,19 +1,17 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-semibold text-xl text-black dark:text-gray-200 leading-tight">
-        Investments
-    </h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">Investments</h2>
 @endsection
 
 @section('content')
-    <div class="max-w-6xl mx-auto p-6 space-y-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         @if(session('success'))
-            <div class="p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
+            <div class="flash-success">{{ session('success') }}</div>
         @endif
 
         @if($errors->any())
-            <div class="p-3 bg-red-100 text-red-800 rounded">
+            <div class="flash-error">
                 <ul class="list-disc list-inside">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -22,134 +20,133 @@
             </div>
         @endif
 
+        {{-- Stats --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
-                <p class="text-xs uppercase tracking-widest text-gray-500">Portfolio Value</p>
-                <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ $defaultCurrency }}</p>
+            <div class="card p-5">
+                <p class="text-xs uppercase tracking-widest t-muted font-bold">Portfolio Value</p>
+                <p class="mt-2 text-2xl font-extrabold t-primary">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
-                <p class="text-xs uppercase tracking-widest text-gray-500">Invested Capital</p>
-                <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalCost, 2, '.', ' ') }} {{ $currencySymbol }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ $defaultCurrency }}</p>
+            <div class="card p-5">
+                <p class="text-xs uppercase tracking-widest t-muted font-bold">Invested Capital</p>
+                <p class="mt-2 text-2xl font-extrabold t-primary">{{ number_format($totalCost, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
-                <p class="text-xs uppercase tracking-widest text-gray-500">Total P/L</p>
-                <p class="mt-2 text-2xl font-bold {{ $profit >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($profit, 2, '.', ' ') }} {{ $currencySymbol }}</p>
-                <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($profitPct, 2) }}%</p>
+            <div class="card p-5">
+                <p class="text-xs uppercase tracking-widest t-muted font-bold">Total P/L</p>
+                <p class="mt-2 text-2xl font-extrabold {{ $profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($profit, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($profitPct, 2) }}%</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-5">
-                <p class="text-xs uppercase tracking-widest text-gray-500">Daily / Monthly</p>
-                <p class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">Daily: <span class="{{ $dailyChangePct >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($dailyChangePct, 2) }}%</span></p>
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">Monthly: <span class="{{ $monthlyChangePct >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ number_format($monthlyChangePct, 2) }}%</span></p>
+            <div class="card p-5">
+                <p class="text-xs uppercase tracking-widest t-muted font-bold">Daily / Monthly</p>
+                <p class="mt-2 text-sm font-semibold t-primary">Daily: <span class="{{ $dailyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($dailyChangePct, 2) }}%</span></p>
+                <p class="text-sm font-semibold t-primary">Monthly: <span class="{{ $monthlyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($monthlyChangePct, 2) }}%</span></p>
             </div>
         </div>
 
+        {{-- Charts --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6">
+            <div class="card p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Daily Performance</h3>
-                    <span class="text-xs text-gray-500">Last 30 days</span>
+                    <h3 class="text-lg font-bold t-primary">Daily Performance</h3>
+                    <span class="text-xs t-muted">Last 30 days</span>
                 </div>
                 <canvas id="dailyChart" height="120"></canvas>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6">
+            <div class="card p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Monthly Performance</h3>
-                    <span class="text-xs text-gray-500">Last 12 months</span>
+                    <h3 class="text-lg font-bold t-primary">Monthly Performance</h3>
+                    <span class="text-xs t-muted">Last 12 months</span>
                 </div>
                 <canvas id="monthlyChart" height="120"></canvas>
             </div>
         </div>
 
+        {{-- Holdings + Add Form --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6">
+            <div class="lg:col-span-2 card p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Holdings</h3>
+                    <h3 class="text-lg font-bold t-primary">Holdings</h3>
                     <form method="POST" action="{{ route('investments.refresh') }}">
                         @csrf
-                        <button class="text-xs font-semibold px-3 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition">Refresh prices</button>
+                        <button class="text-xs font-bold px-4 py-2 rounded-lg bg-[#8b5cf6] text-white hover:bg-[#7c3aed] transition shadow-lg shadow-[#8b5cf6]/10">Refresh prices</button>
                     </form>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm">
-                        <thead class="text-xs uppercase text-gray-500 border-b border-gray-200 dark:border-gray-700">
+                        <thead class="text-[10px] uppercase tracking-widest t-muted border-b border-gray-200 dark:border-white/10">
                             <tr>
-                                <th class="text-left py-2">Asset</th>
-                                <th class="text-right py-2">Qty</th>
-                                <th class="text-right py-2">Avg Price</th>
-                                <th class="text-right py-2">Last Price</th>
-                                <th class="text-right py-2">Value</th>
-                                <th class="text-right py-2">P/L</th>
-                                <th class="text-right py-2"></th>
+                                <th class="text-left py-3">Asset</th>
+                                <th class="text-right py-3">Qty</th>
+                                <th class="text-right py-3">Avg Price</th>
+                                <th class="text-right py-3">Last Price</th>
+                                <th class="text-right py-3">Value</th>
+                                <th class="text-right py-3">P/L</th>
+                                <th class="text-right py-3"></th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                             @forelse($investments as $investment)
                                 @php
                                     $lastPrice = $investment->latestPrice?->price;
                                     $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
-                                    
-                                    
                                     $value = $lastPrice ? $lastPrice * $investment->quantity : null;
                                     $pl = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
                                     $plPct = $investment->average_price > 0 && $lastPrice ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100 : null;
-                                    
-                                   
                                     $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
                                     $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
                                 @endphp
-                                <tr>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition">
                                     <td class="py-3">
-                                        <div class="font-semibold text-gray-900 dark:text-white">{{ $investment->symbol }}</div>
-                                        <div class="text-xs text-gray-500">{{ $investment->name ?? ucfirst($investment->type) }}</div>
+                                        <div class="font-bold t-primary">{{ $investment->symbol }}</div>
+                                        <div class="text-xs t-muted">{{ $investment->name ?? ucfirst($investment->type) }}</div>
                                     </td>
-                                    <td class="py-3 text-right text-gray-700 dark:text-gray-300">{{ number_format($investment->quantity, 8, '.', ' ') }}</td>
-                                    <td class="py-3 text-right text-gray-700 dark:text-gray-300">
+                                    <td class="py-3 text-right t-secondary">{{ number_format($investment->quantity, 8, '.', ' ') }}</td>
+                                    <td class="py-3 text-right t-secondary">
                                         {{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}
                                     </td>
-                                    <td class="py-3 text-right text-gray-700 dark:text-gray-300">
+                                    <td class="py-3 text-right t-secondary">
                                         @if($lastPrice)
                                             <div>{{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
                                         @else
-                                            —
+                                            <span class="t-muted">--</span>
                                         @endif
                                     </td>
-                                    <td class="py-3 text-right text-gray-700 dark:text-gray-300">
+                                    <td class="py-3 text-right">
                                         @if($valueInDefault)
-                                            <div class="font-semibold">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</div>
+                                            <div class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</div>
                                             @if($lastPriceCurrency !== $defaultCurrency)
-                                                <div class="text-xs text-gray-500">{{ number_format($value, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
+                                                <div class="text-xs t-muted">{{ number_format($value, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
                                             @endif
                                         @else
-                                            —
+                                            <span class="t-muted">--</span>
                                         @endif
                                     </td>
                                     <td class="py-3 text-right">
                                         @if($plInDefault !== null)
-                                            <span class="font-semibold {{ $plInDefault >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                            <span class="font-semibold {{ $plInDefault >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
                                                 {{ number_format($plInDefault, 2, '.', ' ') }} {{ $currencySymbol }}
                                                 ({{ number_format($plPct, 2) }}%)
                                             </span>
                                         @else
-                                            —
+                                            <span class="t-muted">--</span>
                                         @endif
                                     </td>
                                     <td class="py-3 text-right">
                                         <div class="flex justify-end gap-3">
-                                            <a href="{{ route('investments.edit', $investment) }}" class="text-xs text-indigo-600 hover:text-indigo-700">Edit</a>
+                                            <a href="{{ route('investments.edit', $investment) }}" class="text-xs font-bold text-[#8b5cf6] hover:text-[#a78bfa] transition">Edit</a>
                                             <form method="POST" action="{{ route('investments.destroy', $investment) }}" onsubmit="return confirm('Delete investment?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="text-xs text-red-600 hover:text-red-700">Delete</button>
+                                                <button class="text-xs font-bold text-red-500 hover:text-red-400 transition">Delete</button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="py-6 text-center text-gray-500">No investments yet.</td>
+                                    <td colspan="7" class="py-8 text-center t-muted">No investments yet.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -157,51 +154,43 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Add Investment</h3>
-                <form method="POST" action="{{ route('investments.store') }}" class="space-y-4" id="investmentForm">
+            <div class="card p-6">
+                <h3 class="text-lg font-bold t-primary mb-4">Add Investment</h3>
+                <form method="POST" action="{{ route('investments.store') }}" class="space-y-3" id="investmentForm">
                     @csrf
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Type</label>
-                        <select name="type" id="investmentType" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <label class="label-dark">Type</label>
+                        <select name="type" id="investmentType" class="select-dark">
                             <option value="stock">Stock</option>
                             <option value="crypto">Crypto</option>
                         </select>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Symbol / Zkratka</label>
-                        <input name="symbol" id="symbolInput" type="text" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="např. AAPL, BTC, ETH" required>
-                        <p class="mt-1 text-xs text-gray-500">Zadejte zkratku akcie nebo kryptoměny</p>
+                        <label class="label-dark">Symbol</label>
+                        <input name="symbol" id="symbolInput" type="text" class="input-dark" placeholder="e.g. AAPL, BTC, ETH" required>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Název (nepovinné)</label>
-                        <input name="name" id="nameInput" type="text" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="např. Apple Inc.">
+                        <label class="label-dark">Name (optional)</label>
+                        <input name="name" id="nameInput" type="text" class="input-dark" placeholder="e.g. Apple Inc.">
                     </div>
-
                     <div id="externalIdRow" class="hidden">
-                        <label class="block text-xs font-semibold text-gray-500">External ID (pro krypto)</label>
-                        <input name="external_id" id="externalIdInput" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="coingecko id, e.g. bitcoin">
+                        <label class="label-dark">External ID (crypto)</label>
+                        <input name="external_id" id="externalIdInput" class="input-dark" placeholder="coingecko id, e.g. bitcoin">
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Množství</label>
-                        <input name="quantity" type="number" step="0.00000001" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="např. 1.5" required>
+                        <label class="label-dark">Quantity</label>
+                        <input name="quantity" type="number" step="0.00000001" class="input-dark" placeholder="e.g. 1.5" required>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Průměrná cena (nepovinné)</label>
-                        <input name="average_price" type="number" step="0.00000001" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="ponechte prázdné pro automatické stáhnutí">
-                        <p class="mt-1 text-xs text-gray-500">Pokud necháte prázdné, stáhne se aktuální cena</p>
+                        <label class="label-dark">Average price (optional)</label>
+                        <input name="average_price" type="number" step="0.00000001" class="input-dark" placeholder="Leave empty for auto-fetch">
+                        <p class="mt-1 text-xs t-muted">If left empty, current price will be fetched</p>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">Měna</label>
-                        <input name="currency" value="USD" class="w-full mt-1 border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <label class="label-dark">Currency</label>
+                        <input name="currency" value="USD" class="input-dark" required>
                     </div>
-
-                    <button class="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold py-2 rounded-lg">Přidat investici</button>
+                    <button class="btn-primary w-full text-sm">Add investment</button>
                 </form>
             </div>
         </div>
@@ -216,7 +205,6 @@
 
         function toggleFields() {
             const isCrypto = typeSelect.value === 'crypto';
-             
             if (isCrypto) {
                 externalIdRow.classList.remove('hidden');
             } else {
@@ -233,6 +221,10 @@
         const dailySeries = @json($dailySeries);
         const monthlySeries = @json($monthlySeries);
 
+        const isDark = document.documentElement.classList.contains('dark');
+        const chartGridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+        const chartTickColor = isDark ? '#6b7280' : '#94a3b8';
+
         if (dailyCtx) {
             new Chart(dailyCtx, {
                 type: 'line',
@@ -242,19 +234,17 @@
                         label: 'Portfolio value',
                         data: dailySeries.values ?? [],
                         borderColor: '#fbbf24',
-                        backgroundColor: 'rgba(251, 191, 36, 0.15)',
+                        backgroundColor: 'rgba(251, 191, 36, 0.08)',
                         fill: true,
                         tension: 0.35,
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: { ticks: { color: '#9ca3af' } },
-                        x: { ticks: { color: '#9ca3af' } }
+                        y: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } },
+                        x: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } }
                     }
                 }
             });
@@ -269,19 +259,17 @@
                         label: 'Portfolio value',
                         data: monthlySeries.values ?? [],
                         borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.15)',
+                        backgroundColor: 'rgba(139, 92, 246, 0.08)',
                         fill: true,
                         tension: 0.35,
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: { ticks: { color: '#9ca3af' } },
-                        x: { ticks: { color: '#9ca3af' } }
+                        y: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } },
+                        x: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } }
                     }
                 }
             });

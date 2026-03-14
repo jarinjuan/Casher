@@ -1,45 +1,47 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-semibold text-xl text-black dark:text-gray-200 leading-tight">Kategorie: {{ $category->name }}</h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">Category: {{ $category->name }}</h2>
 @endsection
 
 @section('content')
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto px-4 py-6">
     <div class="mb-4">
-        <a href="{{ route('categories.index') }}" class="text-gray-600">← Zpět na seznam kategorií</a>
+        <a href="{{ route('categories.index') }}" class="t-secondary hover:text-[#fbbf24] transition text-sm font-medium">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to categories
+        </a>
     </div>
 
-    <div class="bg-white rounded shadow p-4 mb-4">
+    <div class="card p-5 mb-4">
         <div class="flex items-center gap-4">
-            <div style="width:28px;height:28px;background:{{ $category->color ?? '#ddd' }};border-radius:6px"></div>
+            <div class="w-7 h-7 rounded-md" style="background:{{ $category->color ?? '#fbbf24' }}"></div>
             <div>
-                <h3 class="text-lg font-medium">{{ $category->name }}</h3>
-                <div class="text-sm text-gray-500">Vytvořeno: {{ $category->created_at->format('Y-m-d') }}</div>
+                <h3 class="text-lg font-bold t-primary">{{ $category->name }}</h3>
+                <div class="text-xs t-muted">Created: {{ $category->created_at->format('Y-m-d') }}</div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded shadow p-4">
-        <h4 class="font-medium mb-3">Náklady (expenses)</h4>
+    <div class="card p-5">
+        <h4 class="font-bold t-primary mb-3">Expenses</h4>
         @if($transactions->count())
-            <ul>
+            <ul class="divide-y divide-gray-200 dark:divide-white/5">
                 @foreach($transactions as $t)
-                    <li class="py-2 border-b flex justify-between">
+                    <li class="py-3 flex justify-between">
                         <div>
-                            <div class="font-medium">{{ $t->title }}</div>
-                            <div class="text-sm text-gray-500">{{ $t->note }}</div>
+                            <div class="font-semibold t-primary">{{ $t->title }}</div>
+                            <div class="text-xs t-muted">{{ $t->note }}</div>
                         </div>
                         <div class="text-right">
-                            <div class="font-medium">{{ number_format($t->amount,2,',',' ') }} {{ $t->currency }}</div>
-                            <div class="text-xs text-gray-500">{{ $t->created_at->format('Y-m-d') }}</div>
+                            <div class="font-semibold t-primary">{{ number_format($t->amount,2,',',' ') }} {{ $t->currency }}</div>
+                            <div class="text-xs t-muted">{{ $t->created_at->format('Y-m-d') }}</div>
                         </div>
                     </li>
                 @endforeach
             </ul>
             <div class="mt-4">{{ $transactions->links() }}</div>
         @else
-            <div class="text-gray-600">Žádné náklady v této kategorii.</div>
+            <div class="t-muted text-sm">No expenses in this category.</div>
         @endif
     </div>
 </div>

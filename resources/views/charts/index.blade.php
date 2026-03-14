@@ -1,97 +1,91 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-semibold text-xl text-black dark:text-gray-200 leading-tight">Charts & Analytics</h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">Charts & Analytics</h2>
 @endsection
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-6">
-    <!-- Expenses by Category (Pie) -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-4">Expenses by Category</h3>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div class="card p-6">
+        <h3 class="font-bold text-lg t-primary mb-4">Expenses by Category</h3>
         <div class="flex justify-center" style="height: 300px;">
             <canvas id="categoryPie"></canvas>
         </div>
     </div>
 
-    <!-- Income vs Expenses (Line Chart) -->
     @php
         $monthLabels = [];
         $incomeData = [];
         $expenseData = [];
         $teamId = Auth::user()->currentTeam->id;
-        
+
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $monthLabels[] = $date->format('M Y');
-            
+
             $income = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'income')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');
-            
+
             $expense = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'expense')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');
-            
+
             $incomeData[] = $income;
             $expenseData[] = $expense;
         }
     @endphp
-    
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-4">Income vs Expenses Trend (12 Months)</h3>
+
+    <div class="card p-6">
+        <h3 class="font-bold text-lg t-primary mb-4">Income vs Expenses Trend (12 Months)</h3>
         <div style="height: 350px;">
             <canvas id="trendLineChart"></canvas>
         </div>
     </div>
 
-    <!-- Monthly Comparison (Bar Chart) -->
     @php
         $last6Months = [];
         $last6IncomeData = [];
         $last6ExpenseData = [];
-        $teamId = Auth::user()->currentTeam->id;
-        
+
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $last6Months[] = $date->format('M Y');
-            
+
             $income = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'income')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');
-            
+
             $expense = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'expense')
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('amount');
-            
+
             $last6IncomeData[] = $income;
             $last6ExpenseData[] = $expense;
         }
     @endphp
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-4">Monthly Cash Flow (Last 6 Months)</h3>
+    <div class="card p-6">
+        <h3 class="font-bold text-lg t-primary mb-4">Monthly Cash Flow (Last 6 Months)</h3>
         <div style="height: 350px;">
             <canvas id="monthlyBarChart"></canvas>
         </div>
     </div>
 
-    <!-- Income by Type Pie -->
     @php
-        $teamId = Auth::user()->currentTeam->id;
         $salaryIncome = \App\Models\Transaction::where('team_id', $teamId)
             ->where('type', 'income')
             ->where('title', 'like', '%salary%')
             ->sum('amount');
-        
+
         $otherIncome = \App\Models\Transaction::where('team_id', $teamId)
             ->where('type', 'income')
             ->whereNotLike('title', '%salary%')
@@ -99,16 +93,14 @@
     @endphp
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-4">Income Sources</h3>
+        <div class="card p-6">
+            <h3 class="font-bold text-lg t-primary mb-4">Income Sources</h3>
             <div style="height: 300px;">
                 <canvas id="incomeSourcePie"></canvas>
             </div>
         </div>
 
-        <!-- Top Spending Categories -->
         @php
-            $teamId = Auth::user()->currentTeam->id;
             $topCategories = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'expense')
                 ->groupBy('category_id')
@@ -125,169 +117,98 @@
                 });
         @endphp
 
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-4">Top Spending Categories</h3>
+        <div class="card p-6">
+            <h3 class="font-bold text-lg t-primary mb-4">Top Spending Categories</h3>
             <div style="height: 300px;">
                 <canvas id="topCategoriesBar"></canvas>
             </div>
         </div>
     </div>
-    
+
 </div>
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         (function(){
-            // Pie Chart - Expenses by Category
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+            const tickColor = isDark ? '#6b7280' : '#94a3b8';
+            const legendColor = isDark ? '#9ca3af' : '#475569';
+
             const labels = @json($labels);
             const data = @json($data);
             const colors = @json($colors ?? []);
 
-            const ctx1 = document.getElementById('categoryPie').getContext('2d');
-            new Chart(ctx1, {
+            new Chart(document.getElementById('categoryPie').getContext('2d'), {
                 type: 'pie',
                 data: {
                     labels: labels,
                     datasets: [{
                         data: data,
-                        backgroundColor: colors.length ? colors : labels.map((_,i)=>['#4f46e5','#06b6d4','#f59e0b','#ef4444','#10b981','#8b5cf6','#f97316','#60a5fa'][i%8])
+                        backgroundColor: colors.length ? colors : labels.map((_,i)=>['#fbbf24','#8b5cf6','#06b6d4','#ef4444','#10b981','#f97316','#60a5fa','#ec4899'][i%8]),
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
+                    plugins: { legend: { position: 'bottom', labels: { color: legendColor } } }
                 }
             });
 
-            // Line Chart - Income vs Expenses Trend (12 months)
-            const trendMonths = @json($monthLabels);
-            const trendIncomeData = @json($incomeData);
-            const trendExpenseData = @json($expenseData);
-
-            const ctx2 = document.getElementById('trendLineChart').getContext('2d');
-            new Chart(ctx2, {
+            new Chart(document.getElementById('trendLineChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: trendMonths,
+                    labels: @json($monthLabels),
                     datasets: [
-                        {
-                            label: 'Income',
-                            data: trendIncomeData,
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Expenses',
-                            data: trendExpenseData,
-                            borderColor: '#ef4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }
+                        { label: 'Income', data: @json($incomeData), borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.08)', tension: 0.4, fill: true },
+                        { label: 'Expenses', data: @json($expenseData), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.08)', tension: 0.4, fill: true }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { color: legendColor } } },
+                    scales: { y: { beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } }, x: { ticks: { color: tickColor }, grid: { color: gridColor } } }
                 }
             });
 
-            // Bar Chart - Monthly Cash Flow (Last 6 months)
-            const monthlyLabels = @json($last6Months);
-            const monthlyIncome = @json($last6IncomeData);
-            const monthlyExpense = @json($last6ExpenseData);
-
-            const ctx3 = document.getElementById('monthlyBarChart').getContext('2d');
-            new Chart(ctx3, {
+            new Chart(document.getElementById('monthlyBarChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: monthlyLabels,
+                    labels: @json($last6Months),
                     datasets: [
-                        {
-                            label: 'Income',
-                            data: monthlyIncome,
-                            backgroundColor: '#eab308'
-                        },
-                        {
-                            label: 'Expenses',
-                            data: monthlyExpense,
-                            backgroundColor: '#3b82f6'
-                        }
+                        { label: 'Income', data: @json($last6IncomeData), backgroundColor: '#fbbf24', borderRadius: 4 },
+                        { label: 'Expenses', data: @json($last6ExpenseData), backgroundColor: '#8b5cf6', borderRadius: 4 }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { color: legendColor } } },
+                    scales: { y: { beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } }, x: { ticks: { color: tickColor }, grid: { color: gridColor } } }
                 }
             });
 
-            // Pie Chart - Income Sources
-            const incomeSources = ['Salary', 'Other'];
-            const incomeValues = [@json($salaryIncome), @json($otherIncome)];
-
-            const ctx4 = document.getElementById('incomeSourcePie').getContext('2d');
-            new Chart(ctx4, {
+            new Chart(document.getElementById('incomeSourcePie').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: incomeSources,
-                    datasets: [{
-                        data: incomeValues,
-                        backgroundColor: ['#10b981', '#6366f1']
-                    }]
+                    labels: ['Salary', 'Other'],
+                    datasets: [{ data: [@json($salaryIncome), @json($otherIncome)], backgroundColor: ['#fbbf24', '#8b5cf6'], borderWidth: 0 }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: legendColor } } } }
             });
 
-            // Bar Chart - Top Spending Categories
             const topCatsData = @json($topCategories);
-            const topCatLabels = topCatsData.map(c => c.name);
-            const topCatValues = topCatsData.map(c => c.total);
-
-            const ctx5 = document.getElementById('topCategoriesBar').getContext('2d');
-            new Chart(ctx5, {
+            new Chart(document.getElementById('topCategoriesBar').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: topCatLabels,
-                    datasets: [{
-                        label: 'Total Spent',
-                        data: topCatValues,
-                        backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#06b6d4']
-                    }]
+                    labels: topCatsData.map(c => c.name),
+                    datasets: [{ label: 'Total Spent', data: topCatsData.map(c => c.total), backgroundColor: ['#ef4444','#f97316','#fbbf24','#8b5cf6','#06b6d4'], borderRadius: 4 }]
                 },
                 options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: { beginAtZero: true }
-                    }
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }
                 }
             });
         })();
