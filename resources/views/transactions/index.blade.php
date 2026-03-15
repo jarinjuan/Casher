@@ -5,10 +5,10 @@
 @endsection
 
 @section('content')
-<div x-data="{ cols: 2, marks: [2,3,4,5] }" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-    <div class="mb-6 flex flex-col items-center">
+<div x-data="{ cols: 2, marks: [1,2,3,4,5] }" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+    <div class="mb-6 hidden sm:flex flex-col items-center">
         <div class="w-full flex flex-col items-center">
-            <input type="range" min="2" max="5" step="1" x-model="cols" class="w-64 accent-[#fbbf24] h-1.5 bg-gray-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer">
+            <input type="range" min="1" max="5" step="1" x-model="cols" class="w-64 accent-[#fbbf24] h-1.5 bg-gray-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer">
             <div class="flex justify-between w-64 mt-2">
                 <template x-for="n in marks" :key="n">
                     <span :class="cols === n ? 'text-[#fbbf24] font-bold' : 'text-gray-400'" class="text-xs select-none" x-text="n + 'x' + n"></span>
@@ -21,7 +21,7 @@
         <div class="flash-success mb-4">{{ session('success') }}</div>
     @endif
 
-    <div :class="'grid grid-cols-' + cols + ' gap-4'">
+    <div :class="'grid gap-4 grid-cols-1 sm:grid-cols-' + cols">
         @foreach($transactions as $t)
             @php
                 $amountInDefault = $t->amount;

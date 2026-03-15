@@ -75,11 +75,11 @@
             @if($team->invite_code)
                 <div class="bg-violet-50 dark:bg-[#8b5cf6]/5 border border-violet-200 dark:border-[#8b5cf6]/10 rounded-xl p-4 mb-4">
                     <p class="text-xs t-secondary mb-2">Current invite code:</p>
-                    <div class="flex items-center gap-2">
-                        <code class="flex-1 text-lg font-mono bg-gray-50 dark:bg-white/5 p-3 rounded-lg border border-gray-200 dark:border-white/10 t-primary">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        <code class="flex-1 text-lg font-mono bg-gray-50 dark:bg-white/5 p-3 rounded-lg border border-gray-200 dark:border-white/10 t-primary break-all">
                             {{ $team->invite_code }}
                         </code>
-                        <button type="button" onclick="navigator.clipboard.writeText('{{ $team->invite_code }}')" class="btn-secondary text-xs px-4 py-3">Copy</button>
+                        <button type="button" onclick="navigator.clipboard.writeText('{{ $team->invite_code }}')" class="btn-secondary text-xs px-4 py-3 whitespace-nowrap">Copy</button>
                     </div>
                     <p class="text-xs t-muted mt-2">Share this code with anyone who wants to join your workspace.</p>
                 </div>

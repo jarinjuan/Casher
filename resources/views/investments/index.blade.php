@@ -21,7 +21,7 @@
         @endif
 
         {{-- Stats --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Portfolio Value</p>
                 <p class="mt-2 text-2xl font-extrabold t-primary">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
@@ -73,7 +73,80 @@
                     </form>
                 </div>
 
-                <div class="overflow-x-auto">
+                {{-- Mobile card view --}}
+                <div class="md:hidden space-y-3">
+                    @forelse($investments as $investment)
+                        @php
+                            $lastPrice = $investment->latestPrice?->price;
+                            $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
+                            $value = $lastPrice ? $lastPrice * $investment->quantity : null;
+                            $pl = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
+                            $plPct = $investment->average_price > 0 && $lastPrice ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100 : null;
+                            $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
+                            $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
+                        @endphp
+                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <div class="font-bold t-primary text-lg">{{ $investment->symbol }}</div>
+                                    <div class="text-xs t-muted">{{ $investment->name ?? ucfirst($investment->type) }}</div>
+                                </div>
+                                <div class="flex gap-3">
+                                    <a href="{{ route('investments.edit', $investment) }}" class="text-xs font-bold text-[#8b5cf6] hover:text-[#a78bfa] transition">Edit</a>
+                                    <form method="POST" action="{{ route('investments.destroy', $investment) }}" onsubmit="return confirm('Delete investment?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-xs font-bold text-red-500 hover:text-red-400 transition">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Qty</span>
+                                    <div class="t-secondary">{{ number_format($investment->quantity, 8, '.', ' ') }}</div>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Avg Price</span>
+                                    <div class="t-secondary">{{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}</div>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Last Price</span>
+                                    <div class="t-secondary">
+                                        @if($lastPrice)
+                                            {{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}
+                                        @else
+                                            --
+                                        @endif
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Value</span>
+                                    <div>
+                                        @if($valueInDefault)
+                                            <span class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</span>
+                                        @else
+                                            <span class="t-muted">--</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @if($plInDefault !== null)
+                                <div class="mt-2 pt-2 border-t border-gray-200 dark:border-white/5">
+                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">P/L</span>
+                                    <span class="ml-2 font-semibold text-sm {{ $plInDefault >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
+                                        {{ number_format($plInDefault, 2, '.', ' ') }} {{ $currencySymbol }}
+                                        ({{ number_format($plPct, 2) }}%)
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="py-8 text-center t-muted">No investments yet.</div>
+                    @endforelse
+                </div>
+
+                {{-- Desktop table view --}}
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full text-sm">
                         <thead class="text-[10px] uppercase tracking-widest t-muted border-b border-gray-200 dark:border-white/10">
                             <tr>

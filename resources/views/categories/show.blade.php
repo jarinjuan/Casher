@@ -27,12 +27,12 @@
         @if($transactions->count())
             <ul class="divide-y divide-gray-200 dark:divide-white/5">
                 @foreach($transactions as $t)
-                    <li class="py-3 flex justify-between">
+                    <li class="py-3 flex flex-col sm:flex-row sm:justify-between gap-1">
                         <div>
                             <div class="font-semibold t-primary">{{ $t->title }}</div>
                             <div class="text-xs t-muted">{{ $t->note }}</div>
                         </div>
-                        <div class="text-right">
+                        <div class="sm:text-right">
                             <div class="font-semibold t-primary">{{ number_format($t->amount,2,',',' ') }} {{ $t->currency }}</div>
                             <div class="text-xs t-muted">{{ $t->created_at->format('Y-m-d') }}</div>
                         </div>

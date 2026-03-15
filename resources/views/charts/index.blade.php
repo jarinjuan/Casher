@@ -8,7 +8,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
     <div class="card p-6">
         <h3 class="font-bold text-lg t-primary mb-4">Expenses by Category</h3>
-        <div class="flex justify-center" style="height: 300px;">
+        <div class="flex justify-center chart-h-sm">
             <canvas id="categoryPie"></canvas>
         </div>
     </div>
@@ -42,7 +42,7 @@
 
     <div class="card p-6">
         <h3 class="font-bold text-lg t-primary mb-4">Income vs Expenses Trend (12 Months)</h3>
-        <div style="height: 350px;">
+        <div class="chart-h-lg">
             <canvas id="trendLineChart"></canvas>
         </div>
     </div>
@@ -75,7 +75,7 @@
 
     <div class="card p-6">
         <h3 class="font-bold text-lg t-primary mb-4">Monthly Cash Flow (Last 6 Months)</h3>
-        <div style="height: 350px;">
+        <div class="chart-h-lg">
             <canvas id="monthlyBarChart"></canvas>
         </div>
     </div>
@@ -95,7 +95,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="card p-6">
             <h3 class="font-bold text-lg t-primary mb-4">Income Sources</h3>
-            <div style="height: 300px;">
+            <div class="chart-h-sm">
                 <canvas id="incomeSourcePie"></canvas>
             </div>
         </div>
@@ -119,7 +119,7 @@
 
         <div class="card p-6">
             <h3 class="font-bold text-lg t-primary mb-4">Top Spending Categories</h3>
-            <div style="height: 300px;">
+            <div class="chart-h-sm">
                 <canvas id="topCategoriesBar"></canvas>
             </div>
         </div>

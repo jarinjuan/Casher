@@ -187,3 +187,36 @@
     background: rgba(251, 191, 36, 0.3);
     color: var(--text-primary);
 }
+
+/* ── Responsive Utilities ── */
+
+/* Chart height utilities */
+.chart-h-sm {
+    height: 220px;
+}
+
+.chart-h-lg {
+    height: 250px;
+}
+
+@media (min-width: 640px) {
+    .chart-h-sm {
+        height: 300px;
+    }
+
+    .chart-h-lg {
+        height: 350px;
+    }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 639px) {
+    /* Reduce oversized value text on small screens */
+    .card .text-2xl {
+        font-size: 1.25rem;
+    }
+
+    .card .text-3xl {
+        font-size: 1.5rem;
+    }
+}
