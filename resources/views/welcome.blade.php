@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,7 +17,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="antialiased bg-[#09090b] text-gray-200">
+<body class="antialiased bg-[#09090b] text-gray-200 overflow-x-hidden">
 
     <nav x-data="{ open: false }" class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
         <div class="container mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
@@ -40,7 +40,7 @@
                 <a href="#data" class="hover:text-[#fbbf24] transition">Data & Export</a>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-4">
                 @if (Route::has('login'))
                     @auth
                         <a href="{{ url('/dashboard') }}" class="rounded-full bg-white/10 px-6 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">Dashboard</a>
@@ -70,7 +70,7 @@
     </nav>
 
     {{-- HERO --}}
-    <header class="relative overflow-hidden pt-16 pb-16 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24">
+    <header class="relative overflow-hidden pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
         <div class="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
         <div class="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
 
@@ -82,7 +82,7 @@
             </h1>
             
             <p class="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-gray-400 md:text-xl">
-                Dashboard, Transactions, Categories, Charts, Investments and Import / Export in one workflow — exactly the way it looks in the app.
+                Dashboard, Transactions, Categories, Charts, Investments and Import / Export in one workflow. Simple, intuitive and powerful.
             </p>
 
               <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
@@ -91,17 +91,11 @@
               </div>
 
             {{-- Dashboard Preview (app-like) --}}
-            <div class="mt-12 relative mx-auto max-w-full sm:max-w-5xl group px-2">
-                <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#fbbf24] to-[#8b5cf6] opacity-20 blur group-hover:opacity-30 transition duration-1000"></div>
+            <div class="mt-12 relative mx-auto max-w-full sm:max-w-5xl px-2">
                 <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-[#18181b] shadow-2xl">
-                    <div class="flex items-center justify-between border-b border-white/5 bg-white/5 px-4 py-3 text-gray-500">
-                        <div class="flex gap-1.5">
-                            <div class="h-3 w-3 rounded-full bg-[#ef4444]/40"></div>
-                            <div class="h-3 w-3 rounded-full bg-[#fbbf24]/40"></div>
-                            <div class="h-3 w-3 rounded-full bg-[#22c55e]/40"></div>
-                        </div>
-                        <span class="text-[9px] font-mono uppercase tracking-widest">Casher App Preview // Dashboard</span>
-                        <div class="w-10"></div>
+                    <div class="flex items-center justify-between border-b border-white/5 bg-[#141418] px-4 py-3 text-gray-400">
+                        <span class="text-[10px] font-semibold uppercase tracking-[0.2em]">Casher Dashboard Preview</span>
+                        <span class="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[9px] font-medium uppercase tracking-wider text-gray-500">App UI</span>
                     </div>
                     <div class="p-4 sm:p-6 text-left">
                         <div class="rounded-xl border border-white/10 bg-[#111114] overflow-hidden">
@@ -400,7 +394,7 @@
     </section>
 
     {{-- CTA --}}
-    <section class="py-14 sm:py-20 bg-[#09090b] relative">
+    <section class="pt-8 pb-14 sm:pt-12 sm:pb-20 bg-[#09090b] relative overflow-hidden">
         <div class="absolute inset-0 -z-10">
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-[#fbbf24]/5 blur-[150px]"></div>
         </div>
@@ -414,7 +408,7 @@
     <footer class="py-8 sm:py-12 border-t border-white/5 bg-black">
         <div class="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-8">
             <div class="flex items-center gap-2">
-                <div class="h-8 w-8 rounded-md bg-[#fbbf24] flex items-center justify-center text-black font-black text-xs">C</div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">C$</div>
                 <span class="font-extrabold tracking-tight text-white italic">CASHER</span>
             </div>
             
