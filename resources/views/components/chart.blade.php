@@ -4,6 +4,7 @@
     'type' => 'bar',
     'labels' => [],
     'datasets' => [],
+    'wrapperClass' => null,
     'height' => 80,
 ])
 
@@ -11,7 +12,13 @@
     @if($title)
         <h3 class="text-lg font-bold t-primary mb-4">{{ $title }}</h3>
     @endif
-    <canvas id="{{ $id }}" height="{{ $height }}"></canvas>
+    @if($wrapperClass)
+        <div class="{{ $wrapperClass }}">
+            <canvas id="{{ $id }}" class="h-full w-full"></canvas>
+        </div>
+    @else
+        <canvas id="{{ $id }}" height="{{ $height }}"></canvas>
+    @endif
 </div>
 
 <script>
@@ -35,7 +42,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: {{ $wrapperClass ? 'false' : 'true' }},
                     plugins: {
                         legend: { labels: { color: legendColor } }
                     },

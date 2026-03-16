@@ -8,12 +8,20 @@
     <div class="py-4">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Stats Cards --}}
+            
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="card p-6">
-                    <p class="text-xs uppercase tracking-widest t-muted font-bold">Overall balance</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">{{ number_format($totalBalance, 0) }} {{ $currencySymbol }}</p>
+                    <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs uppercase tracking-widest t-muted font-bold">Overall balance (Cash + Investments)</p>
+                        <span id="balance-live-indicator" class="flex items-center gap-1 text-[10px] t-muted">
+                            <span id="balance-live-dot" class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                            
+                        </span>
+                    </div>
+                    <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">{{ number_format($totalBalance, 0) }} {{ $currencySymbol }}</p>
                     <p class="text-xs t-muted mt-1">In {{ $defaultCurrency }}</p>
+                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">Cash: {{ number_format($cashBalance, 0) }} {{ $currencySymbol }}</p>
+                    <p id="overall-balance-investments" class="text-xs t-muted">Investments: {{ number_format($investmentPortfolioValue, 0) }} {{ $currencySymbol }}</p>
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly expenses</p>
@@ -40,16 +48,17 @@
                 </div>
             </div>
 
-            {{-- Chart --}}
+            
             <x-chart
                 title="Expenses vs Income ({{ $defaultCurrency }})"
                 type="bar"
                 :labels="$months"
                 :datasets="$chartDatasets"
+                wrapperClass="dashboard-income-expense-chart"
                 height="80"
             />
 
-            {{-- Budget Progress --}}
+        
             @if($categories->count() > 0)
             <div class="mt-6">
                 <h3 class="text-lg font-bold t-primary mb-4">Monthly budget</h3>
@@ -102,3 +111,70 @@
         </div>
     </div>
 </x-app-layout>
+
+@push('scripts')
+    <script>
+        const DASHBOARD_LIVE_BALANCE_URL = '{{ route('dashboard.live-balance') }}';
+        const DASHBOARD_POLL_MS = 30000;
+
+        function fmtWhole(value) {
+            const num = Number(value ?? 0);
+            return num.toLocaleString('en-US').replace(/,/g, ' ');
+        }
+
+        function updateDashboardBalance() {
+            const dot = document.getElementById('balance-live-dot');
+            const label = document.getElementById('balance-live-label');
+
+            if (dot) {
+                dot.className = 'inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse';
+            }
+
+            fetch(DASHBOARD_LIVE_BALANCE_URL, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const symbol = data.currency_symbol;
+
+                    const totalEl = document.getElementById('overall-balance-value');
+                    if (totalEl) {
+                        totalEl.textContent = fmtWhole(data.total_balance) + ' ' + symbol;
+                    }
+
+                    const cashEl = document.getElementById('overall-balance-cash');
+                    if (cashEl) {
+                        cashEl.textContent = 'Cash: ' + fmtWhole(data.cash_balance) + ' ' + symbol;
+                    }
+
+                    const invEl = document.getElementById('overall-balance-investments');
+                    if (invEl) {
+                        invEl.textContent = 'Investments: ' + fmtWhole(data.investment_portfolio_value) + ' ' + symbol;
+                    }
+
+                    if (dot) {
+                        dot.className = 'inline-block w-2 h-2 rounded-full bg-emerald-500';
+                    }
+
+                    if (label) {
+                        const now = new Date();
+                        const ts = now.getHours().toString().padStart(2, '0') + ':'
+                            + now.getMinutes().toString().padStart(2, '0') + ':'
+                            + now.getSeconds().toString().padStart(2, '0');
+                        label.textContent = 'Updated ' + ts;
+                    }
+                })
+                .catch(() => {
+                    if (dot) {
+                        dot.className = 'inline-block w-2 h-2 rounded-full bg-red-500';
+                    }
+                    if (label) {
+                        label.textContent = 'Update failed';
+                    }
+                });
+        }
+
+        setTimeout(updateDashboardBalance, 5000);
+        setInterval(updateDashboardBalance, DASHBOARD_POLL_MS);
+    </script>
+@endpush

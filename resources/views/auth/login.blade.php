@@ -13,15 +13,10 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
-    <script>
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </head>
-<body class="antialiased bg-slate-50 dark:bg-[#09090b] text-gray-800 dark:text-gray-200">
+<body class="antialiased bg-[#09090b] text-gray-200">
 
-    <nav class="fixed top-0 z-50 w-full border-b border-gray-200 dark:border-white/10 bg-white/60 dark:bg-black/60 backdrop-blur-md">
+    <nav class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
         <div class="container mx-auto flex items-center justify-between px-6 py-4">
             <a href="/" class="flex items-center gap-2">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">
@@ -37,11 +32,11 @@
     </nav>
 
     <div class="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6">
-        <div class="hidden dark:block absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
-        <div class="hidden dark:block absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
+        <div class="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
+        <div class="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
 
         <div class="w-full max-w-md relative">
-            <div class="hidden dark:block absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#fbbf24] to-[#8b5cf6] opacity-20 blur"></div>
+            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#fbbf24] to-[#8b5cf6] opacity-20 blur"></div>
             <div class="relative card rounded-3xl shadow-2xl p-8 md:p-10">
 
                 <div class="text-center mb-8">
@@ -90,7 +85,7 @@
                                 id="remember_me"
                                 type="checkbox"
                                 name="remember"
-                                class="rounded bg-gray-100 dark:bg-black/40 border-gray-300 dark:border-white/20 text-[#fbbf24] focus:ring-[#fbbf24] focus:ring-offset-0 cursor-pointer"
+                                class="rounded bg-black/40 border-white/20 text-[#fbbf24] focus:ring-[#fbbf24] focus:ring-offset-0 cursor-pointer"
                             />
                             <span class="ml-2 text-sm t-secondary group-hover:text-[#fbbf24] transition">Remember me</span>
                         </label>
@@ -110,7 +105,7 @@
                     </button>
                 </form>
 
-                <div class="mt-8 pt-6 border-t border-gray-200 dark:border-white/5 text-center">
+                <div class="mt-8 pt-6 border-t border-white/5 text-center">
                     <p class="t-secondary text-sm">
                         Don't have an account?
                         <a href="{{ route('register') }}" class="text-[#fbbf24] hover:text-[#f59e0b] font-semibold transition">

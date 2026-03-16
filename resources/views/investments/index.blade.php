@@ -24,7 +24,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Portfolio Value</p>
-                <p class="mt-2 text-2xl font-extrabold t-primary">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="mt-2 text-2xl font-extrabold t-primary" id="stat-portfolio-value">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
                 <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
             <div class="card p-5">
@@ -34,8 +34,8 @@
             </div>
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Total P/L</p>
-                <p class="mt-2 text-2xl font-extrabold {{ $profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($profit, 2, '.', ' ') }} {{ $currencySymbol }}</p>
-                <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($profitPct, 2) }}%</p>
+                <p class="mt-2 text-2xl font-extrabold {{ $profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}" id="stat-profit">{{ number_format($profit, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}" id="stat-profit-pct">{{ number_format($profitPct, 2) }}%</p>
             </div>
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Daily / Monthly</p>
@@ -67,10 +67,16 @@
             <div class="lg:col-span-2 card p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-bold t-primary">Holdings</h3>
-                    <form method="POST" action="{{ route('investments.refresh') }}">
-                        @csrf
-                        <button class="text-xs font-bold px-4 py-2 rounded-lg bg-[#8b5cf6] text-white hover:bg-[#7c3aed] transition shadow-lg shadow-[#8b5cf6]/10">Refresh prices</button>
-                    </form>
+                    <div class="flex items-center gap-3">
+                        <span id="live-indicator" class="flex items-center gap-1.5 text-xs t-muted">
+                            <span id="live-dot" class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
+                            <span id="live-label">Live prices</span>
+                        </span>
+                        <form method="POST" action="{{ route('investments.refresh') }}">
+                            @csrf
+                            <button class="text-xs font-bold px-4 py-2 rounded-lg bg-[#8b5cf6] text-white hover:bg-[#7c3aed] transition shadow-lg shadow-[#8b5cf6]/10">Refresh prices</button>
+                        </form>
+                    </div>
                 </div>
 
                 {{-- Mobile card view --}}
@@ -85,7 +91,7 @@
                             $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
                             $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
                         @endphp
-                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5">
+                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5" data-inv-id="{{ $investment->id }}">
                             <div class="flex items-center justify-between mb-3">
                                 <div>
                                     <div class="font-bold t-primary text-lg">{{ $investment->symbol }}</div>
@@ -111,7 +117,7 @@
                                 </div>
                                 <div>
                                     <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Last Price</span>
-                                    <div class="t-secondary">
+                                    <div class="t-secondary" id="inv-mob-last-price-{{ $investment->id }}">
                                         @if($lastPrice)
                                             {{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}
                                         @else
@@ -121,7 +127,7 @@
                                 </div>
                                 <div>
                                     <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Value</span>
-                                    <div>
+                                    <div id="inv-mob-value-{{ $investment->id }}">
                                         @if($valueInDefault)
                                             <span class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</span>
                                         @else
@@ -130,15 +136,12 @@
                                     </div>
                                 </div>
                             </div>
-                            @if($plInDefault !== null)
-                                <div class="mt-2 pt-2 border-t border-gray-200 dark:border-white/5">
-                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">P/L</span>
-                                    <span class="ml-2 font-semibold text-sm {{ $plInDefault >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
-                                        {{ number_format($plInDefault, 2, '.', ' ') }} {{ $currencySymbol }}
-                                        ({{ number_format($plPct, 2) }}%)
-                                    </span>
-                                </div>
-                            @endif
+                            <div id="inv-mob-pl-{{ $investment->id }}" class="mt-2 pt-2 border-t border-gray-200 dark:border-white/5 {{ $plInDefault === null ? 'hidden' : '' }}">
+                                <span class="text-[10px] uppercase tracking-widest t-muted font-bold">P/L</span>
+                                <span class="ml-2 font-semibold text-sm {{ ($plInDefault ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
+                                    {{ $plInDefault !== null ? number_format($plInDefault, 2, '.', ' ').' '.$currencySymbol.' ('.number_format($plPct, 2).'%)' : '' }}
+                                </span>
+                            </div>
                         </div>
                     @empty
                         <div class="py-8 text-center t-muted">No investments yet.</div>
@@ -170,7 +173,7 @@
                                     $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
                                     $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
                                 @endphp
-                                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition" data-inv-id="{{ $investment->id }}">
                                     <td class="py-3">
                                         <div class="font-bold t-primary">{{ $investment->symbol }}</div>
                                         <div class="text-xs t-muted">{{ $investment->name ?? ucfirst($investment->type) }}</div>
@@ -179,14 +182,14 @@
                                     <td class="py-3 text-right t-secondary">
                                         {{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}
                                     </td>
-                                    <td class="py-3 text-right t-secondary">
+                                    <td class="py-3 text-right t-secondary" id="inv-last-price-{{ $investment->id }}">
                                         @if($lastPrice)
                                             <div>{{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
                                         @else
                                             <span class="t-muted">--</span>
                                         @endif
                                     </td>
-                                    <td class="py-3 text-right">
+                                    <td class="py-3 text-right" id="inv-value-{{ $investment->id }}">
                                         @if($valueInDefault)
                                             <div class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</div>
                                             @if($lastPriceCurrency !== $defaultCurrency)
@@ -196,7 +199,7 @@
                                             <span class="t-muted">--</span>
                                         @endif
                                     </td>
-                                    <td class="py-3 text-right">
+                                    <td class="py-3 text-right" id="inv-pl-{{ $investment->id }}">
                                         @if($plInDefault !== null)
                                             <span class="font-semibold {{ $plInDefault >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
                                                 {{ number_format($plInDefault, 2, '.', ' ') }} {{ $currencySymbol }}
@@ -347,5 +350,156 @@
                 }
             });
         }
+
+        // ── Live price auto-update ───────────────────────────────────────
+        const LIVE_PRICES_URL = '{{ route('investments.live-prices') }}';
+        const POLL_MS = 30000; // refresh every 30 s
+
+        function fmtNum(num, dec = 2) {
+            if (num === null || num === undefined) return '--';
+            const n = parseFloat(num);
+            const sign = n < 0 ? '-' : '';
+            const fixed = Math.abs(n).toFixed(dec);
+            const [intPart, fracPart] = fixed.split('.');
+            const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+            return sign + intFmt + '.' + fracPart;
+        }
+
+        function plColorClass(val) {
+            return (val ?? 0) >= 0
+                ? 'font-semibold text-emerald-600 dark:text-emerald-400'
+                : 'font-semibold text-red-500 dark:text-red-400';
+        }
+
+        function updateLivePrices() {
+            const dot   = document.getElementById('live-dot');
+            const label = document.getElementById('live-label');
+
+            if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-yellow-400 animate-pulse';
+
+            fetch(LIVE_PRICES_URL, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(r => r.json())
+                .then(data => {
+                    const sym         = data.currency_symbol;
+                    const defCurrency = data.default_currency;
+
+                    // ── Summary stats ────────────────────────────────────
+                    const pvEl = document.getElementById('stat-portfolio-value');
+                    if (pvEl) pvEl.textContent = fmtNum(data.total_value) + '\u00a0' + sym;
+
+                    const profitEl = document.getElementById('stat-profit');
+                    if (profitEl) {
+                        profitEl.textContent = fmtNum(data.profit) + '\u00a0' + sym;
+                        profitEl.className = profitEl.className
+                            .replace(/\btext-(emerald|red)-\w+\b/g, '').trim()
+                            + (data.profit >= 0
+                                ? ' text-emerald-600 dark:text-emerald-400'
+                                : ' text-red-500 dark:text-red-400');
+                    }
+
+                    const profitPctEl = document.getElementById('stat-profit-pct');
+                    if (profitPctEl) {
+                        profitPctEl.textContent = fmtNum(data.profit_pct) + '%';
+                        profitPctEl.className = profitPctEl.className
+                            .replace(/\btext-(emerald|red)-\w+\b/g, '').trim()
+                            + (data.profit_pct >= 0
+                                ? ' text-emerald-600 dark:text-emerald-400'
+                                : ' text-red-500 dark:text-red-400');
+                    }
+
+                    // ── Per-investment rows ──────────────────────────────
+                    data.investments.forEach(inv => {
+                        const id = inv.id;
+
+                        // Desktop – last price
+                        const lpEl = document.getElementById('inv-last-price-' + id);
+                        if (lpEl) {
+                            lpEl.innerHTML = inv.last_price !== null
+                                ? '<div>' + fmtNum(inv.last_price) + '\u00a0' + inv.last_price_currency + '</div>'
+                                : '<span class="t-muted">--</span>';
+                        }
+
+                        // Desktop – value
+                        const valEl = document.getElementById('inv-value-' + id);
+                        if (valEl) {
+                            if (inv.value_in_default !== null) {
+                                let html = '<div class="font-semibold t-primary">'
+                                    + fmtNum(inv.value_in_default) + '\u00a0' + sym + '</div>';
+                                if (inv.last_price_currency !== defCurrency && inv.value_raw !== null) {
+                                    html += '<div class="text-xs t-muted">'
+                                        + fmtNum(inv.value_raw) + '\u00a0' + inv.last_price_currency + '</div>';
+                                }
+                                valEl.innerHTML = html;
+                            } else {
+                                valEl.innerHTML = '<span class="t-muted">--</span>';
+                            }
+                        }
+
+                        // Desktop – P/L
+                        const plEl = document.getElementById('inv-pl-' + id);
+                        if (plEl) {
+                            plEl.innerHTML = inv.pl_in_default !== null
+                                ? '<span class="' + plColorClass(inv.pl_in_default) + '">'
+                                    + fmtNum(inv.pl_in_default) + '\u00a0' + sym
+                                    + ' (' + fmtNum(inv.pl_pct) + '%)</span>'
+                                : '<span class="t-muted">--</span>';
+                        }
+
+                        // Mobile – last price
+                        const mobLpEl = document.getElementById('inv-mob-last-price-' + id);
+                        if (mobLpEl) {
+                            mobLpEl.textContent = inv.last_price !== null
+                                ? fmtNum(inv.last_price) + '\u00a0' + inv.last_price_currency
+                                : '--';
+                        }
+
+                        // Mobile – value
+                        const mobValEl = document.getElementById('inv-mob-value-' + id);
+                        if (mobValEl) {
+                            mobValEl.innerHTML = inv.value_in_default !== null
+                                ? '<span class="font-semibold t-primary">'
+                                    + fmtNum(inv.value_in_default) + '\u00a0' + sym + '</span>'
+                                : '<span class="t-muted">--</span>';
+                        }
+
+                        // Mobile – P/L
+                        const mobPlEl = document.getElementById('inv-mob-pl-' + id);
+                        if (mobPlEl) {
+                            if (inv.pl_in_default !== null) {
+                                mobPlEl.classList.remove('hidden');
+                                const span = mobPlEl.querySelector('span.ml-2');
+                                if (span) {
+                                    span.className = 'ml-2 font-semibold text-sm '
+                                        + (inv.pl_in_default >= 0
+                                            ? 'text-emerald-600 dark:text-emerald-400'
+                                            : 'text-red-500 dark:text-red-400');
+                                    span.textContent = fmtNum(inv.pl_in_default) + '\u00a0' + sym
+                                        + ' (' + fmtNum(inv.pl_pct) + '%)';
+                                }
+                            } else {
+                                mobPlEl.classList.add('hidden');
+                            }
+                        }
+                    });
+
+                    // ── Indicator: success ──────────────────────────────
+                    if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-emerald-500';
+                    if (label) {
+                        const now = new Date();
+                        const ts = now.getHours().toString().padStart(2,'0') + ':'
+                                 + now.getMinutes().toString().padStart(2,'0') + ':'
+                                 + now.getSeconds().toString().padStart(2,'0');
+                        label.textContent = 'Updated ' + ts;
+                    }
+                })
+                .catch(() => {
+                    if (dot)  dot.className = 'inline-block w-2 h-2 rounded-full bg-red-500';
+                    if (label) label.textContent = 'Update failed';
+                });
+        }
+
+        // First poll 5 s after page load, then every 30 s
+        setTimeout(updateLivePrices, 5000);
+        setInterval(updateLivePrices, POLL_MS);
     </script>
 @endpush

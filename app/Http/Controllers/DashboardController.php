@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Investment;
 use App\Models\Transaction;
 use App\Services\CurrencyConverter;
 use App\Services\ExpenseForecastService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -26,22 +28,11 @@ class DashboardController extends Controller
         $month = now()->month;
         $year = now()->year;
 
-        // Get all transactions
-        $allTransactions = Transaction::where('team_id', $teamId)->get();
-        
-        // Calculate total balance in default currency
-        $totalBalance = 0;
-        foreach ($allTransactions as $transaction) {
-            $amount = $transaction->amount;
-            if ($transaction->currency !== $defaultCurrency) {
-                try {
-                    $amount = $team->convertToDefaultCurrency($amount, $transaction->currency, $transaction->created_at);
-                } catch (\Exception $e) {
-                    // Keep original amount if conversion fails
-                }
-            }
-            $totalBalance += $transaction->type === 'income' ? $amount : -$amount;
-        }
+        $cashBalance = $this->calculateCashBalance($teamId, $team, $defaultCurrency);
+        $investmentPortfolioValue = $this->calculateInvestmentPortfolioValue($teamId, $team);
+
+        // Overall = cash balance + investment portfolio value
+        $totalBalance = $cashBalance + $investmentPortfolioValue;
 
         // Monthly expenses
         $monthlyTransactions = Transaction::where('team_id', $teamId)
@@ -131,6 +122,8 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'totalBalance',
+            'cashBalance',
+            'investmentPortfolioValue',
             'monthlyExpenses',
             'monthlyIncome',
             'expenseTrend',
@@ -142,6 +135,73 @@ class DashboardController extends Controller
             'defaultCurrency',
             'currencySymbol'
         ));
+    }
+
+    public function liveBalance(Request $request): JsonResponse
+    {
+        $team = $request->user()->currentTeam;
+        $teamId = $team->id;
+        $defaultCurrency = $team->default_currency;
+
+        $cashBalance = $this->calculateCashBalance($teamId, $team, $defaultCurrency);
+        $investmentPortfolioValue = $this->calculateInvestmentPortfolioValue($teamId, $team);
+        $totalBalance = $cashBalance + $investmentPortfolioValue;
+
+        return response()->json([
+            'total_balance' => $totalBalance,
+            'cash_balance' => $cashBalance,
+            'investment_portfolio_value' => $investmentPortfolioValue,
+            'currency_symbol' => $team->getCurrencySymbol(),
+            'default_currency' => $defaultCurrency,
+            'updated_at' => now()->toISOString(),
+        ]);
+    }
+
+    private function calculateCashBalance(int $teamId, $team, string $defaultCurrency): float
+    {
+        $allTransactions = Transaction::where('team_id', $teamId)->get();
+
+        $cashBalance = 0.0;
+        foreach ($allTransactions as $transaction) {
+            $amount = $transaction->amount;
+            if ($transaction->currency !== $defaultCurrency) {
+                try {
+                    $amount = $team->convertToDefaultCurrency($amount, $transaction->currency, $transaction->created_at);
+                } catch (\Exception $e) {
+                    // Keep original amount if conversion fails
+                }
+            }
+            $cashBalance += $transaction->type === 'income' ? $amount : -$amount;
+        }
+
+        return $cashBalance;
+    }
+
+    private function calculateInvestmentPortfolioValue(int $teamId, $team): float
+    {
+        $investmentPortfolioValue = 0.0;
+        $investments = Investment::where('team_id', $teamId)
+            ->with('latestPrice')
+            ->get();
+
+        foreach ($investments as $investment) {
+            $latestPrice = $investment->latestPrice?->price;
+            if (! $latestPrice) {
+                continue;
+            }
+
+            $valueInPriceCurrency = $latestPrice * $investment->quantity;
+            $priceCurrency = $investment->latestPrice?->currency ?? 'USD';
+
+            try {
+                $investmentPortfolioValue += $team->convertToDefaultCurrency($valueInPriceCurrency, $priceCurrency);
+            } catch (\Exception $e) {
+                // Keep original amount if conversion fails
+                $investmentPortfolioValue += $valueInPriceCurrency;
+            }
+        }
+
+        return $investmentPortfolioValue;
     }
 
     /**

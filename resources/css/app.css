@@ -199,6 +199,10 @@
     height: 250px;
 }
 
+.dashboard-income-expense-chart {
+    height: 340px;
+}
+
 @media (min-width: 640px) {
     .chart-h-sm {
         height: 300px;
@@ -206,6 +210,10 @@
 
     .chart-h-lg {
         height: 350px;
+    }
+
+    .dashboard-income-expense-chart {
+        height: 260px;
     }
 }
 

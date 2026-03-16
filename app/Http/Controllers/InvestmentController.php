@@ -235,6 +235,94 @@ class InvestmentController extends Controller
         return back()->with('success', $updated > 0 ? 'Prices refreshed.' : 'No prices updated. Check API settings.');
     }
 
+    public function livePrices(Request $request, MarketDataService $marketData): JsonResponse
+    {
+        $team = $request->user()->currentTeam;
+        $teamId = $team->id ?? null;
+
+        $investments = Investment::where('team_id', $teamId)
+            ->with('latestPrice')
+            ->get();
+
+        // Refresh prices that are stale (older than 60 seconds)
+        $refreshed = false;
+        foreach ($investments as $investment) {
+            $latest = $investment->latestPrice;
+            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subSeconds(60))) {
+                continue;
+            }
+            $price = $marketData->getPrice($investment);
+            if (! $price) {
+                continue;
+            }
+            InvestmentPrice::create([
+                'investment_id' => $investment->id,
+                'price'         => $price['price'],
+                'currency'      => $price['currency'],
+                'recorded_at'   => now(),
+                'source'        => $price['source'],
+            ]);
+            $refreshed = true;
+        }
+
+        if ($refreshed) {
+            $investments = Investment::where('team_id', $teamId)
+                ->with('latestPrice')
+                ->get();
+        }
+
+        $totalValue  = 0.0;
+        $totalCost   = 0.0;
+        $items       = [];
+
+        foreach ($investments as $investment) {
+            $lastPrice         = $investment->latestPrice?->price;
+            $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
+            $value             = $lastPrice ? $lastPrice * $investment->quantity : null;
+            $pl                = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
+            $plPct             = $investment->average_price > 0 && $lastPrice
+                                    ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100
+                                    : null;
+            $valueInDefault    = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
+            $plInDefault       = $pl    ? $team->convertToDefaultCurrency($pl,    $lastPriceCurrency) : null;
+
+            if ($valueInDefault) {
+                $totalValue += $valueInDefault;
+            }
+            $costInDefault = $team->convertToDefaultCurrency(
+                $investment->average_price * $investment->quantity,
+                $investment->currency
+            );
+            $totalCost += $costInDefault;
+
+            $items[] = [
+                'id'                 => $investment->id,
+                'symbol'             => $investment->symbol,
+                'last_price'         => $lastPrice,
+                'last_price_currency'=> $lastPriceCurrency,
+                'value_raw'          => $value,
+                'value_in_default'   => $valueInDefault,
+                'pl_in_default'      => $plInDefault,
+                'pl_pct'             => $plPct,
+                'recorded_at'        => $investment->latestPrice?->recorded_at?->toISOString(),
+            ];
+        }
+
+        $profit    = $totalValue - $totalCost;
+        $profitPct = $totalCost > 0 ? ($profit / $totalCost) * 100 : 0;
+
+        return response()->json([
+            'investments'      => $items,
+            'total_value'      => $totalValue,
+            'total_cost'       => $totalCost,
+            'profit'           => $profit,
+            'profit_pct'       => $profitPct,
+            'currency_symbol'  => $team->getCurrencySymbol(),
+            'default_currency' => $team->default_currency,
+            'updated_at'       => now()->toISOString(),
+        ]);
+    }
+
     protected function authorizeInvestment(Request $request, Investment $investment): void
     {
         if ($investment->team_id !== ($request->user()->currentTeam->id ?? null)) {
