@@ -33,7 +33,7 @@ class InvestmentController extends Controller
 
         foreach ($investments as $investment) {
             $latest = $investment->latestPrice;
-            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subMinutes(10))) {
+            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subMinutes(15))) {
                 continue;
             }
 
@@ -220,10 +220,15 @@ class InvestmentController extends Controller
     public function refresh(Request $request, MarketDataService $marketData): RedirectResponse
     {
         $teamId = $request->user()->currentTeam->id ?? null;
-        $investments = Investment::where('team_id', $teamId)->get();
+        $investments = Investment::where('team_id', $teamId)->with('latestPrice')->get();
 
         $updated = 0;
         foreach ($investments as $investment) {
+            $latest = $investment->latestPrice;
+            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subMinutes(5))) {
+                continue; // Zamezení spamování ručního refresh tlačítka (5 minutový cooldown)
+            }
+
             $price = $marketData->getPrice($investment);
             if (! $price) {
                 continue;
@@ -251,11 +256,11 @@ class InvestmentController extends Controller
             ->with('latestPrice')
             ->get();
 
-        // Refresh prices that are stale (older than 60 seconds)
+        // Refresh prices that are stale (older than 15 minutes to save API requests)
         $refreshed = false;
         foreach ($investments as $investment) {
             $latest = $investment->latestPrice;
-            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subSeconds(60))) {
+            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subMinutes(15))) {
                 continue;
             }
             $price = $marketData->getPrice($investment);

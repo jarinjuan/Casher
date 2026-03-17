@@ -70,7 +70,7 @@
                     <div class="flex items-center gap-3">
                         <span id="live-indicator" class="flex items-center gap-1.5 text-xs t-muted">
                             <span id="live-dot" class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
-                            <span id="live-label">Live prices</span>
+                            <span id="live-label" title="Auto-updating every 15 minutes to save API requests.">Auto-updates (15m)</span>
                         </span>
                         <form method="POST" action="{{ route('investments.refresh') }}">
                             @csrf
@@ -527,7 +527,7 @@
 
         // ── Live price auto-update ───────────────────────────────────────
         const LIVE_PRICES_URL = '{{ route('investments.live-prices') }}';
-        const POLL_MS = 30000; // refresh every 30 s
+        const POLL_MS = 900000; // refresh every 15 mins (limit API usage)
 
         function fmtNum(num, dec = 2) {
             if (num === null || num === undefined) return '--';
