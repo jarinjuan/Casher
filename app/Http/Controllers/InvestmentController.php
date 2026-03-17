@@ -119,15 +119,22 @@ class InvestmentController extends Controller
             }
         }
 
-        if (empty($data['average_price']) || $data['average_price'] <= 0) {
-            $tmp = new Investment($data);
-            $price = $marketData->getPrice($tmp);
-            if ($price) {
-                $data['average_price'] = $price['price'];
-            } else {
-                return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu. Zkuste to znovu nebo zadejte průměrnou cenu ručně.']);
-            }
+        // Vždy doměřit aktuální cenu z API pro tuto akci/krypto k výpočtu
+        $tmp = new Investment($data);
+        $price = $marketData->getPrice($tmp);
+        if ($price) {
+            $data['average_price'] = $price['price'];
+        } else {
+            return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu pro vložený symbol. Zkontrolujte prosím symbol a zkuste to znovu.']);
         }
+
+        // Pokud uživatel nakupuje za "Total Amount", spočítáme výsledné množství
+        if ($data['buy_mode'] === 'amount') {
+            $data['quantity'] = (float) $data['amount'] / (float) $data['average_price'];
+        }
+
+        unset($data['buy_mode']);
+        unset($data['amount']);
 
         $existing = Investment::where('team_id', $data['team_id'])
             ->where('type', $data['type'])

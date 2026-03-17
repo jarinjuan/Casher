@@ -230,46 +230,86 @@
                 </div>
             </div>
 
-            <div class="card p-6">
-                <h3 class="text-lg font-bold t-primary mb-4">Add Investment</h3>
-                <form method="POST" action="{{ route('investments.store') }}" class="space-y-3" id="investmentForm">
+            <div class="card p-6 border-t-4 border-t-[#8b5cf6]">
+                <h3 class="text-lg font-bold t-primary mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-[#8b5cf6]"></i> Add Investment
+                </h3>
+                
+                <form method="POST" action="{{ route('investments.store') }}" class="space-y-4" id="investmentForm">
                     @csrf
-                    <div>
-                        <label class="label-dark">Type</label>
-                        <select name="type" id="investmentType" class="select-dark">
-                            <option value="stock">Stock</option>
-                            <option value="crypto">Crypto</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-dark">Symbol</label>
-                        <div class="relative">
-                            <input name="symbol" id="symbolInput" type="text" class="input-dark" placeholder="e.g. AAPL, BTC, ETH" autocomplete="off" required>
-                            <div id="symbolSuggestions" class="hidden absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#111114] shadow-lg"></div>
+                    
+                    {{-- Basic details (Grid) --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="label-dark mb-1.5 block" for="investmentType">Type</label>
+                            <select name="type" id="investmentType" class="select-dark w-full">
+                                <option value="stock">Stock</option>
+                                <option value="crypto">Crypto</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="label-dark mb-1.5 block" for="symbolInput">Symbol</label>
+                            <div class="relative">
+                                <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. AAPL, BTC..." autocomplete="off" required>
+                                <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="label-dark mb-1.5 block" for="nameInput">Name <span class="text-gray-400 dark:text-gray-500 font-normal lowercase">(optional)</span></label>
+                            <input name="name" id="nameInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. Apple Inc.">
+                        </div>
+
+                        <div id="externalIdRow" class="hidden">
+                            <label class="label-dark mb-1.5 block" for="externalIdInput">External ID <span class="text-gray-400 dark:text-gray-500 font-normal lowercase">(crypto)</span></label>
+                            <input name="external_id" id="externalIdInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. bitcoin">
                         </div>
                     </div>
-                    <div>
-                        <label class="label-dark">Name (optional)</label>
-                        <input name="name" id="nameInput" type="text" class="input-dark" placeholder="e.g. Apple Inc.">
+
+                    {{-- Financial details panel --}}
+                    <div class="p-5 rounded-xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5" x-data="{ buyMode: 'quantity' }">
+                        
+                        {{-- Segmented control for Buy Mode --}}
+                        <div class="flex justify-center mb-5">
+                            <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1">
+                                <button type="button" @click="buyMode = 'quantity'" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                    By Quantity
+                                </button>
+                                <button type="button" @click="buyMode = 'amount'" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                    By Amount
+                                </button>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="buy_mode" :value="buyMode">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Toggleable: Quantity OR Amount -->
+                            <div x-show="buyMode === 'quantity'">
+                                <label class="label-dark mb-1.5 block" for="quantityInput">Quantity</label>
+                                <input name="quantity" type="number" step="0.00000001" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 1.5" :required="buyMode === 'quantity'">
+                            </div>
+                            <div x-show="buyMode === 'amount'" style="display: none;">
+                                <label class="label-dark mb-1.5 block" for="amountInput">Amount</label>
+                                <input name="amount" type="number" step="0.01" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 500.00" :required="buyMode === 'amount'">
+                            </div>
+
+                            <div>
+                                <label class="label-dark mb-1.5 block" for="currencyInput">Currency</label>
+                                <input name="currency" id="currencyInput" value="USD" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-lg flex gap-3 text-sm">
+                            <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+                            <p class="t-primary">The current average market price will be fetched and assigned automatically upon adding the investment.</p>
+                        </div>
                     </div>
-                    <div id="externalIdRow" class="hidden">
-                        <label class="label-dark">External ID (crypto)</label>
-                        <input name="external_id" id="externalIdInput" class="input-dark" placeholder="coingecko id, e.g. bitcoin">
-                    </div>
-                    <div>
-                        <label class="label-dark">Quantity</label>
-                        <input name="quantity" type="number" step="0.00000001" class="input-dark" placeholder="e.g. 1.5" required>
-                    </div>
-                    <div>
-                        <label class="label-dark">Average price (optional)</label>
-                        <input name="average_price" type="number" step="0.00000001" class="input-dark" placeholder="Leave empty for auto-fetch">
-                        <p class="mt-1 text-xs t-muted">If left empty, current price will be fetched</p>
-                    </div>
-                    <div>
-                        <label class="label-dark">Currency</label>
-                        <input name="currency" value="USD" class="input-dark" required>
-                    </div>
-                    <button class="btn-primary w-full text-sm">Add investment</button>
+
+                    <button type="submit" class="btn-primary w-full py-3 text-sm flex justify-center items-center gap-2 hover:scale-[1.02] transition-transform">
+                        <i class="fa-solid fa-check"></i> Add to Portfolio
+                    </button>
                 </form>
             </div>
         </div>

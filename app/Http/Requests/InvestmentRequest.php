@@ -18,7 +18,9 @@ class InvestmentRequest extends FormRequest
             'symbol' => ['required', 'string', 'max:15'],
             'name' => ['nullable', 'string', 'max:100'],
             'external_id' => ['nullable', 'string', 'max:100'],
-            'quantity' => ['required', 'numeric', 'min:0.00000001'],
+            'buy_mode' => ['required', 'in:quantity,amount'],
+            'quantity' => ['required_if:buy_mode,quantity', 'nullable', 'numeric', 'min:0.00000001'],
+            'amount' => ['required_if:buy_mode,amount', 'nullable', 'numeric', 'min:0.01'],
             'average_price' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['required', 'string', 'size:3'],
         ];
