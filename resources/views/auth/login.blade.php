@@ -14,7 +14,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="antialiased bg-[#09090b] text-gray-200">
+<body class="antialiased bg-[#09090b] text-gray-200 overflow-x-hidden">
 
     <nav class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
         <div class="container mx-auto flex items-center justify-between px-6 py-4">
@@ -31,13 +31,13 @@
         </div>
     </nav>
 
-    <div class="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6">
+    <div class="relative min-h-screen flex items-center justify-center pt-24 pb-20 px-4 sm:px-6 overflow-hidden">
         <div class="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
         <div class="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
 
         <div class="w-full max-w-md relative">
             <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#fbbf24] to-[#8b5cf6] opacity-20 blur"></div>
-            <div class="relative card rounded-3xl shadow-2xl p-8 md:p-10">
+            <div class="relative card rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10">
 
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-extrabold t-primary mb-2">Welcome Back</h1>
