@@ -243,7 +243,10 @@
                     </div>
                     <div>
                         <label class="label-dark">Symbol</label>
-                        <input name="symbol" id="symbolInput" type="text" class="input-dark" placeholder="e.g. AAPL, BTC, ETH" required>
+                        <div class="relative">
+                            <input name="symbol" id="symbolInput" type="text" class="input-dark" placeholder="e.g. AAPL, BTC, ETH" autocomplete="off" required>
+                            <div id="symbolSuggestions" class="hidden absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#111114] shadow-lg"></div>
+                        </div>
                     </div>
                     <div>
                         <label class="label-dark">Name (optional)</label>
@@ -278,6 +281,14 @@
     <script>
         const typeSelect = document.getElementById('investmentType');
         const externalIdRow = document.getElementById('externalIdRow');
+        const symbolInput = document.getElementById('symbolInput');
+        const nameInput = document.getElementById('nameInput');
+        const externalIdInput = document.getElementById('externalIdInput');
+        const symbolSuggestions = document.getElementById('symbolSuggestions');
+        const SEARCH_URL = '{{ route('investments.search') }}';
+
+        let symbolSearchTimer = null;
+        let symbolSearchAbortController = null;
 
         function toggleFields() {
             const isCrypto = typeSelect.value === 'crypto';
@@ -285,11 +296,134 @@
                 externalIdRow.classList.remove('hidden');
             } else {
                 externalIdRow.classList.add('hidden');
+                externalIdInput.value = '';
             }
+        }
+
+        function clearSuggestions() {
+            symbolSuggestions.innerHTML = '';
+            symbolSuggestions.classList.add('hidden');
+        }
+
+        function showSuggestions(items) {
+            symbolSuggestions.innerHTML = '';
+
+            if (!items.length) {
+                const empty = document.createElement('div');
+                empty.className = 'px-3 py-2 text-xs t-muted';
+                empty.textContent = 'No matches found';
+                symbolSuggestions.appendChild(empty);
+                symbolSuggestions.classList.remove('hidden');
+                return;
+            }
+
+            items.forEach((item) => {
+                const row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-white/5 transition border-b border-gray-200 dark:border-white/5 last:border-b-0';
+
+                const top = document.createElement('div');
+                top.className = 'text-sm font-semibold t-primary';
+                top.textContent = item.symbol || '';
+
+                const meta = document.createElement('div');
+                meta.className = 'text-xs t-muted';
+
+                if (typeSelect.value === 'crypto') {
+                    meta.textContent = [item.name, item.external_id].filter(Boolean).join(' · ');
+                } else {
+                    meta.textContent = [item.name, item.exchange].filter(Boolean).join(' · ');
+                }
+
+                row.appendChild(top);
+                row.appendChild(meta);
+
+                row.addEventListener('click', () => {
+                    symbolInput.value = (item.symbol || '').toUpperCase();
+                    if (item.name) {
+                        nameInput.value = item.name;
+                    }
+
+                    if (typeSelect.value === 'crypto') {
+                        externalIdInput.value = item.external_id || '';
+                    } else {
+                        externalIdInput.value = '';
+                    }
+
+                    clearSuggestions();
+                });
+
+                symbolSuggestions.appendChild(row);
+            });
+
+            symbolSuggestions.classList.remove('hidden');
+        }
+
+        function fetchSymbolSuggestions() {
+            const query = symbolInput.value.trim();
+            if (!query) {
+                clearSuggestions();
+                return;
+            }
+
+            if (symbolSearchAbortController) {
+                symbolSearchAbortController.abort();
+            }
+
+            symbolSearchAbortController = new AbortController();
+            const params = new URLSearchParams({
+                q: query,
+                type: typeSelect.value,
+            });
+
+            fetch(`${SEARCH_URL}?${params.toString()}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                signal: symbolSearchAbortController.signal,
+            })
+                .then((res) => res.ok ? res.json() : [])
+                .then((items) => {
+                    if (!Array.isArray(items)) {
+                        clearSuggestions();
+                        return;
+                    }
+                    showSuggestions(items);
+                })
+                .catch((err) => {
+                    if (err.name === 'AbortError') {
+                        return;
+                    }
+                    clearSuggestions();
+                });
         }
 
         toggleFields();
         typeSelect.addEventListener('change', toggleFields);
+
+        typeSelect.addEventListener('change', () => {
+            clearSuggestions();
+            if (symbolInput.value.trim()) {
+                fetchSymbolSuggestions();
+            }
+        });
+
+        symbolInput.addEventListener('input', () => {
+            if (symbolSearchTimer) {
+                clearTimeout(symbolSearchTimer);
+            }
+            symbolSearchTimer = setTimeout(fetchSymbolSuggestions, 250);
+        });
+
+        symbolInput.addEventListener('focus', () => {
+            if (symbolInput.value.trim()) {
+                fetchSymbolSuggestions();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!symbolSuggestions.contains(event.target) && event.target !== symbolInput) {
+                clearSuggestions();
+            }
+        });
 
         const dailyCtx = document.getElementById('dailyChart');
         const monthlyCtx = document.getElementById('monthlyChart');
