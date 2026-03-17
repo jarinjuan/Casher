@@ -5,15 +5,21 @@
 @endsection
 
 @section('content')
-<div x-data="{ cols: 2, marks: [1,2,3,4,5] }" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-    <div class="mb-6 hidden sm:flex flex-col items-center">
-        <div class="w-full flex flex-col items-center">
-            <input type="range" min="1" max="5" step="1" x-model="cols" class="w-64 accent-[#fbbf24] h-1.5 bg-gray-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer">
-            <div class="flex justify-between w-64 mt-2">
-                <template x-for="n in marks" :key="n">
-                    <span :class="cols === n ? 'text-[#fbbf24] font-bold' : 'text-gray-400'" class="text-xs select-none" x-text="n + 'x' + n"></span>
-                </template>
-            </div>
+<div x-data="{ cols: parseInt(localStorage.getItem('transaction_cols')) || 2 }" x-init="$watch('cols', value => localStorage.setItem('transaction_cols', value))" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+    <div class="mb-6 hidden sm:flex justify-center">
+        <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1 shadow-sm border border-gray-200/50 dark:border-white/10">
+            <button @click="cols = 1" :class="cols === 1 ? 'bg-white dark:bg-white/10 shadow text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="w-12 py-1.5 rounded-lg text-sm font-bold transition flex justify-center items-center">
+                1
+            </button>
+            <button @click="cols = 2" :class="cols === 2 ? 'bg-white dark:bg-white/10 shadow text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="w-12 py-1.5 rounded-lg text-sm font-bold transition flex justify-center items-center">
+                2
+            </button>
+            <button @click="cols = 3" :class="cols === 3 ? 'bg-white dark:bg-white/10 shadow text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="w-12 py-1.5 rounded-lg text-sm font-bold transition flex justify-center items-center">
+                3
+            </button>
+            <button @click="cols = 4" :class="cols === 4 ? 'bg-white dark:bg-white/10 shadow text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="w-12 py-1.5 rounded-lg text-sm font-bold transition flex justify-center items-center">
+                4
+            </button>
         </div>
     </div>
 
@@ -21,7 +27,15 @@
         <div class="flash-success mb-4">{{ session('success') }}</div>
     @endif
 
-    <div :class="'grid gap-4 grid-cols-1 sm:grid-cols-' + cols">
+    <!-- Prevent Tailwind purging of grid classes -->
+    <div class="hidden sm:grid-cols-1 sm:grid-cols-2 sm:grid-cols-3 sm:grid-cols-4 lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
+
+    <div class="grid gap-4 grid-cols-1" :class="{
+        'sm:grid-cols-1': cols === 1,
+        'sm:grid-cols-2': cols === 2,
+        'sm:grid-cols-3 lg:grid-cols-3': cols === 3,
+        'sm:grid-cols-3 lg:grid-cols-4': cols === 4
+    }">
         @foreach($transactions as $t)
             @php
                 $amountInDefault = $t->amount;
@@ -45,26 +59,24 @@
                         <div class="truncate text-xs t-muted">{{ $t->note }}</div>
                     </div>
                 </div>
-                <div class="flex items-end justify-between mt-1">
-                    <div>
-                        <span class="font-extrabold text-xl t-primary group-hover:text-[#fbbf24] transition">
-                            {{ number_format($amountInDefault, 2, ',', ' ') }} {{ $currencySymbol }}
-                        </span>
-                        @if($showOriginal)
-                            <div class="text-xs t-muted mt-0.5">
-                                Originally: {{ number_format($t->amount, 2, ',', ' ') }} {{ $t->currency }}
-                            </div>
-                        @endif
-                        <div class="text-xs mt-1 font-bold uppercase tracking-widest {{ $t->type === 'income' ? 'text-emerald-500' : 'text-red-500' }}">{{ $t->type }}</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <a href="{{ route('transactions.edit', $t) }}" class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">Edit</a>
-                        <form method="POST" action="{{ route('transactions.destroy', $t) }}" onsubmit="return confirm('Delete?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn-danger">Delete</button>
-                        </form>
-                    </div>
+                <div class="mt-1">
+                    <span class="font-extrabold text-xl t-primary group-hover:text-[#fbbf24] transition">
+                        {{ number_format($amountInDefault, 2, ',', ' ') }} {{ $currencySymbol }}
+                    </span>
+                    @if($showOriginal)
+                        <div class="text-xs t-muted mt-0.5">
+                            Originally: {{ number_format($t->amount, 2, ',', ' ') }} {{ $t->currency }}
+                        </div>
+                    @endif
+                    <div class="text-xs mt-1 font-bold uppercase tracking-widest {{ $t->type === 'income' ? 'text-emerald-500' : 'text-red-500' }}">{{ $t->type }}</div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full">
+                    <a href="{{ route('transactions.edit', $t) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">Edit</a>
+                    <form method="POST" action="{{ route('transactions.destroy', $t) }}" onsubmit="return confirm('Delete?')" class="flex-1 flex">
+                        @csrf
+                        @method('DELETE')
+                        <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">Delete</button>
+                    </form>
                 </div>
             </div>
         @endforeach
