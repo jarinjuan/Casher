@@ -62,12 +62,25 @@ class Transaction extends Model
                     $periodStart = now()->startOfYear();
                 }
 
-                $spent = Transaction::where('user_id', $user->id)
+                $expenses = Transaction::where('user_id', $user->id)
                     ->where('type', 'expense')
                     ->where('category_id', $budget->category_id)
-                    ->where('currency', $budget->currency)
                     ->where('created_at', '>=', $periodStart)
-                    ->sum('amount');
+                    ->get();
+                    
+                $converter = app(\App\Services\CurrencyConverter::class);
+                $spent = 0.0;
+                foreach ($expenses as $expense) {
+                    $amount = $expense->amount;
+                    if ($expense->currency !== $budget->currency) {
+                        try {
+                            $amount = $converter->convert($amount, $expense->currency, $budget->currency, $expense->created_at);
+                        } catch (\Exception $e) {
+                            // keep original
+                        }
+                    }
+                    $spent += $amount;
+                }
 
                 if ($budget->isExceeded($spent)) {
                     $user->notify(new \App\Notifications\BudgetExceeded($budget, $spent));

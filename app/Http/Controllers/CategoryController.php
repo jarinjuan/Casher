@@ -31,7 +31,7 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         if (!isset($data['budget_currency'])) {
-            $data['budget_currency'] = 'CZK';
+            $data['budget_currency'] = $request->user()->currentTeam->default_currency ?? 'CZK';
         }
 
         $request->user()->categories()->create($data);
@@ -60,7 +60,7 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         if (!isset($data['budget_currency'])) {
-            $data['budget_currency'] = 'CZK';
+            $data['budget_currency'] = $request->user()->currentTeam->default_currency ?? 'CZK';
         }
 
         $category->update($data);

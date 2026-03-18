@@ -30,12 +30,23 @@ class ExpenseForecastService
             return 0;
         }
         
+        $team = \App\Models\Team::find($teamId);
         $byMonth = $expenses->groupBy(function($t) {
             return $t->created_at->format('Y-m');
         });
-        $monthlySums = $byMonth->map(function($group) {
-            return $group->sum('amount');
+        $monthlySums = $byMonth->map(function($group) use ($team) {
+            $sum = 0.0;
+            foreach ($group as $expense) {
+                $amount = $expense->amount;
+                if ($team && $expense->currency !== $team->default_currency) {
+                    try {
+                        $amount = $team->convertToDefaultCurrency($amount, $expense->currency, $expense->created_at);
+                    } catch (\Exception $e) {}
+                }
+                $sum += $amount;
+            }
+            return $sum;
         });
-        return $monthlySums->avg();
+        return $monthlySums->avg() ?? 0.0;
     }
 }

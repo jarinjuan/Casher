@@ -37,11 +37,28 @@ class Category extends Model
         if (!$year) $year = now()->year;
         if (!$month) $month = now()->month;
 
-        return $this->transactions()
+        $transactions = $this->transactions()
             ->where('type', 'expense')
             ->whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
-            ->sum('amount');
+            ->get();
+
+        $converter = app(\App\Services\CurrencyConverter::class);
+        $total = 0.0;
+
+        foreach ($transactions as $transaction) {
+            $amount = $transaction->amount;
+            if ($transaction->currency !== $this->budget_currency) {
+                try {
+                    $amount = $converter->convert($amount, $transaction->currency, $this->budget_currency, $transaction->created_at);
+                } catch (\Exception $e) {
+                    // Fallback to original amount if conversion fails
+                }
+            }
+            $total += $amount;
+        }
+
+        return $total;
     }
 
     public function getMonthlyBudgetPercentage($year = null, $month = null)

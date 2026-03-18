@@ -30,7 +30,7 @@
                 <label class="label-dark">Currency</label>
                 <select name="budget_currency" class="select-dark">
                     @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
-                        <option value="{{ $c }}">{{ $c }}</option>
+                        <option value="{{ $c }}" {{ (old('budget_currency') ?? auth()->user()->currentTeam->default_currency ?? 'CZK') === $c ? 'selected' : '' }}>{{ $c }}</option>
                     @endforeach
                 </select>
             </div>

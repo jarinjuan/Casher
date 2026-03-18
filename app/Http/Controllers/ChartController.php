@@ -23,8 +23,20 @@ class ChartController extends Controller
         $data = [];
         $colors = [];
 
+        $team = clone $user->currentTeam;
+
         foreach ($categories as $cat) {
-            $sum = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->where('category_id', $cat->id)->sum('amount');
+            $expenses = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->where('category_id', $cat->id)->get();
+            $sum = 0.0;
+            foreach ($expenses as $expense) {
+                $amount = $expense->amount;
+                if ($expense->currency !== $team->default_currency) {
+                    try {
+                        $amount = $team->convertToDefaultCurrency($amount, $expense->currency, $expense->created_at);
+                    } catch (\Exception $e) {}
+                }
+                $sum += $amount;
+            }
             if ($sum <= 0) continue;
             $labels[] = $cat->name;
             $data[] = (float) $sum;
@@ -32,7 +44,18 @@ class ChartController extends Controller
         }
 
         // uncategorized expenses
-        $uncat = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->whereNull('category_id')->sum('amount');
+        $uncatExpenses = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->whereNull('category_id')->get();
+        $uncat = 0.0;
+        foreach ($uncatExpenses as $expense) {
+            $amount = $expense->amount;
+            if ($expense->currency !== $team->default_currency) {
+                try {
+                    $amount = $team->convertToDefaultCurrency($amount, $expense->currency, $expense->created_at);
+                } catch (\Exception $e) {}
+            }
+            $uncat += $amount;
+        }
+        
         if ($uncat > 0) {
             $labels[] = 'Uncategorized';
             $data[] = (float) $uncat;

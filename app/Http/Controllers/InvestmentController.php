@@ -146,6 +146,17 @@ class InvestmentController extends Controller
             $newQty = (float) $data['quantity'];
             $oldAvg = (float) $existing->average_price;
             $newAvg = (float) $data['average_price'];
+            
+            // Convert existing average price to the new entry's currency if they differ
+            if ($existing->currency !== $data['currency']) {
+                try {
+                    $converter = app(\App\Services\CurrencyConverter::class);
+                    $oldAvg = $converter->convert($oldAvg, $existing->currency, $data['currency']);
+                } catch (\Exception $e) {
+                    return back()->withErrors(['currency' => 'Nepodařilo se převést měny pro sloučení investic. Zkontrolujte API nebo zadejte kompatibilní měnu.'])->withInput();
+                }
+            }
+            
             $totalQty = $oldQty + $newQty;
 
             $weightedAvg = $totalQty > 0
