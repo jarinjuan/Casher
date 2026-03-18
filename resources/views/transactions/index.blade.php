@@ -8,7 +8,7 @@
 <div x-data="transactionsPage()" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
     <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <form @submit.prevent="performSearch" class="w-full sm:w-64 relative">
-            <input type="text" x-model="search" @input.debounce.300ms="performSearch" placeholder="Search transactions..." class="w-full bg-[#18181b] border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-[#fbbf24] focus:ring-1 focus:ring-[#fbbf24] transition">
+            <input type="text" x-model="search" @input.debounce.300ms="performSearch" placeholder="Search transactions..." class="w-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-2 text-sm focus:border-[#fbbf24] focus:ring-1 focus:ring-[#fbbf24] outline-none transition">
             
             <div x-show="isLoading" style="display: none;" class="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500">
                 <i class="fa-solid fa-circle-notch fa-spin"></i>

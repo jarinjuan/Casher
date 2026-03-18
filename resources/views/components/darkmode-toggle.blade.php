@@ -3,9 +3,26 @@
 <div x-data="{
     dark: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && true),
     toggle() {
+        // Disable all transitions on the entire page
+        const css = document.createElement('style');
+        css.appendChild(document.createTextNode(`*, *::before, *::after {
+            -webkit-transition: none !important;
+            -moz-transition: none !important;
+            -o-transition: none !important;
+            -ms-transition: none !important;
+            transition: none !important;
+        }`));
+        document.head.appendChild(css);
+
         this.dark = !this.dark;
         localStorage.setItem('theme', this.dark ? 'dark' : 'light');
         document.documentElement.classList.toggle('dark', this.dark);
+
+        // Force a browser repaint so the new styles calculate instantly without transitions
+        window.getComputedStyle(css).opacity;
+        
+        // Remove the style tag, restoring normal transitions everywhere
+        document.head.removeChild(css);
     },
     init() {
         document.documentElement.classList.toggle('dark', this.dark);
