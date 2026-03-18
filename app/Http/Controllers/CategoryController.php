@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -25,14 +26,9 @@ class CategoryController extends Controller
         return redirect()->route('categories.index');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(CategoryRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'color' => 'nullable|string|max:7',
-            'monthly_budget' => 'nullable|numeric|min:0',
-            'budget_currency' => 'nullable|string|size:3',
-        ]);
+        $data = $request->validated();
 
         if (!isset($data['budget_currency'])) {
             $data['budget_currency'] = 'CZK';
@@ -57,16 +53,11 @@ class CategoryController extends Controller
         return view('categories.show', compact('category', 'transactions'));
     }
 
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(CategoryRequest $request, Category $category): RedirectResponse
     {
         if ($category->user_id !== auth()->id()) abort(403);
 
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'color' => 'nullable|string|max:7',
-            'monthly_budget' => 'nullable|numeric|min:0',
-            'budget_currency' => 'nullable|string|size:3',
-        ]);
+        $data = $request->validated();
 
         if (!isset($data['budget_currency'])) {
             $data['budget_currency'] = 'CZK';

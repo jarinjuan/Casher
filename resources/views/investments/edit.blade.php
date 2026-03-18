@@ -29,29 +29,33 @@
                 </div>
                 <div>
                     <label class="label-dark">Symbol</label>
-                    <input name="symbol" value="{{ $investment->symbol }}" class="input-dark" required>
+                    <input name="symbol" value="{{ $investment->symbol }}" class="input-dark" required maxlength="15">
                 </div>
                 <div>
                     <label class="label-dark">Name</label>
-                    <input name="name" value="{{ $investment->name }}" class="input-dark">
+                    <input name="name" value="{{ $investment->name }}" class="input-dark" maxlength="100">
                 </div>
                 <div>
                     <label class="label-dark">External ID</label>
-                    <input name="external_id" value="{{ $investment->external_id }}" class="input-dark">
+                    <input name="external_id" value="{{ $investment->external_id }}" class="input-dark" maxlength="100">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="label-dark">Quantity</label>
-                        <input name="quantity" type="number" step="0.00000001" value="{{ $investment->quantity }}" class="input-dark" required>
+                        <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" value="{{ $investment->quantity }}" class="input-dark" required>
                     </div>
                     <div>
                         <label class="label-dark">Avg Price</label>
-                        <input name="average_price" type="number" step="0.00000001" value="{{ $investment->average_price }}" class="input-dark" required>
+                        <input name="average_price" type="number" step="0.00000001" min="0" max="9999999999" value="{{ $investment->average_price }}" class="input-dark" required>
                     </div>
                 </div>
                 <div>
                     <label class="label-dark">Currency</label>
-                    <input name="currency" value="{{ $investment->currency }}" class="input-dark" required>
+                    <select name="currency" class="select-dark" required>
+                        @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
+                            <option value="{{ $c }}" {{ $investment->currency === $c ? 'selected' : '' }}>{{ $c }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button class="btn-primary text-sm">Save</button>

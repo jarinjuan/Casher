@@ -16,7 +16,7 @@
             <h2 class="t-primary text-xs font-extrabold tracking-wider leading-tight uppercase mb-1">Add Category</h2>
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Name</label>
-                <input name="name" type="text" required class="input-dark" placeholder="Category name" />
+                <input name="name" type="text" required class="input-dark" placeholder="Category name" maxlength="255" />
             </div>
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Color</label>
@@ -24,14 +24,14 @@
             </div>
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Monthly budget</label>
-                <input type="number" name="monthly_budget" placeholder="Monthly budget" step="0.01" min="0" class="input-dark" />
+                <input type="number" name="monthly_budget" placeholder="Monthly budget" step="0.01" min="0" max="999999999999.99" class="input-dark" />
             </div>
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Currency</label>
                 <select name="budget_currency" class="select-dark">
-                    <option value="CZK">CZK</option>
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
+                    @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
+                        <option value="{{ $c }}">{{ $c }}</option>
+                    @endforeach
                 </select>
             </div>
             <button type="submit" class="btn-primary w-full text-sm mt-1">Add Category</button>

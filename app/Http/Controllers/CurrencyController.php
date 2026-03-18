@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CurrencyList;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Services\CurrencyConverter;
@@ -16,10 +17,10 @@ class CurrencyController extends Controller
     public function convert(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'amount' => ['required','numeric'],
-            'from' => ['required','string','size:3'],
-            'to' => ['required','string','size:3'],
-            'date' => ['nullable','date'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'max:99999999.99'],
+            'from'   => ['required', 'string', 'size:3', CurrencyList::validationRule()],
+            'to'     => ['required', 'string', 'size:3', CurrencyList::validationRule()],
+            'date'   => ['nullable', 'date', 'before_or_equal:today'],
         ]);
 
         $converter = new CurrencyConverter();

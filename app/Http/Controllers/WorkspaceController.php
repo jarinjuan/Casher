@@ -58,7 +58,7 @@ class WorkspaceController extends Controller
     public function join(Request $request)
     {
         $request->validate([
-            'invite_code' => 'required|string|exists:teams,invite_code',
+            'invite_code' => 'required|string|max:50|exists:teams,invite_code',
         ]);
 
         $team = Team::where('invite_code', $request->invite_code)->firstOrFail();

@@ -62,7 +62,7 @@ class DataController extends Controller
     public function import(Request $request, ImportService $importService)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,csv,xls',
+            'file' => 'required|file|mimes:xlsx,csv,xls|max:10240',
         ]);
 
         $teamId = $request->user()->currentTeam->id ?? null;
@@ -73,42 +73,86 @@ class DataController extends Controller
 
             $importData = [];
 
+            $currencyRule = \App\Enums\CurrencyList::validationRule();
+
             if (isset($data[0]) && ! empty($data[0])) {
-                $importData['transactions'] = array_map(function ($row) {
-                    return [
-                        'title' => $row[0] ?? '',
-                        'amount' => $row[1] ?? 0,
-                        'type' => $row[2] ?? 'expense',
-                        'note' => $row[3] ?? '',
+                $rawTransactions = array_slice($data[0], 1);
+                $validTransactions = [];
+                foreach ($rawTransactions as $idx => $row) {
+                    $rowData = [
+                        'title'    => $row[0] ?? '',
+                        'amount'   => $row[1] ?? 0,
+                        'type'     => $row[2] ?? 'expense',
+                        'note'     => $row[3] ?? '',
                         'category_name' => $row[4] ?? '',
                         'currency' => $row[5] ?? 'USD',
                         'created_at' => $row[6] ?? now(),
                     ];
-                }, array_slice($data[0], 1));
+                    $validator = \Illuminate\Support\Facades\Validator::make($rowData, [
+                        'title'    => 'required|string|max:255',
+                        'amount'   => 'required|numeric|min:0.01|max:99999999.99',
+                        'type'     => 'required|in:income,expense',
+                        'note'     => 'nullable|string|max:10000',
+                        'currency' => ['required', 'string', 'size:3', $currencyRule],
+                    ]);
+                    if ($validator->fails()) {
+                        continue; // Skip invalid rows
+                    }
+                    $validTransactions[] = $rowData;
+                }
+                $importData['transactions'] = $validTransactions;
             }
 
             if (isset($data[1]) && ! empty($data[1])) {
-                $importData['categories'] = array_map(function ($row) {
-                    return [
-                        'name' => $row[0] ?? '',
-                        'monthly_budget' => $row[1] ?? 0,
+                $rawCategories = array_slice($data[1], 1);
+                $validCategories = [];
+                foreach ($rawCategories as $idx => $row) {
+                    $rowData = [
+                        'name'            => $row[0] ?? '',
+                        'monthly_budget'  => $row[1] ?? 0,
                         'budget_currency' => $row[2] ?? 'CZK',
                     ];
-                }, array_slice($data[1], 1));
+                    $validator = \Illuminate\Support\Facades\Validator::make($rowData, [
+                        'name'            => 'required|string|max:255',
+                        'monthly_budget'  => 'nullable|numeric|min:0|max:999999999999.99',
+                        'budget_currency' => ['nullable', 'string', 'size:3', $currencyRule],
+                    ]);
+                    if ($validator->fails()) {
+                        continue;
+                    }
+                    $validCategories[] = $rowData;
+                }
+                $importData['categories'] = $validCategories;
             }
 
             if (isset($data[2]) && ! empty($data[2])) {
-                $importData['investments'] = array_map(function ($row) {
-                    return [
-                        'type' => $row[0] ?? 'stock',
-                        'name' => $row[1] ?? '',
-                        'symbol' => $row[2] ?? '',
-                        'external_id' => $row[3] ?? '',
-                        'quantity' => $row[4] ?? 0,
+                $rawInvestments = array_slice($data[2], 1);
+                $validInvestments = [];
+                foreach ($rawInvestments as $idx => $row) {
+                    $rowData = [
+                        'type'          => $row[0] ?? 'stock',
+                        'name'          => $row[1] ?? '',
+                        'symbol'        => $row[2] ?? '',
+                        'external_id'   => $row[3] ?? '',
+                        'quantity'      => $row[4] ?? 0,
                         'average_price' => $row[5] ?? 0,
-                        'currency' => $row[6] ?? 'USD',
+                        'currency'      => $row[6] ?? 'USD',
                     ];
-                }, array_slice($data[2], 1));
+                    $validator = \Illuminate\Support\Facades\Validator::make($rowData, [
+                        'type'          => 'required|in:stock,crypto',
+                        'symbol'        => 'required|string|max:15',
+                        'name'          => 'nullable|string|max:100',
+                        'external_id'   => 'nullable|string|max:100',
+                        'quantity'      => 'required|numeric|min:0.00000001|max:9999999999',
+                        'average_price' => 'required|numeric|min:0|max:9999999999',
+                        'currency'      => ['required', 'string', 'size:3', $currencyRule],
+                    ]);
+                    if ($validator->fails()) {
+                        continue;
+                    }
+                    $validInvestments[] = $rowData;
+                }
+                $importData['investments'] = $validInvestments;
             }
 
             $result = $importService->importData($teamId, $importData);

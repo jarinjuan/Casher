@@ -13,7 +13,7 @@
 
             <div>
                 <label class="label-dark">Name</label>
-                <input name="name" value="{{ old('name', $category->name) }}" required class="input-dark">
+                <input name="name" value="{{ old('name', $category->name) }}" required class="input-dark" maxlength="255">
             </div>
             <div>
                 <label class="label-dark">Color</label>
@@ -21,14 +21,14 @@
             </div>
             <div>
                 <label class="label-dark">Monthly budget</label>
-                <input type="number" name="monthly_budget" placeholder="e.g. 500" step="0.01" min="0" value="{{ old('monthly_budget', $category->monthly_budget) }}" class="input-dark">
+                <input type="number" name="monthly_budget" placeholder="e.g. 500" step="0.01" min="0" max="999999999999.99" value="{{ old('monthly_budget', $category->monthly_budget) }}" class="input-dark">
             </div>
             <div>
                 <label class="label-dark">Budget currency</label>
                 <select name="budget_currency" class="select-dark">
-                    <option value="CZK" {{ old('budget_currency', $category->budget_currency) === 'CZK' ? 'selected' : '' }}>CZK</option>
-                    <option value="EUR" {{ old('budget_currency', $category->budget_currency) === 'EUR' ? 'selected' : '' }}>EUR</option>
-                    <option value="USD" {{ old('budget_currency', $category->budget_currency) === 'USD' ? 'selected' : '' }}>USD</option>
+                    @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
+                        <option value="{{ $c }}" {{ old('budget_currency', $category->budget_currency) === $c ? 'selected' : '' }}>{{ $c }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="flex gap-3 pt-2">

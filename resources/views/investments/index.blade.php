@@ -251,7 +251,7 @@
                         <div>
                             <label class="label-dark mb-1.5 block" for="symbolInput">Symbol</label>
                             <div class="relative">
-                                <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. AAPL, BTC..." autocomplete="off" required>
+                                <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. AAPL, BTC..." autocomplete="off" required maxlength="15">
                                 <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
                             </div>
                         </div>
@@ -288,11 +288,11 @@
                             <!-- Toggleable: Quantity OR Amount -->
                             <div x-show="buyMode === 'quantity'">
                                 <label class="label-dark mb-1.5 block" for="quantityInput">Quantity</label>
-                                <input name="quantity" type="number" step="0.00000001" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 1.5" :required="buyMode === 'quantity'">
+                                <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 1.5" :required="buyMode === 'quantity'">
                             </div>
                             <div x-show="buyMode === 'amount'" style="display: none;">
                                 <label class="label-dark mb-1.5 block" for="amountInput">Amount</label>
-                                <input name="amount" type="number" step="0.01" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 500.00" :required="buyMode === 'amount'">
+                                <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 500.00" :required="buyMode === 'amount'">
                             </div>
 
                             <div>

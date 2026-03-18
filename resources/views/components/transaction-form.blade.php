@@ -27,14 +27,14 @@
 
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Title</label>
-                <input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required
+                <input name="title" type="text" value="{{ old('title', $transaction->title ?? '') }}" required maxlength="255"
                        class="input-dark" placeholder="Description"/>
                 <x-input-error :messages="$errors->get('title')" class="mt-0.5 text-red-500 text-xs" />
             </div>
 
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Amount</label>
-                <input name="amount" type="number" step="1" value="{{ old('amount', $transaction->amount ?? '') }}" required
+                <input name="amount" type="number" step="0.01" min="0.01" max="99999999.99" value="{{ old('amount', $transaction->amount ?? '') }}" required
                        class="input-dark text-lg font-bold" style="height: 2.75rem;" placeholder="0.00"/>
                 <x-input-error :messages="$errors->get('amount')" class="mt-0.5 text-red-500 text-xs" />
             </div>
@@ -52,7 +52,7 @@
                 <div class="flex flex-col gap-1">
                     <label class="label-dark">Currency</label>
                     <select name="currency" class="select-dark">
-                        @foreach(['CZK','EUR','USD'] as $c)
+                        @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
                             <option value="{{ $c }}" {{ old('currency', $transaction->currency ?? 'CZK') === $c ? 'selected' : '' }}>{{ $c }}</option>
                         @endforeach
                     </select>
@@ -61,8 +61,7 @@
 
             <div class="flex flex-col gap-1">
                 <label class="label-dark">Note</label>
-                <input name="note" type="text" value="{{ old('note', $transaction->note ?? '') }}"
-                       class="input-dark" placeholder="Note..."/>
+                <textarea name="note" class="input-dark" placeholder="Note..." maxlength="10000" rows="2">{{ old('note', $transaction->note ?? '') }}</textarea>
             </div>
 
             <div class="pb-2 pt-1">
