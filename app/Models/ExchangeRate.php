@@ -19,7 +19,7 @@ class ExchangeRate extends Model
     public static function latestRate(string $currency, $date = null)
     {
         $q = static::where('currency', $currency);
-        if ($date) $q->where('date', $date);
+        if ($date) $q->where('date', '<=', $date);
         return $q->orderByDesc('date')->first();
     }
 }

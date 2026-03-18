@@ -20,9 +20,18 @@ class TransactionController extends Controller
     public function index(Request $request): View
     {
         $currentTeam = $request->user()->currentTeam;
-        $transactions = Transaction::where('team_id', $currentTeam->id ?? null)
-            ->latest()
-            ->paginate(15);
+        $search = $request->query('search');
+
+        $query = Transaction::where('team_id', $currentTeam->id ?? null);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('note', 'like', '%' . $search . '%');
+            });
+        }
+
+        $transactions = $query->latest()->paginate(15)->withQueryString();
         
         $defaultCurrency = $currentTeam->default_currency;
         $currencySymbol = $currentTeam->getCurrencySymbol();

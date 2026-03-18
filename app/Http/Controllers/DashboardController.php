@@ -120,6 +120,12 @@ class DashboardController extends Controller
         // Categories with budgets
         $categories = $user->categories()->where('monthly_budget', '>', 0)->get();
 
+        // Recent transactions
+        $recentTransactions = Transaction::where('team_id', $teamId)
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('dashboard', compact(
             'totalBalance',
             'cashBalance',
@@ -133,7 +139,9 @@ class DashboardController extends Controller
             'chartDatasets',
             'categories',
             'defaultCurrency',
-            'currencySymbol'
+            'currencySymbol',
+            'recentTransactions',
+            'team'
         ));
     }
 

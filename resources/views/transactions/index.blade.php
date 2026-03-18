@@ -5,8 +5,21 @@
 @endsection
 
 @section('content')
-<div x-data="{ cols: parseInt(localStorage.getItem('transaction_cols')) || 2 }" x-init="$watch('cols', value => localStorage.setItem('transaction_cols', value))" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-    <div class="mb-6 hidden sm:flex justify-center">
+<div x-data="transactionsPage()" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <form @submit.prevent="performSearch" class="w-full sm:w-64 relative">
+            <input type="text" x-model="search" @input.debounce.300ms="performSearch" placeholder="Search transactions..." class="w-full bg-[#18181b] border border-white/10 rounded-xl px-4 py-2 text-sm focus:border-[#fbbf24] focus:ring-1 focus:ring-[#fbbf24] transition">
+            
+            <div x-show="isLoading" style="display: none;" class="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+            </div>
+            
+            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#fbbf24] transition">
+                <i class="fa-solid fa-search"></i>
+            </button>
+        </form>
+
+        <div class="hidden sm:flex justify-end">
         <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1 shadow-sm border border-gray-200/50 dark:border-white/10">
             <button @click="cols = 1" :class="cols === 1 ? 'bg-white dark:bg-white/10 shadow text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="w-12 py-1.5 rounded-lg text-sm font-bold transition flex justify-center items-center">
                 1
@@ -21,6 +34,7 @@
                 4
             </button>
         </div>
+        </div>
     </div>
 
     @if(session('success'))
@@ -30,7 +44,7 @@
     <!-- Prevent Tailwind purging of grid classes -->
     <div class="hidden sm:grid-cols-1 sm:grid-cols-2 sm:grid-cols-3 sm:grid-cols-4 lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
 
-    <div class="grid gap-4 grid-cols-1" :class="{
+    <div id="transactions-grid" class="grid gap-4 grid-cols-1" :class="{
         'sm:grid-cols-1': cols === 1,
         'sm:grid-cols-2': cols === 2,
         'sm:grid-cols-3 lg:grid-cols-3': cols === 3,
@@ -82,6 +96,65 @@
         @endforeach
     </div>
 
-    <div class="mt-6">{{ $transactions->links() }}</div>
+    <div id="transactions-pagination" class="mt-6">{{ $transactions->links() }}</div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('transactionsPage', () => ({
+        cols: parseInt(localStorage.getItem('transaction_cols')) || 2,
+        search: new URLSearchParams(window.location.search).get('search') || '',
+        isLoading: false,
+        controller: null,
+
+        init() {
+            this.$watch('cols', value => localStorage.setItem('transaction_cols', value));
+        },
+
+        performSearch() {
+            this.isLoading = true;
+            
+            if (this.controller) {
+                this.controller.abort();
+            }
+            this.controller = new AbortController();
+            
+            const url = new URL(window.location.href);
+            if (this.search) {
+                url.searchParams.set('search', this.search);
+                url.searchParams.delete('page'); // reset to page 1 on new search
+            } else {
+                url.searchParams.delete('search');
+            }
+            
+            window.history.replaceState({}, '', url);
+
+            fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                signal: this.controller.signal
+            })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const newGrid = doc.getElementById('transactions-grid');
+                if (newGrid) document.getElementById('transactions-grid').innerHTML = newGrid.innerHTML;
+
+                const newPagination = doc.getElementById('transactions-pagination');
+                if (newPagination) document.getElementById('transactions-pagination').innerHTML = newPagination.innerHTML;
+            })
+            .catch(err => {
+                if (err.name !== 'AbortError') console.error(err);
+            })
+            .finally(() => {
+                this.isLoading = false;
+                this.controller = null;
+            });
+        }
+    }));
+});
+</script>
+@endpush

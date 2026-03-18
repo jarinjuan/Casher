@@ -55,7 +55,53 @@
                 height="80"
             />
 
-        
+            @if($recentTransactions->count() > 0)
+            <div class="mt-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold t-primary">Recent transactions</h3>
+                    <a href="{{ route('transactions.index') }}" class="text-sm font-semibold text-[#8b5cf6] hover:text-[#7c3aed] transition">View all <i class="fa-solid fa-arrow-right text-xs ml-1"></i></a>
+                </div>
+                <div class="bg-white dark:bg-[#18181b] rounded-xl border border-gray-100 dark:border-white/5 shadow-sm overflow-hidden">
+                    <ul class="divide-y divide-gray-100 dark:divide-white/5">
+                        @foreach($recentTransactions as $t)
+                            @php
+                                $amountInDefault = $t->amount;
+                                if ($t->currency !== $defaultCurrency) {
+                                    try {
+                                        $amountInDefault = $team->convertToDefaultCurrency($t->amount, $t->currency, $t->created_at);
+                                    } catch (\Exception $e) {}
+                                }
+                            @endphp
+                            <li class="p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="flex items-center justify-center w-10 h-10 rounded-lg shrink-0 {{ $t->type === 'income' ? 'bg-emerald-500/10' : 'bg-red-500/10' }}">
+                                        @if($t->type === 'income')
+                                            <i class="fa-solid fa-arrow-down text-emerald-500"></i>
+                                        @else
+                                            <i class="fa-solid fa-arrow-up text-red-500"></i>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="truncate font-bold t-primary text-sm">{{ $t->title }}</p>
+                                        <p class="truncate text-xs t-muted">{{ $t->created_at->format('M d, Y') }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <p class="font-extrabold text-sm {{ $t->type === 'income' ? 'text-emerald-500 dark:text-emerald-400' : 't-primary' }}">
+                                        {{ $t->type === 'income' ? '+' : '-' }}{{ number_format($amountInDefault, 2, ',', ' ') }} {{ $currencySymbol }}
+                                    </p>
+                                    @if($t->currency !== $defaultCurrency)
+                                        <p class="text-[10px] t-muted">
+                                            Orig: {{ number_format($t->amount, 2, ',', ' ') }} {{ $t->currency }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            @endif
             @if($categories->count() > 0)
             <div class="mt-6">
                 <h3 class="text-lg font-bold t-primary mb-4">Monthly budget</h3>
