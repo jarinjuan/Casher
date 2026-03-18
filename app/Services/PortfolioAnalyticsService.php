@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 
 class PortfolioAnalyticsService
 {
-    public function buildSeries(Collection $investments, Carbon $start, string $bucket = 'day'): array
+    public function buildSeries(Collection $investments, Carbon $start, string $bucket = 'day', ?\App\Models\Team $team = null): array
     {
         if ($investments->isEmpty()) {
             return ['labels' => [], 'values' => []];
@@ -31,6 +31,12 @@ class PortfolioAnalyticsService
         $latest = [];
         $currentKey = null;
 
+        $converter = null;
+        if ($team) {
+            $converter = app(\App\Services\CurrencyConverter::class);
+        }
+        $latestRateCache = [];
+
         foreach ($prices as $price) {
             $key = $bucket === 'month'
                 ? $price->recorded_at->format('Y-m')
@@ -38,16 +44,19 @@ class PortfolioAnalyticsService
 
             if ($currentKey !== null && $key !== $currentKey) {
                 $labels[] = $currentKey;
-                $values[] = $this->portfolioValue($latest, $quantities);
+                $values[] = $this->portfolioValue($latest, $quantities, $team, $converter, $latestRateCache);
             }
 
             $currentKey = $key;
-            $latest[$price->investment_id] = (float) $price->price;
+            $latest[$price->investment_id] = [
+                'price' => (float) $price->price,
+                'currency' => $price->currency,
+            ];
         }
 
         if ($currentKey !== null) {
             $labels[] = $currentKey;
-            $values[] = $this->portfolioValue($latest, $quantities);
+            $values[] = $this->portfolioValue($latest, $quantities, $team, $converter, $latestRateCache);
         }
 
         return ['labels' => $labels, 'values' => $values];
@@ -87,13 +96,28 @@ class PortfolioAnalyticsService
         return (($last - $prev) / $prev) * 100;
     }
 
-    protected function portfolioValue(array $latest, Collection $quantities): float
+    protected function portfolioValue(array $latest, Collection $quantities, ?\App\Models\Team $team = null, $converter = null, &$latestRateCache = []): float
     {
         $total = 0.0;
 
         foreach ($quantities as $id => $qty) {
             if (isset($latest[$id])) {
-                $total += $latest[$id] * (float) $qty;
+                $info = $latest[$id];
+                $val = $info['price'] * (float) $qty;
+                
+                if ($team && !empty($info['currency']) && $info['currency'] !== $team->default_currency) {
+                    $currency = $info['currency'];
+                    if (!isset($latestRateCache[$currency])) {
+                        try {
+                            $latestRateCache[$currency] = $converter->convert(1, $currency, $team->default_currency);
+                        } catch (\Exception $e) {
+                            $latestRateCache[$currency] = 1;
+                        }
+                    }
+                    $val *= $latestRateCache[$currency];
+                }
+                
+                $total += $val;
             }
         }
 

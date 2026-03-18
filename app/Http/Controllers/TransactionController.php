@@ -61,7 +61,7 @@ class TransactionController extends Controller
         if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
         $transaction->update($request->validated());
 
-        return redirect()->route('transactions.index')->with('success', 'Záznam aktualizován.');
+        return redirect()->route('transactions.index')->with('success', 'Transaction updated.');
     }
 
     public function destroy(Transaction $transaction): RedirectResponse
@@ -69,6 +69,6 @@ class TransactionController extends Controller
         if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
         $transaction->delete();
 
-        return back()->with('success', 'Záznam smazán.');
+        return back()->with('success', 'Transaction deleted.');
     }
 }

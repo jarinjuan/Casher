@@ -34,7 +34,7 @@ class BudgetExceeded extends Notification
             'spent' => (float) $this->spent,
             'period' => $this->budget->period,
             'currency' => $this->budget->currency,
-            'message' => 'Rozpočet byl překročen',
+            'message' => 'Budget exceeded',
         ];
     }
 }

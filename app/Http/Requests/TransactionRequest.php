@@ -25,7 +25,7 @@ class TransactionRequest extends FormRequest
                 'exists:categories,id',
                 function ($attribute, $value, $fail) {
                     if ($value && \App\Models\Category::where('id', '=', $value)->where('user_id', '=', auth()->id())->doesntExist()) {
-                        $fail('Vybraná kategorie vám nepatří.');
+                        $fail('Selected category does not belong to you.');
                     }
                 },
             ],
@@ -36,16 +36,16 @@ class TransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'amount.min'      => 'Částka musí být alespoň 0.01.',
-            'amount.max'      => 'Částka nesmí překročit 99 999 999.99.',
-            'amount.numeric'  => 'Částka musí být číslo.',
-            'note.max'        => 'Poznámka nesmí překročit 10 000 znaků.',
-            'currency.in'     => 'Neplatná měna.',
-            'title.max'       => 'Název nesmí překročit 255 znaků.',
-            'title.required'  => 'Název je povinný.',
-            'amount.required' => 'Částka je povinná.',
-            'type.required'   => 'Typ transakce je povinný.',
-            'type.in'         => 'Typ musí být příjem nebo výdaj.',
+            'amount.min'      => 'Amount must be at least 0.01.',
+            'amount.max'      => 'Amount must not exceed 99,999,999.99.',
+            'amount.numeric'  => 'Amount must be a number.',
+            'note.max'        => 'Note must not exceed 10,000 characters.',
+            'currency.in'     => 'Invalid currency.',
+            'title.max'       => 'Title must not exceed 255 characters.',
+            'title.required'  => 'Title is required.',
+            'amount.required' => 'Amount is required.',
+            'type.required'   => 'Transaction type is required.',
+            'type.in'         => 'Type must be income or expense.',
         ];
     }
 }

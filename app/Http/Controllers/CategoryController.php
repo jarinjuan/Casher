@@ -36,7 +36,7 @@ class CategoryController extends Controller
 
         $request->user()->categories()->create($data);
 
-        return back()->with('success', 'Kategorie vytvořena.');
+        return back()->with('success', 'Category created.');
     }
 
     public function edit(Category $category): View
@@ -64,13 +64,13 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
-        return redirect()->route('categories.index')->with('success', 'Kategorie aktualizována.');
+        return redirect()->route('categories.index')->with('success', 'Category updated.');
     }
 
     public function destroy(Category $category): RedirectResponse
     {
         if ($category->user_id !== auth()->id()) abort(403);
         $category->delete();
-        return back()->with('success', 'Kategorie smazána.');
+        return back()->with('success', 'Category deleted.');
     }
 }

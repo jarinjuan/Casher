@@ -13,10 +13,7 @@
                 <div class="card p-6">
                     <div class="flex items-center justify-between gap-2">
                         <p class="text-xs uppercase tracking-widest t-muted font-bold">Overall balance (Cash + Investments)</p>
-                        <span id="balance-live-indicator" class="flex items-center gap-1 text-[10px] t-muted">
-                            <span id="balance-live-dot" class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
-                            
-                        </span>
+                        
                     </div>
                     <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">{{ number_format($totalBalance, 0) }} {{ $currencySymbol }}</p>
                     <p class="text-xs t-muted mt-1">In {{ $defaultCurrency }}</p>
@@ -70,7 +67,7 @@
                             $percentage = $cat->getMonthlyBudgetPercentage();
                             $isExceeded = $spent > $budget;
                             $symbol = match($cat->budget_currency) {
-                                'CZK' => 'Kč',
+                                'CZK' => 'CZK',
                                 'EUR' => '€',
                                 'USD' => '$',
                                 'GBP' => '£',

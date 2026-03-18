@@ -22,7 +22,7 @@ class Team extends Model
     public function getCurrencySymbol(): string
     {
         return match($this->default_currency) {
-            'CZK' => 'Kč',
+            'CZK' => 'CZK',
             'EUR' => '€',
             'USD' => '$',
             'GBP' => '£',

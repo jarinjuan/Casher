@@ -30,18 +30,18 @@ class InvestmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'quantity.max'      => 'Množství nesmí překročit 9 999 999 999.',
-            'quantity.min'      => 'Množství musí být kladné číslo.',
-            'quantity.numeric'  => 'Množství musí být číslo.',
-            'amount.max'        => 'Částka nesmí překročit 9 999 999 999.',
-            'amount.min'        => 'Částka musí být alespoň 0.01.',
-            'amount.numeric'    => 'Částka musí být číslo.',
-            'average_price.max' => 'Průměrná cena nesmí překročit 9 999 999 999.',
-            'average_price.numeric' => 'Průměrná cena musí být číslo.',
-            'currency.in'       => 'Neplatná měna.',
-            'symbol.required'   => 'Symbol je povinný.',
-            'symbol.max'        => 'Symbol nesmí překročit 15 znaků.',
-            'type.in'           => 'Typ musí být stock nebo crypto.',
+            'quantity.max'      => 'Quantity must not exceed 9,999,999,999.',
+            'quantity.min'      => 'Quantity must be a positive number.',
+            'quantity.numeric'  => 'Quantity must be a number.',
+            'amount.max'        => 'Amount must not exceed 9,999,999,999.',
+            'amount.min'        => 'Amount must be at least 0.01.',
+            'amount.numeric'    => 'Amount must be a number.',
+            'average_price.max' => 'Average price must not exceed 9,999,999,999.',
+            'average_price.numeric' => 'Average price must be a number.',
+            'currency.in'       => 'Invalid currency.',
+            'symbol.required'   => 'Symbol is required.',
+            'symbol.max'        => 'Symbol must not exceed 15 characters.',
+            'type.in'           => 'Type must be stock or crypto.',
         ];
     }
 }

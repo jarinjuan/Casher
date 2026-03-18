@@ -79,8 +79,8 @@ class InvestmentController extends Controller
         $profit = $totalValue - $totalCost;
         $profitPct = $totalCost > 0 ? ($profit / $totalCost) * 100 : 0;
 
-        $dailySeries = $analytics->buildSeries($investments, now()->subDays(30), 'day');
-        $monthlySeries = $analytics->buildSeries($investments, now()->subMonths(12), 'month');
+        $dailySeries = $analytics->buildSeries($investments, now()->subDays(30), 'day', $team);
+        $monthlySeries = $analytics->buildSeries($investments, now()->subMonths(12), 'month', $team);
 
         $dailyChangePct = $analytics->lastStepChangePercent($dailySeries);
         $monthlyChangePct = $analytics->changePercentFromSeries($monthlySeries);
@@ -171,12 +171,12 @@ class InvestmentController extends Controller
                 'currency' => $data['currency'],
             ]);
 
-            return back()->with('success', 'Investice byla aktualizována (sloučena s existující).');
+            return back()->with('success', 'Investment updated (merged with existing).');
         }
 
         Investment::create($data);
 
-        return back()->with('success', 'Investice byla přidána.');
+        return back()->with('success', 'Investment added.');
     }
 
     public function edit(Request $request, Investment $investment): View

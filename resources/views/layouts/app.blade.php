@@ -95,12 +95,6 @@
 
                         <div class="flex gap-3 items-center">
                             <x-darkmode-toggle />
-                            <form method="POST" action="{{ route('logout') }}" class="inline">
-                                @csrf
-                                <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition">
-                                    {{ __('Logout') }}
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </header>
