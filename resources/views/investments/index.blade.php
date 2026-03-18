@@ -79,8 +79,8 @@
                     </div>
                 </div>
 
-                {{-- Mobile card view --}}
-                <div class="md:hidden space-y-3">
+                {{-- Unified Grid view --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @forelse($investments as $investment)
                         @php
                             $lastPrice = $investment->latestPrice?->price;
@@ -91,33 +91,33 @@
                             $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
                             $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
                         @endphp
-                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5" data-inv-id="{{ $investment->id }}">
-                            <div class="flex items-center justify-between mb-3">
-                                <div>
-                                    <div class="font-bold t-primary text-lg">{{ $investment->symbol }}</div>
-                                    <div class="text-xs t-muted">{{ $investment->name ?? ucfirst($investment->type) }}</div>
+                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group relative" data-inv-id="{{ $investment->id }}">
+                            <div class="flex items-center gap-3 mb-1">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-lg shrink-0 bg-[#8b5cf6]/10 text-[#8b5cf6]">
+                                    @if($investment->type === 'crypto')
+                                        <i class="fa-brands fa-bitcoin"></i>
+                                    @else
+                                        <i class="fa-solid fa-building"></i>
+                                    @endif
                                 </div>
-                                <div class="flex gap-3">
-                                    <a href="{{ route('investments.edit', $investment) }}" class="text-xs font-bold text-[#8b5cf6] hover:text-[#a78bfa] transition">Edit</a>
-                                    <form method="POST" action="{{ route('investments.destroy', $investment) }}" onsubmit="return confirm('Delete investment?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-xs font-bold text-red-500 hover:text-red-400 transition">Delete</button>
-                                    </form>
+                                <div class="flex-1 min-w-0">
+                                    <div class="truncate font-bold t-primary text-lg">{{ $investment->symbol }}</div>
+                                    <div class="truncate text-xs t-muted">{{ $investment->name ?? ucfirst($investment->type) }}</div>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 text-sm">
+
+                            <div class="grid grid-cols-2 gap-4 text-sm mt-2">
                                 <div>
-                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Qty</span>
-                                    <div class="t-secondary">{{ number_format($investment->quantity, 8, '.', ' ') }}</div>
+                                    <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Qty</div>
+                                    <div class="font-semibold t-secondary">{{ number_format($investment->quantity, 6, '.', ' ') }}</div>
                                 </div>
                                 <div>
-                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Avg Price</span>
-                                    <div class="t-secondary">{{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}</div>
+                                    <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Avg Price</div>
+                                    <div class="font-semibold t-secondary">{{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}</div>
                                 </div>
                                 <div>
-                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Last Price</span>
-                                    <div class="t-secondary" id="inv-mob-last-price-{{ $investment->id }}">
+                                    <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Last Price</div>
+                                    <div class="font-semibold t-secondary" id="inv-last-price-{{ $investment->id }}">
                                         @if($lastPrice)
                                             {{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}
                                         @else
@@ -126,8 +126,8 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Value</span>
-                                    <div id="inv-mob-value-{{ $investment->id }}">
+                                    <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Value</div>
+                                    <div id="inv-value-{{ $investment->id }}">
                                         @if($valueInDefault)
                                             <span class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</span>
                                         @else
@@ -136,101 +136,35 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="inv-mob-pl-{{ $investment->id }}" class="mt-2 pt-2 border-t border-gray-200 dark:border-white/5 {{ $plInDefault === null ? 'hidden' : '' }}">
-                                <span class="text-[10px] uppercase tracking-widest t-muted font-bold">P/L</span>
-                                <span class="ml-2 font-semibold text-sm {{ ($plInDefault ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
-                                    {{ $plInDefault !== null ? number_format($plInDefault, 2, '.', ' ').' '.$currencySymbol.' ('.number_format($plPct, 2).'%)' : '' }}
-                                </span>
+
+                            <div id="inv-pl-{{ $investment->id }}" class="mt-4 pt-3 border-t border-gray-200 dark:border-white/5 {{ $plInDefault === null ? 'hidden' : '' }}">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Profit / Loss</span>
+                                    <span class="font-bold {{ ($plInDefault ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
+                                        {{ $plInDefault !== null ? ($plInDefault >= 0 ? '+' : '').number_format($plInDefault, 2, '.', ' ').' '.$currencySymbol : '' }} 
+                                        @if($pl !== null)
+                                            <span class="text-xs ml-1">({{ number_format($plPct, 2) }}%)</span>
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="{{ route('investments.edit', $investment) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">Edit</a>
+                                <form method="POST" action="{{ route('investments.destroy', $investment) }}" onsubmit="return confirm('Delete?')" class="flex-1 flex">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">Delete</button>
+                                </form>
                             </div>
                         </div>
                     @empty
-                        <div class="py-8 text-center t-muted">No investments yet.</div>
+                        <div class="col-span-1 md:col-span-2 py-8 text-center t-muted border border-dashed border-gray-300 dark:border-white/10 rounded-xl">No investments yet.</div>
                     @endforelse
-                </div>
-
-                {{-- Desktop table view --}}
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead class="text-[10px] uppercase tracking-widest t-muted border-b border-gray-200 dark:border-white/10">
-                            <tr>
-                                <th class="text-left py-3">Asset</th>
-                                <th class="text-right py-3">Qty</th>
-                                <th class="text-right py-3">Avg Price</th>
-                                <th class="text-right py-3">Last Price</th>
-                                <th class="text-right py-3">Value</th>
-                                <th class="text-right py-3">P/L</th>
-                                <th class="text-right py-3"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                            @forelse($investments as $investment)
-                                @php
-                                    $lastPrice = $investment->latestPrice?->price;
-                                    $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
-                                    $value = $lastPrice ? $lastPrice * $investment->quantity : null;
-                                    $pl = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
-                                    $plPct = $investment->average_price > 0 && $lastPrice ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100 : null;
-                                    $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
-                                    $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
-                                @endphp
-                                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition" data-inv-id="{{ $investment->id }}">
-                                    <td class="py-3">
-                                        <div class="font-bold t-primary">{{ $investment->symbol }}</div>
-                                        <div class="text-xs t-muted">{{ $investment->name ?? ucfirst($investment->type) }}</div>
-                                    </td>
-                                    <td class="py-3 text-right t-secondary">{{ number_format($investment->quantity, 8, '.', ' ') }}</td>
-                                    <td class="py-3 text-right t-secondary">
-                                        {{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}
-                                    </td>
-                                    <td class="py-3 text-right t-secondary" id="inv-last-price-{{ $investment->id }}">
-                                        @if($lastPrice)
-                                            <div>{{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
-                                        @else
-                                            <span class="t-muted">--</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3 text-right" id="inv-value-{{ $investment->id }}">
-                                        @if($valueInDefault)
-                                            <div class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</div>
-                                            @if($lastPriceCurrency !== $defaultCurrency)
-                                                <div class="text-xs t-muted">{{ number_format($value, 2, '.', ' ') }} {{ $lastPriceCurrency }}</div>
-                                            @endif
-                                        @else
-                                            <span class="t-muted">--</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3 text-right" id="inv-pl-{{ $investment->id }}">
-                                        @if($plInDefault !== null)
-                                            <span class="font-semibold {{ $plInDefault >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
-                                                {{ number_format($plInDefault, 2, '.', ' ') }} {{ $currencySymbol }}
-                                                ({{ number_format($plPct, 2) }}%)
-                                            </span>
-                                        @else
-                                            <span class="t-muted">--</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3 text-right">
-                                        <div class="flex justify-end gap-3">
-                                            <a href="{{ route('investments.edit', $investment) }}" class="text-xs font-bold text-[#8b5cf6] hover:text-[#a78bfa] transition">Edit</a>
-                                            <form method="POST" action="{{ route('investments.destroy', $investment) }}" onsubmit="return confirm('Delete investment?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="text-xs font-bold text-red-500 hover:text-red-400 transition">Delete</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="py-8 text-center t-muted">No investments yet.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
-            <div class="card p-6 border-t-4 border-t-[#8b5cf6]">
+            <div class="card p-6">
                 <h3 class="text-lg font-bold t-primary mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-plus-circle text-[#8b5cf6]"></i> Add Investment
                 </h3>
@@ -251,20 +185,13 @@
                         <div>
                             <label class="label-dark mb-1.5 block" for="symbolInput">Symbol</label>
                             <div class="relative">
-                                <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. AAPL, BTC..." autocomplete="off" required maxlength="15">
+                                <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="ex. AAPL, BTC..." autocomplete="off" required maxlength="15">
                                 <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="label-dark mb-1.5 block" for="nameInput">Name <span class="text-gray-400 dark:text-gray-500 font-normal lowercase">(optional)</span></label>
-                            <input name="name" id="nameInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. Apple Inc.">
-                        </div>
-
-                        <div id="externalIdRow" class="hidden">
-                            <label class="label-dark mb-1.5 block" for="externalIdInput">External ID <span class="text-gray-400 dark:text-gray-500 font-normal lowercase">(crypto)</span></label>
-                            <input name="external_id" id="externalIdInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. bitcoin">
-                        </div>
+                        <input type="hidden" name="name" id="nameInput">
+                        <input type="hidden" name="external_id" id="externalIdInput">
                     </div>
 
                     {{-- Financial details panel --}}
@@ -288,23 +215,17 @@
                             <!-- Toggleable: Quantity OR Amount -->
                             <div x-show="buyMode === 'quantity'">
                                 <label class="label-dark mb-1.5 block" for="quantityInput">Quantity</label>
-                                <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 1.5" :required="buyMode === 'quantity'">
+                                <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'quantity'">
                             </div>
                             <div x-show="buyMode === 'amount'" style="display: none;">
-                                <label class="label-dark mb-1.5 block" for="amountInput">Amount</label>
-                                <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="e.g. 500.00" :required="buyMode === 'amount'">
-                            </div>
-
-                            <div>
-                                <label class="label-dark mb-1.5 block" for="currencyInput">Currency</label>
-                                <input name="currency" id="currencyInput" value="USD" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" required>
+                                <label class="label-dark mb-1.5 flex justify-between items-center" for="amountInput">
+                                    <span>Amount</span>
+                                    <span class="text-xs px-2 py-0.5 rounded bg-[#8b5cf6]/20 text-[#8b5cf6] font-bold">{{ $defaultCurrency }}</span>
+                                </label>
+                                <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'amount'">
                             </div>
                         </div>
                         
-                        <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-lg flex gap-3 text-sm">
-                            <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
-                            <p class="t-primary">The current average market price will be fetched and assigned automatically upon adding the investment.</p>
-                        </div>
                     </div>
 
                     <button type="submit" class="btn-primary w-full py-3 text-sm flex justify-center items-center gap-2 hover:scale-[1.02] transition-transform">
@@ -320,7 +241,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const typeSelect = document.getElementById('investmentType');
-        const externalIdRow = document.getElementById('externalIdRow');
         const symbolInput = document.getElementById('symbolInput');
         const nameInput = document.getElementById('nameInput');
         const externalIdInput = document.getElementById('externalIdInput');
@@ -332,10 +252,7 @@
 
         function toggleFields() {
             const isCrypto = typeSelect.value === 'crypto';
-            if (isCrypto) {
-                externalIdRow.classList.remove('hidden');
-            } else {
-                externalIdRow.classList.add('hidden');
+            if (!isCrypto) {
                 externalIdInput.value = '';
             }
         }
@@ -585,73 +502,41 @@
                     data.investments.forEach(inv => {
                         const id = inv.id;
 
-                        // Desktop – last price
+                        // Unified Card – last price
                         const lpEl = document.getElementById('inv-last-price-' + id);
                         if (lpEl) {
-                            lpEl.innerHTML = inv.last_price !== null
-                                ? '<div>' + fmtNum(inv.last_price) + '\u00a0' + inv.last_price_currency + '</div>'
-                                : '<span class="t-muted">--</span>';
+                            lpEl.textContent = inv.last_price !== null
+                                ? fmtNum(inv.last_price) + ' ' + inv.last_price_currency
+                                : '--';
                         }
 
-                        // Desktop – value
+                        // Unified Card – value
                         const valEl = document.getElementById('inv-value-' + id);
                         if (valEl) {
                             if (inv.value_in_default !== null) {
-                                let html = '<div class="font-semibold t-primary">'
-                                    + fmtNum(inv.value_in_default) + '\u00a0' + sym + '</div>';
-                                if (inv.last_price_currency !== defCurrency && inv.value_raw !== null) {
-                                    html += '<div class="text-xs t-muted">'
-                                        + fmtNum(inv.value_raw) + '\u00a0' + inv.last_price_currency + '</div>';
-                                }
-                                valEl.innerHTML = html;
+                                valEl.innerHTML = '<span class="font-semibold t-primary">'
+                                    + fmtNum(inv.value_in_default) + ' ' + sym + '</span>';
                             } else {
                                 valEl.innerHTML = '<span class="t-muted">--</span>';
                             }
                         }
 
-                        // Desktop – P/L
+                        // Unified Card – P/L
                         const plEl = document.getElementById('inv-pl-' + id);
                         if (plEl) {
-                            plEl.innerHTML = inv.pl_in_default !== null
-                                ? '<span class="' + plColorClass(inv.pl_in_default) + '">'
-                                    + fmtNum(inv.pl_in_default) + '\u00a0' + sym
-                                    + ' (' + fmtNum(inv.pl_pct) + '%)</span>'
-                                : '<span class="t-muted">--</span>';
-                        }
-
-                        // Mobile – last price
-                        const mobLpEl = document.getElementById('inv-mob-last-price-' + id);
-                        if (mobLpEl) {
-                            mobLpEl.textContent = inv.last_price !== null
-                                ? fmtNum(inv.last_price) + '\u00a0' + inv.last_price_currency
-                                : '--';
-                        }
-
-                        // Mobile – value
-                        const mobValEl = document.getElementById('inv-mob-value-' + id);
-                        if (mobValEl) {
-                            mobValEl.innerHTML = inv.value_in_default !== null
-                                ? '<span class="font-semibold t-primary">'
-                                    + fmtNum(inv.value_in_default) + '\u00a0' + sym + '</span>'
-                                : '<span class="t-muted">--</span>';
-                        }
-
-                        // Mobile – P/L
-                        const mobPlEl = document.getElementById('inv-mob-pl-' + id);
-                        if (mobPlEl) {
                             if (inv.pl_in_default !== null) {
-                                mobPlEl.classList.remove('hidden');
-                                const span = mobPlEl.querySelector('span.ml-2');
-                                if (span) {
-                                    span.className = 'ml-2 font-semibold text-sm '
-                                        + (inv.pl_in_default >= 0
-                                            ? 'text-emerald-600 dark:text-emerald-400'
-                                            : 'text-red-500 dark:text-red-400');
-                                    span.textContent = fmtNum(inv.pl_in_default) + '\u00a0' + sym
-                                        + ' (' + fmtNum(inv.pl_pct) + '%)';
-                                }
+                                plEl.classList.remove('hidden');
+                                plEl.innerHTML = `
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Profit / Loss</span>
+                                        <span class="font-bold ${plColorClass(inv.pl_in_default)}">
+                                            ${inv.pl_in_default >= 0 ? '+' : ''}${fmtNum(inv.pl_in_default)} ${sym}
+                                            <span class="text-xs ml-1">(${fmtNum(inv.pl_pct)}%)</span>
+                                        </span>
+                                    </div>
+                                `;
                             } else {
-                                mobPlEl.classList.add('hidden');
+                                plEl.classList.add('hidden');
                             }
                         }
                     });

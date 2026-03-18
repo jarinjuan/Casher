@@ -23,7 +23,7 @@ class InvestmentRequest extends FormRequest
             'quantity'      => ['required_if:buy_mode,quantity', 'nullable', 'numeric', 'min:0.00000001', 'max:9999999999'],
             'amount'        => ['required_if:buy_mode,amount', 'nullable', 'numeric', 'min:0.01', 'max:9999999999'],
             'average_price' => ['nullable', 'numeric', 'min:0', 'max:9999999999'],
-            'currency'      => ['required', 'string', 'size:3', CurrencyList::validationRule()],
+            'currency'      => ['nullable', 'string', 'size:3', CurrencyList::validationRule()],
         ];
     }
 

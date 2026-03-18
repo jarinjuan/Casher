@@ -21,7 +21,7 @@
             </div>
             <div>
                 <label class="label-dark">Monthly budget</label>
-                <input type="number" name="monthly_budget" placeholder="e.g. 500" step="0.01" min="0" max="999999999999.99" value="{{ old('monthly_budget', $category->monthly_budget) }}" class="input-dark">
+                <input type="number" name="monthly_budget" placeholder="ex. 500" step="0.01" min="0" max="999999999999.99" value="{{ old('monthly_budget', $category->monthly_budget) }}" class="input-dark">
             </div>
             <div>
                 <label class="label-dark">Budget currency</label>

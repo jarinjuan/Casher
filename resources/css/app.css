@@ -98,6 +98,11 @@
         box-shadow: 0 0 0 1px #fbbf24;
     }
 
+    .select-dark option {
+        background: var(--bg-card);
+        color: var(--text-primary);
+    }
+
     /* Buttons */
     .btn-primary {
         @apply bg-[#fbbf24] hover:bg-[#f59e0b] text-black font-bold py-2.5 px-6 rounded-lg transition shadow-lg shadow-[#fbbf24]/10;

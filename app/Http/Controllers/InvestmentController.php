@@ -107,7 +107,9 @@ class InvestmentController extends Controller
         $data['user_id'] = $request->user()->id;
         $data['team_id'] = $request->user()->currentTeam->id ?? null;
         $data['symbol'] = strtoupper($data['symbol']);
-        $data['currency'] = strtoupper($data['currency']);
+        if (isset($data['currency'])) {
+            $data['currency'] = strtoupper($data['currency']);
+        }
 
         $marketData = app(MarketDataService::class);
 
@@ -119,18 +121,30 @@ class InvestmentController extends Controller
             }
         }
 
-        // Vždy doměřit aktuální cenu z API pro tuto akci/krypto k výpočtu
         $tmp = new Investment($data);
         $price = $marketData->getPrice($tmp);
         if ($price) {
             $data['average_price'] = $price['price'];
+            $data['currency'] = strtoupper($price['currency']);
         } else {
-            return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu pro vložený symbol. Zkontrolujte prosím symbol a zkuste to znovu.']);
+            return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu pro vložený symbol. Zkontrolujte prosím symbol a zkuste to znovu.'])->withInput();
         }
 
         // Pokud uživatel nakupuje za "Total Amount", spočítáme výsledné množství
         if ($data['buy_mode'] === 'amount') {
-            $data['quantity'] = (float) $data['amount'] / (float) $data['average_price'];
+            $amountInDefault = (float) $data['amount'];
+            
+            // Konverze z výchozí měny do měny investice
+            $converter = app(\App\Services\CurrencyConverter::class);
+            $team = $request->user()->currentTeam;
+            try {
+                // Převede se to na měnu, kterou nám vrátilo API (USD atd.), ze které je vypočítaná 'average_price'
+                $amountInTargetCurrency = $converter->convert($amountInDefault, $team->default_currency, $data['currency']);
+            } catch (\Exception $e) {
+                return back()->withErrors(['amount' => 'Chyba při konverzi měny ke spočítání akcií. Zkontrolujte si aktuální kurzy.'])->withInput();
+            }
+
+            $data['quantity'] = $amountInTargetCurrency / (float) $data['average_price'];
         }
 
         unset($data['buy_mode']);
