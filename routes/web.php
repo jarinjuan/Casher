@@ -42,7 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'joinForm'])->name('workspace.join');
     Route::post('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'join'])->name('workspace.join.submit');
     Route::post('workspace/switch/{teamId}', [\App\Http\Controllers\WorkspaceController::class, 'switchWorkspace'])->name('workspace.switch');
-
+    Route::delete('workspace/{team}/members/{user}', [\App\Http\Controllers\WorkspaceController::class, 'removeMember'])->name('workspace.remove-member');
+    Route::delete('workspace/{team}/leave', [\App\Http\Controllers\WorkspaceController::class, 'leaveWorkspace'])->name('workspace.leave');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

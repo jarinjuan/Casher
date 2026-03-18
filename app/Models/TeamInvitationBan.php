@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class TeamInvitationBan extends Model
+{
+    protected $fillable = [
+        'team_id',
+        'user_id',
+        'invite_code',
+    ];
+}
