@@ -30,12 +30,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Amount</th>
-                            <th>Type</th>
-                            <th>Category</th>
-                            <th>Currency</th>
-                            <th>Date</th>
+                            <th>Title</th><th>Amount</th><th>Type</th><th>Category</th><th>Currency</th><th>Date</th>
                         </tr>
                     </thead>
                     <tbody>

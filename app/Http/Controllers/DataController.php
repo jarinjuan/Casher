@@ -90,7 +90,7 @@ class DataController extends Controller
                     ];
                     $validator = \Illuminate\Support\Facades\Validator::make($rowData, [
                         'title'    => 'required|string|max:255',
-                        'amount'   => 'required|numeric|min:0.01|max:99999999.99',
+                        'amount'   => 'required|numeric|min:0.01|max:999999999999.99',
                         'type'     => 'required|in:income,expense',
                         'note'     => 'nullable|string|max:10000',
                         'currency' => ['required', 'string', 'size:3', $currencyRule],

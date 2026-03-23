@@ -62,11 +62,17 @@ class Transaction extends Model
                     $periodStart = now()->startOfYear();
                 }
 
-                $expenses = Transaction::where('user_id', $user->id)
+                $expenseQuery = Transaction::where('user_id', $user->id)
+                    ->where('team_id', $transaction->team_id)
                     ->where('type', 'expense')
-                    ->where('category_id', $budget->category_id)
-                    ->where('created_at', '>=', $periodStart)
-                    ->get();
+                    ->where('created_at', '>=', $periodStart);
+
+                // Global budget (no category) should sum ALL expenses, not just uncategorized
+                if ($budget->category_id !== null) {
+                    $expenseQuery->where('category_id', $budget->category_id);
+                }
+
+                $expenses = $expenseQuery->get();
                     
                 $converter = app(\App\Services\CurrencyConverter::class);
                 $spent = 0.0;

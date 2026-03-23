@@ -86,10 +86,16 @@
                             $lastPrice = $investment->latestPrice?->price;
                             $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
                             $value = $lastPrice ? $lastPrice * $investment->quantity : null;
-                            $pl = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
-                            $plPct = $investment->average_price > 0 && $lastPrice ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100 : null;
                             $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
-                            $plInDefault = $pl ? $team->convertToDefaultCurrency($pl, $lastPriceCurrency) : null;
+
+                            // Convert cost to default currency from investment's stored currency
+                            $costInOriginal = $investment->average_price * $investment->quantity;
+                            $costInDefault = $team->convertToDefaultCurrency($costInOriginal, $investment->currency);
+
+                            // P/L computed in default currency to avoid mixing currencies
+                            $plInDefault = $valueInDefault !== null ? $valueInDefault - $costInDefault : null;
+                            $plPct = $costInDefault > 0 && $valueInDefault !== null
+                                ? (($valueInDefault - $costInDefault) / $costInDefault) * 100 : null;
                         @endphp
                         <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group relative" data-inv-id="{{ $investment->id }}">
                             <div class="flex items-center gap-3 mb-1">
@@ -142,7 +148,7 @@
                                     <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Profit / Loss</span>
                                     <span class="font-bold {{ ($plInDefault ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
                                         {{ $plInDefault !== null ? ($plInDefault >= 0 ? '+' : '').number_format($plInDefault, 2, '.', ' ').' '.$currencySymbol : '' }} 
-                                        @if($pl !== null)
+                                        @if($plPct !== null)
                                             <span class="text-xs ml-1">({{ number_format($plPct, 2) }}%)</span>
                                         @endif
                                     </span>

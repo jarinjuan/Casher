@@ -43,7 +43,7 @@ class TransactionSheet implements FromArray, WithHeadings
     {
         $this->data = $data;
     }
-
+    
     public function array(): array
     {
         return $this->data;

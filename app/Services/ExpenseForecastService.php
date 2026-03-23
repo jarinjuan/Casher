@@ -46,6 +46,7 @@ class ExpenseForecastService
                 $sum += $amount;
             }
             return $sum;
+            
         });
         return $monthlySums->avg() ?? 0.0;
     }

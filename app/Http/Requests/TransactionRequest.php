@@ -16,7 +16,7 @@ class TransactionRequest extends FormRequest
     {
         return [
             'title'       => ['required', 'string', 'max:255'],
-            'amount'      => ['required', 'numeric', 'min:0.01', 'max:99999999.99'],
+            'amount'      => ['required', 'numeric', 'min:0.01', 'max:999999999999.99'],
             'type'        => ['required', 'in:income,expense'],
             'note'        => ['nullable', 'string', 'max:10000'],
             'category_id' => [

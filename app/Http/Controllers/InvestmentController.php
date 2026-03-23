@@ -316,32 +316,32 @@ class InvestmentController extends Controller
             $lastPrice         = $investment->latestPrice?->price;
             $lastPriceCurrency = $investment->latestPrice?->currency ?? 'USD';
             $value             = $lastPrice ? $lastPrice * $investment->quantity : null;
-            $pl                = $lastPrice ? ($lastPrice - $investment->average_price) * $investment->quantity : null;
-            $plPct             = $investment->average_price > 0 && $lastPrice
-                                    ? (($lastPrice - $investment->average_price) / $investment->average_price) * 100
-                                    : null;
             $valueInDefault    = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
-            $plInDefault       = $pl    ? $team->convertToDefaultCurrency($pl,    $lastPriceCurrency) : null;
+
+            // Convert cost to default currency from investment's stored currency
+            $costInOriginal    = $investment->average_price * $investment->quantity;
+            $costInDefault     = $team->convertToDefaultCurrency($costInOriginal, $investment->currency);
+
+            // P/L must be computed in a single currency (default) to avoid mixing
+            $plInDefault       = $valueInDefault !== null ? $valueInDefault - $costInDefault : null;
+            $plPct             = $costInDefault > 0 && $valueInDefault !== null
+                                    ? (($valueInDefault - $costInDefault) / $costInDefault) * 100 : null;
 
             if ($valueInDefault) {
                 $totalValue += $valueInDefault;
             }
-            $costInDefault = $team->convertToDefaultCurrency(
-                $investment->average_price * $investment->quantity,
-                $investment->currency
-            );
             $totalCost += $costInDefault;
 
             $items[] = [
-                'id'                 => $investment->id,
-                'symbol'             => $investment->symbol,
-                'last_price'         => $lastPrice,
+                'id' => $investment->id,
+                'symbol' => $investment->symbol,
+                'last_price' => $lastPrice,
                 'last_price_currency'=> $lastPriceCurrency,
-                'value_raw'          => $value,
-                'value_in_default'   => $valueInDefault,
-                'pl_in_default'      => $plInDefault,
-                'pl_pct'             => $plPct,
-                'recorded_at'        => $investment->latestPrice?->recorded_at?->toISOString(),
+                'value_raw' => $value,
+                'value_in_default' => $valueInDefault,
+                'pl_in_default' => $plInDefault,
+                'pl_pct' => $plPct,
+                'recorded_at' => $investment->latestPrice?->recorded_at?->toISOString(),
             ];
         }
 
