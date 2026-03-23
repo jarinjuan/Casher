@@ -24,23 +24,23 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Portfolio Value</p>
-                <p class="mt-2 text-2xl font-extrabold t-primary" id="stat-portfolio-value">{{ number_format($totalValue, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="mt-2 text-2xl font-extrabold t-primary" id="stat-portfolio-value">@money($totalValue) {{ $currencySymbol }}</p>
                 <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Invested Capital</p>
-                <p class="mt-2 text-2xl font-extrabold t-primary">{{ number_format($totalCost, 2, '.', ' ') }} {{ $currencySymbol }}</p>
+                <p class="mt-2 text-2xl font-extrabold t-primary">@money($totalCost) {{ $currencySymbol }}</p>
                 <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Total P/L</p>
-                <p class="mt-2 text-2xl font-extrabold {{ $profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}" id="stat-profit">{{ number_format($profit, 2, '.', ' ') }} {{ $currencySymbol }}</p>
-                <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}" id="stat-profit-pct">{{ number_format($profitPct, 2) }}%</p>
+                <p class="mt-2 text-2xl font-extrabold {{ $profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}" id="stat-profit">@money($profit) {{ $currencySymbol }}</p>
+                <p class="text-xs mt-1 {{ $profitPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}" id="stat-profit-pct">@money($profitPct)%</p>
             </div>
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Daily / Monthly</p>
-                <p class="mt-2 text-sm font-semibold t-primary">Daily: <span class="{{ $dailyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($dailyChangePct, 2) }}%</span></p>
-                <p class="text-sm font-semibold t-primary">Monthly: <span class="{{ $monthlyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">{{ number_format($monthlyChangePct, 2) }}%</span></p>
+                <p class="mt-2 text-sm font-semibold t-primary">Daily: <span class="{{ $dailyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">@money($dailyChangePct)%</span></p>
+                <p class="text-sm font-semibold t-primary">Monthly: <span class="{{ $monthlyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">@money($monthlyChangePct)%</span></p>
             </div>
         </div>
 
@@ -115,17 +115,17 @@
                             <div class="grid grid-cols-2 gap-4 text-sm mt-2">
                                 <div>
                                     <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Qty</div>
-                                    <div class="font-semibold t-secondary">{{ number_format($investment->quantity, 6, '.', ' ') }}</div>
+                                    <div class="font-semibold t-secondary">@money($investment->quantity, 6)</div>
                                 </div>
                                 <div>
                                     <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Avg Price</div>
-                                    <div class="font-semibold t-secondary">{{ number_format($investment->average_price, 2, '.', ' ') }} {{ $investment->currency }}</div>
+                                    <div class="font-semibold t-secondary">@money($investment->average_price) {{ $investment->currency }}</div>
                                 </div>
                                 <div>
                                     <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Last Price</div>
                                     <div class="font-semibold t-secondary" id="inv-last-price-{{ $investment->id }}">
                                         @if($lastPrice)
-                                            {{ number_format($lastPrice, 2, '.', ' ') }} {{ $lastPriceCurrency }}
+                                            @money($lastPrice) {{ $lastPriceCurrency }}
                                         @else
                                             --
                                         @endif
@@ -135,7 +135,7 @@
                                     <div class="text-[10px] uppercase tracking-widest t-muted font-bold">Value</div>
                                     <div id="inv-value-{{ $investment->id }}">
                                         @if($valueInDefault)
-                                            <span class="font-semibold t-primary">{{ number_format($valueInDefault, 2, '.', ' ') }} {{ $currencySymbol }}</span>
+                                            <span class="font-semibold t-primary">@money($valueInDefault) {{ $currencySymbol }}</span>
                                         @else
                                             <span class="t-muted">--</span>
                                         @endif
@@ -147,9 +147,9 @@
                                 <div class="flex items-center justify-between">
                                     <span class="text-[10px] uppercase tracking-widest t-muted font-bold">Profit / Loss</span>
                                     <span class="font-bold {{ ($plInDefault ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
-                                        {{ $plInDefault !== null ? ($plInDefault >= 0 ? '+' : '').number_format($plInDefault, 2, '.', ' ').' '.$currencySymbol : '' }} 
+                                        {{ $plInDefault !== null ? ($plInDefault >= 0 ? '+' : '').\App\Helpers\Number::format($plInDefault).' '.$currencySymbol : '' }} 
                                         @if($plPct !== null)
-                                            <span class="text-xs ml-1">({{ number_format($plPct, 2) }}%)</span>
+                                            <span class="text-xs ml-1">(@money($plPct)%)</span>
                                         @endif
                                     </span>
                                 </div>
@@ -458,8 +458,8 @@
             const sign = n < 0 ? '-' : '';
             const fixed = Math.abs(n).toFixed(dec);
             const [intPart, fracPart] = fixed.split('.');
-            const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
-            return sign + intFmt + '.' + fracPart;
+            const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            return sign + intFmt + ',' + fracPart;
         }
 
         function plColorClass(val) {

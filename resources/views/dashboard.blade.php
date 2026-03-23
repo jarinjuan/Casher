@@ -15,32 +15,32 @@
                         <p class="text-xs uppercase tracking-widest t-muted font-bold">Overall balance (Cash + Investments)</p>
                         
                     </div>
-                    <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">{{ number_format($totalBalance, 0) }} {{ $currencySymbol }}</p>
+                    <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">@money($totalBalance, 0) {{ $currencySymbol }}</p>
                     <p class="text-xs t-muted mt-1">In {{ $defaultCurrency }}</p>
-                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">Cash: {{ number_format($cashBalance, 0) }} {{ $currencySymbol }}</p>
-                    <p id="overall-balance-investments" class="text-xs t-muted">Investments: {{ number_format($investmentPortfolioValue, 0) }} {{ $currencySymbol }}</p>
+                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">Cash: @money($cashBalance, 0) {{ $currencySymbol }}</p>
+                    <p id="overall-balance-investments" class="text-xs t-muted">Investments: @money($investmentPortfolioValue, 0) {{ $currencySymbol }}</p>
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly expenses</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">{{ number_format($monthlyExpenses, 0) }} {{ $currencySymbol }}</p>
+                    <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyExpenses, 0) {{ $currencySymbol }}</p>
                     @if($expenseTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $expenseTrend >= 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400' }}">
-                            {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? number_format(abs($expenseTrend), 1) : '0.0' }}% vs. last month
+                            {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? \App\Helpers\Number::format(abs($expenseTrend), 1) : '0.0' }}% vs. last month
                         </p>
                     @endif
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly income</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">{{ number_format($monthlyIncome, 0) }} {{ $currencySymbol }}</p>
+                    <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyIncome, 0) {{ $currencySymbol }}</p>
                     @if($incomeTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $incomeTrend >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
-                            {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? number_format(abs($incomeTrend), 1) : '0.0' }}% vs. last month
+                            {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? \App\Helpers\Number::format(abs($incomeTrend), 1) : '0.0' }}% vs. last month
                         </p>
                     @endif
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Expense forecast</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">{{ number_format($forecast, 0) }} {{ $currencySymbol }}</p>
+                    <p class="text-2xl font-extrabold t-primary mt-2">@money($forecast, 0) {{ $currencySymbol }}</p>
                     <p class="mt-2 text-xs t-muted">6 last months average</p>
                 </div>
             </div>
@@ -88,11 +88,11 @@
                                 </div>
                                 <div class="text-right shrink-0">
                                     <p class="font-extrabold text-sm {{ $t->type === 'income' ? 'text-emerald-500 dark:text-emerald-400' : 't-primary' }}">
-                                        {{ $t->type === 'income' ? '+' : '-' }}{{ number_format($amountInDefault, 2, ',', ' ') }} {{ $currencySymbol }}
+                                        {{ $t->type === 'income' ? '+' : '-' }}@money($amountInDefault) {{ $currencySymbol }}
                                     </p>
                                     @if($t->currency !== $defaultCurrency)
                                         <p class="text-[10px] t-muted">
-                                            Orig: {{ number_format($t->amount, 2, ',', ' ') }} {{ $t->currency }}
+                                            Orig: @money($t->amount) {{ $t->currency }}
                                         </p>
                                     @endif
                                 </div>
@@ -136,15 +136,15 @@
                             </div>
                             <div class="text-sm">
                                 <span class="font-semibold {{ $isExceeded ? 'text-red-500 dark:text-red-400' : 't-primary' }}">
-                                    {{ number_format($spent, 2, ',', ' ') }} {{ $symbol }}
+                                    @money($spent) {{ $symbol }}
                                 </span>
                                 <span class="t-muted">/</span>
                                 <span class="t-secondary">
-                                    {{ number_format($budget, 2, ',', ' ') }} {{ $symbol }}
+                                    @money($budget) {{ $symbol }}
                                 </span>
                             </div>
                             @if($isExceeded)
-                                <div class="mt-2 text-xs text-red-500 dark:text-red-400 font-semibold">Exceeded by {{ number_format($spent - $budget, 2, ',', ' ') }} {{ $symbol }}</div>
+                                <div class="mt-2 text-xs text-red-500 dark:text-red-400 font-semibold">Exceeded by @money($spent - $budget) {{ $symbol }}</div>
                             @endif
                         </div>
                     @endforeach

@@ -75,7 +75,7 @@
                     <p class="font-bold text-[#fbbf24] mb-1">Budgets:</p>
                     <ul class="space-y-0.5 t-secondary">
                         @foreach($budgets as $b)
-                            <li>{{ $b->category?->name ?? 'All' }} -- {{ number_format($b->amount,2,',','.') }} {{ $b->currency }}</li>
+                            <li>{{ $b->category?->name ?? 'All' }} -- @money($b->amount) {{ $b->currency }}</li>
                         @endforeach
                     </ul>
                 </div>

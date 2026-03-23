@@ -75,11 +75,11 @@
                 </div>
                 <div class="mt-1">
                     <span class="font-extrabold text-xl t-primary group-hover:text-[#fbbf24] transition">
-                        {{ number_format($amountInDefault, 2, ',', ' ') }} {{ $currencySymbol }}
+                        @money($amountInDefault) {{ $currencySymbol }}
                     </span>
                     @if($showOriginal)
                         <div class="text-xs t-muted mt-0.5">
-                            Originally: {{ number_format($t->amount, 2, ',', ' ') }} {{ $t->currency }}
+                            Originally: @money($t->amount) {{ $t->currency }}
                         </div>
                     @endif
                     <div class="text-xs mt-1 font-bold uppercase tracking-widest {{ $t->type === 'income' ? 'text-emerald-500' : 'text-red-500' }}">{{ $t->type }}</div>

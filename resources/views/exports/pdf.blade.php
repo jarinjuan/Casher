@@ -37,7 +37,7 @@
                         @foreach($data['transactions'] as $t)
                             <tr>
                                 <td>{{ $t['title'] }}</td>
-                                <td>{{ number_format($t['amount'], 2) }}</td>
+                                <td>@money($t['amount'])</td>
                                 <td>{{ ucfirst($t['type']) }}</td>
                                 <td>{{ $t['category_name'] ?? '—' }}</td>
                                 <td>{{ $t['currency'] }}</td>
@@ -68,7 +68,7 @@
                         @foreach($data['categories'] as $c)
                             <tr>
                                 <td>{{ $c['name'] }}</td>
-                                <td>{{ number_format($c['monthly_budget'], 2) }}</td>
+                                <td>@money($c['monthly_budget'])</td>
                                 <td>{{ $c['budget_currency'] }}</td>
                             </tr>
                         @endforeach
@@ -101,8 +101,8 @@
                                 <td>{{ ucfirst($i['type']) }}</td>
                                 <td>{{ $i['symbol'] }}</td>
                                 <td>{{ $i['name'] ?? '—' }}</td>
-                                <td>{{ number_format($i['quantity'], 8) }}</td>
-                                <td>{{ number_format($i['average_price'], 2) }}</td>
+                                <td>@money($i['quantity'], 8)</td>
+                                <td>@money($i['average_price'])</td>
                                 <td>{{ $i['currency'] }}</td>
                             </tr>
                         @endforeach

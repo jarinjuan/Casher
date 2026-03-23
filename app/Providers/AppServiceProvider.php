@@ -18,5 +18,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Blade::directive('money', function ($expression) {
+            return "<?php echo \App\Helpers\Number::format($expression); ?>";
+        });
     }
 }

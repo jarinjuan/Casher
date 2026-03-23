@@ -53,7 +53,7 @@
                 <div class="flex items-end justify-between mt-1">
                     <div>
                         @if($cat->monthly_budget)
-                            <span class="font-extrabold text-lg t-primary group-hover:text-[#fbbf24] transition">{{ number_format($cat->monthly_budget, 2, ',', ' ') }} {{ $cat->budget_currency ?? 'CZK' }}</span>
+                            <span class="font-extrabold text-lg t-primary group-hover:text-[#fbbf24] transition">@money($cat->monthly_budget) {{ $cat->budget_currency ?? 'CZK' }}</span>
                             <div class="text-xs mt-0.5 font-bold uppercase tracking-widest t-muted">Monthly budget</div>
                         @endif
                     </div>

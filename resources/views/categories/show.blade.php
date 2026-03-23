@@ -33,7 +33,7 @@
                             <div class="text-xs t-muted">{{ $t->note }}</div>
                         </div>
                         <div class="sm:text-right">
-                            <div class="font-semibold t-primary">{{ number_format($t->amount,2,',',' ') }} {{ $t->currency }}</div>
+                            <div class="font-semibold t-primary">@money($t->amount) {{ $t->currency }}</div>
                             <div class="text-xs t-muted">{{ $t->created_at->format('Y-m-d') }}</div>
                         </div>
                     </li>
