@@ -15,14 +15,14 @@
                         <p class="text-xs uppercase tracking-widest t-muted font-bold">Overall balance (Cash + Investments)</p>
                         
                     </div>
-                    <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">@money($totalBalance, 0) {{ $currencySymbol }}</p>
+                    <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">@money($totalBalance) {{ $currencySymbol }}</p>
                     <p class="text-xs t-muted mt-1">In {{ $defaultCurrency }}</p>
-                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">Cash: @money($cashBalance, 0) {{ $currencySymbol }}</p>
-                    <p id="overall-balance-investments" class="text-xs t-muted">Investments: @money($investmentPortfolioValue, 0) {{ $currencySymbol }}</p>
+                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">Cash: @money($cashBalance) {{ $currencySymbol }}</p>
+                    <p id="overall-balance-investments" class="text-xs t-muted">Investments: @money($investmentPortfolioValue) {{ $currencySymbol }}</p>
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly expenses</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyExpenses, 0) {{ $currencySymbol }}</p>
+                    <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyExpenses) {{ $currencySymbol }}</p>
                     @if($expenseTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $expenseTrend >= 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400' }}">
                             {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? \App\Helpers\Number::format(abs($expenseTrend), 1) : '0.0' }}% vs. last month
@@ -31,7 +31,7 @@
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly income</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyIncome, 0) {{ $currencySymbol }}</p>
+                    <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyIncome) {{ $currencySymbol }}</p>
                     @if($incomeTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $incomeTrend >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
                             {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? \App\Helpers\Number::format(abs($incomeTrend), 1) : '0.0' }}% vs. last month
@@ -40,7 +40,7 @@
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">Expense forecast</p>
-                    <p class="text-2xl font-extrabold t-primary mt-2">@money($forecast, 0) {{ $currencySymbol }}</p>
+                    <p class="text-2xl font-extrabold t-primary mt-2">@money($forecast) {{ $currencySymbol }}</p>
                     <p class="mt-2 text-xs t-muted">6 last months average</p>
                 </div>
             </div>
@@ -162,7 +162,7 @@
 
         function fmtWhole(value) {
             const num = Number(value ?? 0);
-            return num.toLocaleString('en-US').replace(/,/g, ' ');
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ' ');
         }
 
         function updateDashboardBalance() {

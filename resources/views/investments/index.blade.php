@@ -459,7 +459,7 @@
             const fixed = Math.abs(n).toFixed(dec);
             const [intPart, fracPart] = fixed.split('.');
             const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            return sign + intFmt + ',' + fracPart;
+            return sign + intFmt + '.' + fracPart;
         }
 
         function plColorClass(val) {
