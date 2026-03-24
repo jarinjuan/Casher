@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
         
         $team = \App\Models\Team::create([
             'user_id' => $user->id,
-            'name' => $user->name . "'s team",
+            'name' => __('Team: :name', ['name' => $user->name]),
         ]);
 
         

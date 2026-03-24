@@ -51,7 +51,7 @@ class TransactionSheet implements FromArray, WithHeadings
 
     public function headings(): array
     {
-        return ['Title', 'Amount', 'Type', 'Note', 'Category', 'Currency', 'Created At'];
+        return [__('Title'), __('Amount'), __('Type'), __('Note'), __('Category'), __('Currency'), __('Created At')];
     }
 
     public function title(): string
@@ -76,7 +76,7 @@ class CategorySheet implements FromArray, WithHeadings
 
     public function headings(): array
     {
-        return ['Name', 'Monthly Budget', 'Budget Currency'];
+        return [__('Name'), __('Monthly Budget'), __('Budget Currency')];
     }
 
     public function title(): string
@@ -101,7 +101,7 @@ class InvestmentSheet implements FromArray, WithHeadings
 
     public function headings(): array
     {
-        return ['Type', 'Name', 'Symbol', 'External ID', 'Quantity', 'Average Price', 'Currency'];
+        return [__('Type'), __('Name'), __('Symbol'), __('External ID'), __('Quantity'), __('Average Price'), __('Currency')];
     }
 
     public function title(): string

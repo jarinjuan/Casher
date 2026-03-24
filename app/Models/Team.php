@@ -17,6 +17,26 @@ class Team extends Model
     ];
 
     /**
+     * Dynamically translate the default team name.
+     */
+    public function getNameAttribute($value)
+    {
+        if (str_starts_with($value, 'Team: ')) {
+            return __('Team: :name', ['name' => str_replace('Team: ', '', $value)]);
+        }
+        
+        if (str_starts_with($value, 'Tým: ')) {
+            return __('Team: :name', ['name' => str_replace('Tým: ', '', $value)]);
+        }
+        
+        if (str_ends_with($value, "'s team")) {
+            return __('Team: :name', ['name' => str_replace("'s team", "", $value)]);
+        }
+
+        return $value;
+    }
+
+    /**
      * Get currency symbol for the team's default currency
      */
     public function getCurrencySymbol(): string

@@ -16,6 +16,13 @@ Route::get('/lang/{locale}', function ($locale) {
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/locale/{lang}', function ($lang) {
+    if (in_array($lang, ['en', 'cs'])) {
+        session()->put('locale', $lang);
+    }
+    return back();
+})->name('locale.switch');
+
 Route::get('/analysis', function () {
     return view('analysis');
 })->middleware(['auth', 'verified'])->name('analysis');

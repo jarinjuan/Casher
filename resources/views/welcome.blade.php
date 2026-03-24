@@ -115,7 +115,7 @@
                                         <li class="text-gray-400">Categories</li>
                                         <li class="text-gray-400">{{ __('welcome.nav.data') }}</li>
                                         <li class="text-gray-400">{{ __('welcome.nav.investments') }}</li>
-                                        <li class="text-gray-400">Import / Export</li>
+                                        <li class="text-gray-400">Import / export</li>
                                     </ul>
                                 </aside>
 

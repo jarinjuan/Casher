@@ -17,7 +17,7 @@ class WorkspaceController extends Controller
         $team = auth()->user()->currentTeam;
         
         if (!$team) {
-            return redirect('/dashboard')->with('error', 'No workspace selected');
+            return redirect('/dashboard')->with('error', __('No workspace selected'));
         }
 
         return view('workspace.settings', [
@@ -35,14 +35,14 @@ class WorkspaceController extends Controller
         $team = auth()->user()->currentTeam;
 
         if ($team->user_id !== auth()->id()) {
-            return back()->with('error', 'Only workspace owner can generate invite codes');
+            return back()->with('error', __('Only workspace owner can generate invite codes'));
         }
 
         $team->update([
             'invite_code' => Str::random(12),
         ]);
 
-        return back()->with('success', 'Invite code generated: ' . $team->invite_code);
+        return back()->with('success', __('Invite code generated: :code', ['code' => $team->invite_code]));
     }
 
     /**
@@ -68,11 +68,11 @@ class WorkspaceController extends Controller
             ->where('user_id', auth()->id())
             ->where('invite_code', $request->invite_code)
             ->exists()) {
-            return back()->with('error', 'You cannot join this workspace using this invite code.');
+            return back()->with('error', __('You cannot join this workspace using this invite code.'));
         }
 
         if ($team->users()->where('user_id', auth()->id())->exists()) {
-            return back()->with('info', 'You are already member of this workspace');
+            return back()->with('info', __('You are already member of this workspace'));
         }
 
         $team->users()->attach(auth()->id(), ['role' => 'member']);
@@ -80,7 +80,7 @@ class WorkspaceController extends Controller
         auth()->user()->update(['current_team_id' => $team->id]);
         auth()->setUser(auth()->user()->fresh());
 
-        return redirect('/dashboard')->with('success', 'Successfully joined workspace: ' . $team->name);
+        return redirect('/dashboard')->with('success', __('Successfully joined workspace: :name', ['name' => $team->name]));
     }
 
     /**
@@ -91,13 +91,13 @@ class WorkspaceController extends Controller
         $team = Team::findOrFail($teamId);
 
         if (!$team->users()->where('user_id', auth()->id())->exists() && $team->user_id !== auth()->id()) {
-            return back()->with('error', 'You do not have access to this workspace');
+            return back()->with('error', __('You do not have access to this workspace'));
         }
 
         auth()->user()->update(['current_team_id' => $team->id]);
         auth()->setUser(auth()->user()->fresh());
 
-        return back()->with('success', 'Switched to workspace: ' . $team->name);
+        return back()->with('success', __('Switched to workspace: :name', ['name' => $team->name]));
     }
 
     /**
@@ -108,7 +108,7 @@ class WorkspaceController extends Controller
         $team = auth()->user()->currentTeam;
 
         if ($team->user_id !== auth()->id()) {
-            return back()->with('error', 'Only workspace owner can change currency settings');
+            return back()->with('error', __('Only workspace owner can change currency settings'));
         }
 
         $request->validate([
@@ -119,7 +119,7 @@ class WorkspaceController extends Controller
             'default_currency' => strtoupper($request->default_currency),
         ]);
 
-        return back()->with('success', 'Default currency updated to ' . $request->default_currency);
+        return back()->with('success', __('Default currency updated to :currency', ['currency' => $request->default_currency]));
     }
 
     /**
@@ -136,7 +136,7 @@ class WorkspaceController extends Controller
 
         $team->users()->updateExistingPivot($userId, ['role' => $data['role']]);
 
-        return back()->with('success', 'Member role updated successfully.');
+        return back()->with('success', __('Member role updated successfully.'));
     }
 
     public function removeMember($teamId, $userId)
@@ -144,15 +144,15 @@ class WorkspaceController extends Controller
         $team = Team::findOrFail($teamId);
 
         if ($team->user_id !== auth()->id()) {
-            return back()->with('error', 'Only workspace owner can remove members');
+            return back()->with('error', __('Only workspace owner can remove members'));
         }
 
         if ($userId == auth()->id()) {
-            return back()->with('error', 'You cannot remove yourself from the workspace');
+            return back()->with('error', __('You cannot remove yourself from the workspace'));
         }
 
         if (!$team->users()->where('user_id', $userId)->exists()) {
-            return back()->with('error', 'User is not a member of this workspace');
+            return back()->with('error', __('User is not a member of this workspace'));
         }
 
         if ($team->invite_code) {
@@ -173,7 +173,7 @@ class WorkspaceController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Member successfully removed.');
+        return back()->with('success', __('Member successfully removed.'));
     }
 
     /**
@@ -185,11 +185,11 @@ class WorkspaceController extends Controller
         $user = auth()->user();
 
         if ($team->user_id === $user->id) {
-            return back()->with('error', 'You cannot leave a workspace that you own.');
+            return back()->with('error', __('You cannot leave a workspace that you own.'));
         }
 
         if (!$team->users()->where('user_id', $user->id)->exists()) {
-            return back()->with('error', 'You are not a member of this workspace.');
+            return back()->with('error', __('You are not a member of this workspace.'));
         }
 
         $team->users()->detach($user->id);
@@ -200,9 +200,9 @@ class WorkspaceController extends Controller
                 'current_team_id' => $fallbackTeam ? $fallbackTeam->id : null,
             ]);
             
-            return redirect()->route('dashboard')->with('success', 'You have successfully left the workspace: ' . $team->name);
+            return redirect()->route('dashboard')->with('success', __('You have successfully left the workspace: :name', ['name' => $team->name]));
         }
 
-        return redirect()->route('dashboard')->with('success', 'You have successfully left the workspace.');
+        return redirect()->route('dashboard')->with('success', __('You have successfully left the workspace.'));
     }
 }

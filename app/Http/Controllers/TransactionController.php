@@ -54,7 +54,7 @@ class TransactionController extends Controller
         $data['team_id'] = $request->user()->currentTeam->id;
         Transaction::create($data);
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction saved.');
+        return redirect()->route('transactions.index')->with('success', __('Transaction saved.'));
     }
 
     public function edit(Transaction $transaction): View
@@ -70,7 +70,7 @@ class TransactionController extends Controller
         $this->authorize('update', $transaction);
         $transaction->update($request->validated());
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction updated.');
+        return redirect()->route('transactions.index')->with('success', __('Transaction updated.'));
     }
 
     public function destroy(Transaction $transaction): RedirectResponse
@@ -78,6 +78,6 @@ class TransactionController extends Controller
         $this->authorize('delete', $transaction);
         $transaction->delete();
 
-        return back()->with('success', 'Transaction deleted.');
+        return back()->with('success', __('Transaction deleted.'));
     }
 }

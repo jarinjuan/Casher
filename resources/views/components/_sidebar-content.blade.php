@@ -8,7 +8,7 @@
         </div>
         <div class="flex-1">
             <h1 class="text-sm font-bold t-primary">Casher</h1>
-            <p class="text-xs t-muted">Expense Tracker</p>
+            <p class="text-xs t-muted">{{ __('Expense Tracker') }}</p>
         </div>
     </div>
 
@@ -17,8 +17,8 @@
             <button @click="open = !open" class="w-full px-3 py-2.5 text-left bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition group">
                 <div class="flex items-center justify-between">
                     <div class="flex-1 min-w-0">
-                        <p class="text-[10px] font-medium t-muted uppercase tracking-widest mb-0.5">Current Workspace</p>
-                        <p class="text-sm font-semibold t-primary truncate">{{ $currentTeam->name ?? 'No Workspace' }}</p>
+                        <p class="text-[10px] font-medium t-muted uppercase tracking-widest mb-0.5">{{ __('Current Workspace') }}</p>
+                        <p class="text-sm font-semibold t-primary truncate">{{ $currentTeam->name ?? __('No Workspace') }}</p>
                     </div>
                     <i class="fa-solid fa-chevron-down text-xs t-muted transition-transform" :class="open ? 'rotate-180' : ''"></i>
                 </div>
@@ -53,7 +53,7 @@
         </div>
     @elseif($currentTeam)
         <div class="px-3 py-2.5 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/10">
-            <p class="text-[10px] font-medium t-muted uppercase tracking-widest mb-0.5">Workspace</p>
+            <p class="text-[10px] font-medium t-muted uppercase tracking-widest mb-0.5">{{ __('Workspace') }}</p>
             <p class="text-sm font-semibold t-primary">{{ $currentTeam->name }}</p>
         </div>
     @endif
@@ -64,7 +64,7 @@
     <a href="{{ route('transactions.create') }}" class="block">
         <button class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-black font-bold py-2.5 px-4 rounded-lg transition shadow-lg shadow-[#fbbf24]/10 flex items-center justify-center gap-2">
             <i class="fa-solid fa-plus text-xs"></i>
-            <span class="text-sm">Add Transaction</span>
+            <span class="text-sm">{{ __('Add transaction') }}</span>
         </button>
     </a>
 
@@ -79,7 +79,7 @@
                     }}"
             >
                 <i class="{{ $item['icon'] }} mr-3 text-sm w-5"></i>
-                {{ $item['label'] }}
+                {{ __($item['label']) }}
             </a>
         @endforeach
     </nav>
@@ -89,12 +89,12 @@
 <div class="px-4 space-y-2 border-t border-gray-200 dark:border-white/10 pt-4">
     <a href="{{ route('workspace.settings') }}" class="flex items-center px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">
         <i class="fa-solid fa-cog text-sm mr-3 w-5"></i>
-        <span>Settings</span>
+        <span>{{ __('Settings') }}</span>
     </a>
 
     <a href="{{ route('workspace.join') }}" class="flex items-center px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">
         <i class="fa-solid fa-link text-sm mr-3 w-5"></i>
-        <span>Join Workspace</span>
+        <span>{{ __('Join workspace') }}</span>
     </a>
 
     <div class="pt-2 border-t border-gray-200 dark:border-white/10">
@@ -114,7 +114,7 @@
             @csrf
             <button type="submit" class="w-full flex items-center px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 text-sm font-medium transition">
                 <i class="fa-solid fa-sign-out-alt text-sm mr-3 w-5"></i>
-                <span>Logout</span>
+                <span>{{ __('Log Out') }}</span>
             </button>
         </form>
     </div>

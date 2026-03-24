@@ -12,42 +12,42 @@
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="card p-6">
                     <div class="flex items-center justify-between gap-2">
-                        <p class="text-xs uppercase tracking-widest t-muted font-bold">Overall balance (Cash + Investments)</p>
+                        <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Overall balance') }}</p>
                         
                     </div>
                     <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">@money($totalBalance) {{ $currencySymbol }}</p>
-                    <p class="text-xs t-muted mt-1">In {{ $defaultCurrency }}</p>
-                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">Cash: @money($cashBalance) {{ $currencySymbol }}</p>
-                    <p id="overall-balance-investments" class="text-xs t-muted">Investments: @money($investmentPortfolioValue) {{ $currencySymbol }}</p>
+                    <p class="text-xs t-muted mt-1">{{ __('In') }} {{ $defaultCurrency }}</p>
+                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">{{ __('Cash') }}: @money($cashBalance) {{ $currencySymbol }}</p>
+                    <p id="overall-balance-investments" class="text-xs t-muted">{{ __('Investments') }}: @money($investmentPortfolioValue) {{ $currencySymbol }}</p>
                 </div>
                 <div class="card p-6">
-                    <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly expenses</p>
+                    <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Monthly expenses') }}</p>
                     <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyExpenses) {{ $currencySymbol }}</p>
                     @if($expenseTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $expenseTrend >= 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400' }}">
-                            {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? \App\Helpers\Number::format(abs($expenseTrend), 1) : '0.0' }}% vs. last month
+                            {{ $expenseTrend >= 0 ? '▲' : '▼' }} {{ abs($expenseTrend) > 0.1 ? \App\Helpers\Number::format(abs($expenseTrend), 1) : '0.0' }}% {{ __('vs. last month') }}
                         </p>
                     @endif
                 </div>
                 <div class="card p-6">
-                    <p class="text-xs uppercase tracking-widest t-muted font-bold">Monthly income</p>
+                    <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Monthly income') }}</p>
                     <p class="text-2xl font-extrabold t-primary mt-2">@money($monthlyIncome) {{ $currencySymbol }}</p>
                     @if($incomeTrend !== 0)
                         <p class="text-sm font-semibold mt-2 {{ $incomeTrend >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">
-                            {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? \App\Helpers\Number::format(abs($incomeTrend), 1) : '0.0' }}% vs. last month
+                            {{ $incomeTrend >= 0 ? '▲' : '▼' }} {{ abs($incomeTrend) > 0.1 ? \App\Helpers\Number::format(abs($incomeTrend), 1) : '0.0' }}% {{ __('vs. last month') }}
                         </p>
                     @endif
                 </div>
                 <div class="card p-6">
-                    <p class="text-xs uppercase tracking-widest t-muted font-bold">Expense forecast</p>
+                    <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Expense forecast') }}</p>
                     <p class="text-2xl font-extrabold t-primary mt-2">@money($forecast) {{ $currencySymbol }}</p>
-                    <p class="mt-2 text-xs t-muted">6 last months average</p>
+                    <p class="mt-2 text-xs t-muted">{{ __('6 last months average') }}</p>
                 </div>
             </div>
 
             
             <x-chart
-                title="Expenses vs Income ({{ $defaultCurrency }})"
+                title="{{ __('Expenses vs income') }} ({{ $defaultCurrency }})"
                 type="bar"
                 :labels="$months"
                 :datasets="$chartDatasets"
@@ -58,8 +58,8 @@
             @if($recentTransactions->count() > 0)
             <div class="mt-8">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold t-primary">Recent transactions</h3>
-                    <a href="{{ route('transactions.index') }}" class="text-sm font-semibold text-[#8b5cf6] hover:text-[#7c3aed] transition">View all <i class="fa-solid fa-arrow-right text-xs ml-1"></i></a>
+                    <h3 class="text-lg font-bold t-primary">{{ __('Recent transactions') }}</h3>
+                    <a href="{{ route('transactions.index') }}" class="text-sm font-semibold text-[#8b5cf6] hover:text-[#7c3aed] transition">{{ __('View all') }} <i class="fa-solid fa-arrow-right text-xs ml-1"></i></a>
                 </div>
                 <div class="bg-white dark:bg-[#18181b] rounded-xl border border-gray-100 dark:border-white/5 shadow-sm overflow-hidden">
                     <ul class="divide-y divide-gray-100 dark:divide-white/5">
@@ -92,7 +92,7 @@
                                     </p>
                                     @if($t->currency !== $defaultCurrency)
                                         <p class="text-[10px] t-muted">
-                                            Orig: @money($t->amount) {{ $t->currency }}
+                                            {{ __('Orig') }}: @money($t->amount) {{ $t->currency }}
                                         </p>
                                     @endif
                                 </div>
@@ -104,7 +104,7 @@
             @endif
             @if($categories->count() > 0)
             <div class="mt-6">
-                <h3 class="text-lg font-bold t-primary mb-4">Monthly budget</h3>
+                <h3 class="text-lg font-bold t-primary mb-4">{{ __('Monthly budget') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($categories as $cat)
                         @php
@@ -144,7 +144,7 @@
                                 </span>
                             </div>
                             @if($isExceeded)
-                                <div class="mt-2 text-xs text-red-500 dark:text-red-400 font-semibold">Exceeded by @money($spent - $budget) {{ $symbol }}</div>
+                                <div class="mt-2 text-xs text-red-500 dark:text-red-400 font-semibold">{{ __('Exceeded by') }} @money($spent - $budget) {{ $symbol }}</div>
                             @endif
                         </div>
                     @endforeach

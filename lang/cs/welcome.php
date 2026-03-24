@@ -17,7 +17,7 @@ return [
         'explore_features' => 'Prozkoumat funkce',
         'preview' => 'Náhled Casher nástěnky',
         'app_ui' => 'Rozhraní aplikace',
-        'overall_balance' => 'Celkový zůstatek (Hotovost + Investice)',
+        'overall_balance' => 'Celkový zůstatek',
         'in_eur' => 'V EUR',
         'cash' => 'Hotovost',
         'investments' => 'Investice',

@@ -178,12 +178,12 @@ class InvestmentController extends Controller
                 'currency' => $data['currency'],
             ]);
 
-            return back()->with('success', 'Investment updated (merged with existing).');
+            return back()->with('success', __('Investment updated (merged with existing).'));
         }
 
         Investment::create($data);
 
-        return back()->with('success', 'Investment added.');
+        return back()->with('success', __('Investment added.'));
     }
 
     public function edit(Request $request, Investment $investment): View
@@ -209,7 +209,7 @@ class InvestmentController extends Controller
 
         $investment->update($data);
 
-        return back()->with('success', 'Investment updated.');
+        return back()->with('success', __('Investment updated.'));
     }
 
     public function search(Request $request, MarketDataService $marketData): JsonResponse
@@ -269,7 +269,7 @@ class InvestmentController extends Controller
         $this->authorize('delete', $investment);
         $investment->delete();
 
-        return back()->with('success', 'Investment deleted.');
+        return back()->with('success', __('Investment deleted.'));
     }
 
     public function refresh(Request $request, MarketDataService $marketData): RedirectResponse
@@ -299,7 +299,7 @@ class InvestmentController extends Controller
             $updated++;
         }
 
-        return back()->with('success', $updated > 0 ? 'Prices refreshed.' : 'No prices updated.');
+        return back()->with('success', $updated > 0 ? __('Prices refreshed.') : __('No prices updated.'));
     }
 
     public function livePrices(Request $request, MarketDataService $marketData): JsonResponse

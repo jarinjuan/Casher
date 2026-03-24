@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-bold text-xl t-primary leading-tight">New record</h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">{{ __('New record') }}</h2>
 @endsection
 
 @section('content')

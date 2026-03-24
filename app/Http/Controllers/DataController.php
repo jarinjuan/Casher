@@ -172,10 +172,11 @@ class DataController extends Controller
 
             $result = $importService->importData($teamId, $importData);
 
-            $message = 'Import completed: ';
-            $message .= 'Transactions: ' . $result['success']['transactions'] . ', ';
-            $message .= 'Categories: ' . $result['success']['categories'] . ', ';
-            $message .= 'Investments: ' . $result['success']['investments'];
+            $message = __('Import completed: Transactions: :transactions, Categories: :categories, Investments: :investments', [
+                'transactions' => $result['success']['transactions'],
+                'categories' => $result['success']['categories'],
+                'investments' => $result['success']['investments'],
+            ]);
 
             if (! empty($result['errors'])) {
                 $errorMsg = implode("\n", $result['errors']);
@@ -184,7 +185,7 @@ class DataController extends Controller
 
             return back()->with('success', $message);
         } catch (\Throwable $e) {
-            return back()->withErrors(['import' => 'Import failed: ' . $e->getMessage()]);
+            return back()->withErrors(['import' => __('Import failed:') . ' ' . $e->getMessage()]);
         }
     }
 

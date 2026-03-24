@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-bold text-xl t-primary leading-tight">Charts & Analytics</h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">{{ __('Charts & analytics') }}</h2>
 @endsection
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
     <div class="card p-6">
-        <h3 class="font-bold text-lg t-primary mb-4">Expenses by Category</h3>
+        <h3 class="font-bold text-lg t-primary mb-4">{{ __('Expenses by category') }}</h3>
         <div class="flex justify-center chart-h-sm">
             <canvas id="categoryPie"></canvas>
         </div>
@@ -41,7 +41,7 @@
     @endphp
 
     <div class="card p-6">
-        <h3 class="font-bold text-lg t-primary mb-4">Income vs Expenses Trend (12 Months)</h3>
+        <h3 class="font-bold text-lg t-primary mb-4">{{ __('Income vs expenses trend (12 months)') }}</h3>
         <div class="chart-h-lg">
             <canvas id="trendLineChart"></canvas>
         </div>
@@ -74,27 +74,31 @@
     @endphp
 
     <div class="card p-6">
-        <h3 class="font-bold text-lg t-primary mb-4">Monthly Cash Flow (Last 6 Months)</h3>
+        <h3 class="font-bold text-lg t-primary mb-4">{{ __('Monthly cash flow (last 6 months)') }}</h3>
         <div class="chart-h-lg">
             <canvas id="monthlyBarChart"></canvas>
         </div>
     </div>
 
     @php
-        $salaryIncome = \App\Models\Transaction::where('team_id', $teamId)
+        $incomeSources = \App\Models\Transaction::where('team_id', $teamId)
             ->where('type', 'income')
-            ->where('title', 'like', '%salary%')
-            ->sum('amount');
-
-        $otherIncome = \App\Models\Transaction::where('team_id', $teamId)
-            ->where('type', 'income')
-            ->whereNotLike('title', '%salary%')
-            ->sum('amount');
+            ->groupBy('category_id')
+            ->selectRaw('category_id, SUM(amount) as total')
+            ->orderByDesc('total')
+            ->with('category')
+            ->get()
+            ->map(function($tx) {
+                return [
+                    'name' => $tx->category->name ?? __('Uncategorized'),
+                    'total' => $tx->total
+                ];
+            });
     @endphp
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="card p-6">
-            <h3 class="font-bold text-lg t-primary mb-4">Income Sources</h3>
+            <h3 class="font-bold text-lg t-primary mb-4">{{ __('Income sources') }}</h3>
             <div class="chart-h-sm">
                 <canvas id="incomeSourcePie"></canvas>
             </div>
@@ -111,14 +115,14 @@
                 ->get()
                 ->map(function($tx) {
                     return [
-                        'name' => $tx->category->name ?? 'Uncategorized',
+                        'name' => $tx->category->name ?? __('Uncategorized'),
                         'total' => $tx->total
                     ];
                 });
         @endphp
 
         <div class="card p-6">
-            <h3 class="font-bold text-lg t-primary mb-4">Top Spending Categories</h3>
+            <h3 class="font-bold text-lg t-primary mb-4">{{ __('Top spending categories') }}</h3>
             <div class="chart-h-sm">
                 <canvas id="topCategoriesBar"></canvas>
             </div>
@@ -162,8 +166,8 @@
                 data: {
                     labels: @json($monthLabels),
                     datasets: [
-                        { label: 'Income', data: @json($incomeData), borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.08)', tension: 0.4, fill: true },
-                        { label: 'Expenses', data: @json($expenseData), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.08)', tension: 0.4, fill: true }
+                        { label: '{{ __('Income') }}', data: @json($incomeData), borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.08)', tension: 0.4, fill: true },
+                        { label: '{{ __('Expenses') }}', data: @json($expenseData), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.08)', tension: 0.4, fill: true }
                     ]
                 },
                 options: {
@@ -178,8 +182,8 @@
                 data: {
                     labels: @json($last6Months),
                     datasets: [
-                        { label: 'Income', data: @json($last6IncomeData), backgroundColor: '#fbbf24', borderRadius: 4 },
-                        { label: 'Expenses', data: @json($last6ExpenseData), backgroundColor: '#8b5cf6', borderRadius: 4 }
+                        { label: '{{ __('Income') }}', data: @json($last6IncomeData), backgroundColor: '#fbbf24', borderRadius: 4 },
+                        { label: '{{ __('Expenses') }}', data: @json($last6ExpenseData), backgroundColor: '#8b5cf6', borderRadius: 4 }
                     ]
                 },
                 options: {
@@ -189,11 +193,16 @@
                 }
             });
 
+            const incomeSourcesData = @json($incomeSources);
             new Chart(document.getElementById('incomeSourcePie').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Salary', 'Other'],
-                    datasets: [{ data: [@json($salaryIncome), @json($otherIncome)], backgroundColor: ['#fbbf24', '#8b5cf6'], borderWidth: 0 }]
+                    labels: incomeSourcesData.map(c => c.name),
+                    datasets: [{ 
+                        data: incomeSourcesData.map(c => c.total), 
+                        backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#ef4444', '#10b981', '#f97316', '#ec4899', '#3b82f6'], 
+                        borderWidth: 0 
+                    }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: legendColor } } } }
             });
@@ -203,7 +212,7 @@
                 type: 'bar',
                 data: {
                     labels: topCatsData.map(c => c.name),
-                    datasets: [{ label: 'Total Spent', data: topCatsData.map(c => c.total), backgroundColor: ['#ef4444','#f97316','#fbbf24','#8b5cf6','#06b6d4'], borderRadius: 4 }]
+                    datasets: [{ label: '{{ __('Total Spent') }}', data: topCatsData.map(c => c.total), backgroundColor: ['#ef4444','#f97316','#fbbf24','#8b5cf6','#06b6d4'], borderRadius: 4 }]
                 },
                 options: {
                     indexAxis: 'y', responsive: true, maintainAspectRatio: false,

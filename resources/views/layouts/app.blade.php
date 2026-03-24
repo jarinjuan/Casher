@@ -64,7 +64,7 @@
             'active' => request()->routeIs('investments.*'),
         ],
         [
-            'label' => 'Import / Export',
+            'label' => 'Import / export',
             'route' => route('data.index'),
             'icon' => 'fa-solid fa-exchange',
             'active' => request()->routeIs('data.*'),

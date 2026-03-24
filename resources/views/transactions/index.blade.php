@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-bold text-xl t-primary leading-tight">Transactions</h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">{{ __('Transactions') }}</h2>
 @endsection
 
 @section('content')
 <div x-data="transactionsPage()" class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
     <div class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <form @submit.prevent="performSearch" class="w-full sm:w-64 relative">
-            <input type="text" x-model="search" @input.debounce.300ms="performSearch" placeholder="Search transactions..." class="w-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-2 text-sm focus:border-[#fbbf24] focus:ring-1 focus:ring-[#fbbf24] outline-none transition">
+            <input type="text" x-model="search" @input.debounce.300ms="performSearch" placeholder="{{ __('Search transactions...') }}" class="w-full bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl px-4 py-2 text-sm focus:border-[#fbbf24] focus:ring-1 focus:ring-[#fbbf24] outline-none transition">
             
             <div x-show="isLoading" style="display: none;" class="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500">
                 <i class="fa-solid fa-circle-notch fa-spin"></i>
@@ -77,17 +77,17 @@
                     </span>
                     @if($showOriginal)
                         <div class="text-xs t-muted mt-0.5">
-                            Originally: @money($t->amount) {{ $t->currency }}
+                            {{ __('Originally') }}: @money($t->amount) {{ $t->currency }}
                         </div>
                     @endif
-                    <div class="text-xs mt-1 font-bold uppercase tracking-widest {{ $t->type === 'income' ? 'text-emerald-500' : 'text-red-500' }}">{{ $t->type }}</div>
+                    <div class="text-xs mt-1 font-bold uppercase tracking-widest {{ $t->type === 'income' ? 'text-emerald-500' : 'text-red-500' }}">{{ __($t->type) }}</div>
                 </div>
                 <div class="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full">
-                    <a href="{{ route('transactions.edit', $t) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">Edit</a>
-                    <form method="POST" action="{{ route('transactions.destroy', $t) }}" onsubmit="return confirm('Delete?')" class="flex-1 flex">
+                    <a href="{{ route('transactions.edit', $t) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
+                    <form method="POST" action="{{ route('transactions.destroy', $t) }}" onsubmit="return confirm('{{ __('Delete?') }}')" class="flex-1 flex">
                         @csrf
                         @method('DELETE')
-                        <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">Delete</button>
+                        <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">{{ __('Delete') }}</button>
                     </form>
                 </div>
             </div>

@@ -95,14 +95,14 @@ class DashboardController extends Controller
 
         $chartDatasets = [
             [
-                'label' => 'Expenses',
+                'label' => __('Expenses'),
                 'data' => $expenseData,
                 'backgroundColor' => '#3b82f6',
                 'borderColor' => '#1e40af',
                 'borderWidth' => 1
             ],
             [
-                'label' => 'Income',
+                'label' => __('Income'),
                 'data' => $incomeData,
                 'backgroundColor' => '#eab308',
                 'borderColor' => '#ca8a04',
@@ -113,6 +113,7 @@ class DashboardController extends Controller
         $categories = $user->categories()->where('monthly_budget', '>', 0)->get();
 
         $recentTransactions = Transaction::where('team_id', $teamId)
+            ->with(['category'])
             ->latest()
             ->take(5)
             ->get();

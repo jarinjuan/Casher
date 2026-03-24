@@ -55,7 +55,7 @@ class ChartController extends Controller
         }
         
         if ($uncat > 0) {
-            $labels[] = 'Uncategorized';
+            $labels[] = __('Uncategorized');
             $data[] = (float) $uncat;
             $colors[] = '#d1d5db';
         }

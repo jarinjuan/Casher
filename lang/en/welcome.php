@@ -17,7 +17,7 @@ return [
         'explore_features' => 'Explore Features',
         'preview' => 'Casher dashboard preview',
         'app_ui' => 'App UI',
-        'overall_balance' => 'Overall balance (Cash + Investments)',
+        'overall_balance' => 'Overall balance',
         'in_eur' => 'In EUR',
         'cash' => 'Cash',
         'investments' => 'Investments',

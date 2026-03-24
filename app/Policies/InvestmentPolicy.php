@@ -20,17 +20,16 @@ class InvestmentPolicy
             return false;
         }
 
-        $team = Team::find($investment->team_id);
+        $team = Team::find($investment->team_id, '*');
         if ($team && $team->user_id === $user->id) {
             return true;
         }
 
-        $teamUser = DB::table('team_user')
+        return DB::table('team_user')
             ->where('team_id', $investment->team_id)
             ->where('user_id', $user->id)
-            ->first();
-
-        return $teamUser && $teamUser->role === 'editor';
+            ->where('role', 'editor')
+            ->exists();
     }
 
     public function delete(User $user, Investment $investment): bool
@@ -39,16 +38,15 @@ class InvestmentPolicy
             return false;
         }
 
-        $team = Team::find($investment->team_id);
+        $team = Team::find($investment->team_id, '*');
         if ($team && $team->user_id === $user->id) {
             return true;
         }
 
-        $teamUser = DB::table('team_user')
+        return DB::table('team_user')
             ->where('team_id', $investment->team_id)
             ->where('user_id', $user->id)
-            ->first();
-
-        return $teamUser && $teamUser->role === 'editor';
+            ->where('role', 'editor')
+            ->exists();
     }
 }
