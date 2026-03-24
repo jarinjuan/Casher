@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
     // Data Import/Export routes
     Route::get('data', [\App\Http\Controllers\DataController::class, 'index'])->name('data.index');
+    Route::get('data/template', [\App\Http\Controllers\DataController::class, 'template'])->name('data.template');
     Route::post('data/export', [\App\Http\Controllers\DataController::class, 'export'])->name('data.export');
     Route::post('data/import', [\App\Http\Controllers\DataController::class, 'import'])->name('data.import');
 
@@ -51,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'join'])->name('workspace.join.submit');
     Route::post('workspace/switch/{teamId}', [\App\Http\Controllers\WorkspaceController::class, 'switchWorkspace'])->name('workspace.switch');
     Route::delete('workspace/{team}/members/{user}', [\App\Http\Controllers\WorkspaceController::class, 'removeMember'])->name('workspace.remove-member');
+    Route::put('workspace/{team}/members/{user}/role', [\App\Http\Controllers\WorkspaceController::class, 'updateRole'])->name('workspace.update-role');
     Route::delete('workspace/{team}/leave', [\App\Http\Controllers\WorkspaceController::class, 'leaveWorkspace'])->name('workspace.leave');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

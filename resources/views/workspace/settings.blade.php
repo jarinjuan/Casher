@@ -52,9 +52,20 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="text-xs bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-700 px-3 py-1 rounded-full font-bold capitalize">
-                                    {{ $member->pivot->role ?? 'Member' }}
-                                </span>
+                                @if(auth()->id() === $team->user_id && $member->id !== auth()->id())
+                                    <form method="POST" action="{{ route('workspace.update-role', ['team' => $team->id, 'user' => $member->id]) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <select name="role" onchange="this.form.submit()" class="text-xs bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-700 pl-3 pr-8 py-1.5 rounded-full cursor-pointer font-bold capitalize outline-none focus:ring-2 focus:ring-violet-500/30 transition-shadow">
+                                            <option value="editor" {{ ($member->pivot->role ?? '') === 'editor' ? 'selected' : '' }}>Editor</option>
+                                            <option value="reader" {{ ($member->pivot->role ?? 'reader') === 'reader' ? 'selected' : '' }}>Reader</option>
+                                        </select>
+                                    </form>
+                                @else
+                                    <span class="text-xs bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-gray-300 dark:border-gray-700 px-3 py-1 rounded-full font-bold capitalize">
+                                        {{ $member->pivot->role ?? 'reader' }}
+                                    </span>
+                                @endif
                                 @if(auth()->id() === $team->user_id && $member->id !== auth()->id())
                                     <form method="POST" action="{{ route('workspace.remove-member', ['team' => $team->id, 'user' => $member->id]) }}" onsubmit="return confirm('Are you sure you want to remove this member from the workspace? They will no longer be able to access it or rejoin using the current invite code.')">
                                         @csrf
@@ -136,12 +147,12 @@
         </div>
     @else
         <div class="card p-6 border border-red-200 dark:border-red-900/30">
-            <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2">{{ __('Leave Workspace') }}</h3>
+            <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2">{{ __('Leave workspace') }}</h3>
             <p class="text-sm t-muted mb-4">Are you sure you want to leave this workspace? You will lose access to all its data and will need a new invite code from the owner to rejoin.</p>
             <form method="POST" action="{{ route('workspace.leave', $team->id) }}" onsubmit="return confirm('Are you sure you want to leave this workspace? You will lose access immediately.')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn-primary !bg-red-600 hover:!bg-red-700 !text-white !border-red-600 text-sm transition-colors">Leave Workspace</button>
+                <button type="submit" class="btn-primary !bg-red-600 hover:!bg-red-700 !text-white !border-red-600 text-sm transition-colors">Leave workspace</button>
             </form>
         </div>
     @endif

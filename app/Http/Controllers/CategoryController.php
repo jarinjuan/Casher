@@ -41,13 +41,13 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        if ($category->user_id !== auth()->id()) abort(403);
+        $this->authorize('update', $category);
         return view('categories.edit', compact('category'));
     }
 
     public function show(Category $category): View
     {
-        if ($category->user_id !== auth()->id()) abort(403);
+        $this->authorize('view', $category);
 
         $transactions = $category->transactions()->where('type', 'expense')->latest()->paginate(20);
         return view('categories.show', compact('category', 'transactions'));
@@ -55,7 +55,7 @@ class CategoryController extends Controller
 
     public function update(CategoryRequest $request, Category $category): RedirectResponse
     {
-        if ($category->user_id !== auth()->id()) abort(403);
+        $this->authorize('update', $category);
 
         $data = $request->validated();
 
@@ -69,7 +69,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        if ($category->user_id !== auth()->id()) abort(403);
+        $this->authorize('delete', $category);
         $category->delete();
         return back()->with('success', 'Category deleted.');
     }

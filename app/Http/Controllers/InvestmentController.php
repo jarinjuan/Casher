@@ -188,7 +188,7 @@ class InvestmentController extends Controller
 
     public function edit(Request $request, Investment $investment): View
     {
-        $this->authorizeInvestment($request, $investment);
+        $this->authorize('update', $investment);
 
         return view('investments.edit', [
             'investment' => $investment,
@@ -197,7 +197,7 @@ class InvestmentController extends Controller
 
     public function update(InvestmentRequest $request, Investment $investment): RedirectResponse
     {
-        $this->authorizeInvestment($request, $investment);
+        $this->authorize('update', $investment);
 
         $data = $request->validated();
         $data['symbol'] = strtoupper($data['symbol']);
@@ -266,7 +266,7 @@ class InvestmentController extends Controller
 
     public function destroy(Request $request, Investment $investment): RedirectResponse
     {
-        $this->authorizeInvestment($request, $investment);
+        $this->authorize('delete', $investment);
         $investment->delete();
 
         return back()->with('success', 'Investment deleted.');
@@ -387,10 +387,4 @@ class InvestmentController extends Controller
         ]);
     }
 
-    protected function authorizeInvestment(Request $request, Investment $investment): void
-    {
-        if ($investment->team_id !== ($request->user()->currentTeam->id ?? null)) {
-            abort(403);
-        }
-    }
 }

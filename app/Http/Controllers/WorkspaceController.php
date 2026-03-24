@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -124,6 +125,20 @@ class WorkspaceController extends Controller
     /**
      * Remove member from workspace
      */
+    public function updateRole(Request $request, $teamId, $userId): RedirectResponse
+    {
+        $team = \App\Models\Team::findOrFail($teamId);
+        if (auth()->id() !== $team->user_id) abort(403);
+
+        $data = $request->validate([
+            'role' => 'required|in:editor,reader'
+        ]);
+
+        $team->users()->updateExistingPivot($userId, ['role' => $data['role']]);
+
+        return back()->with('success', 'Member role updated successfully.');
+    }
+
     public function removeMember($teamId, $userId)
     {
         $team = Team::findOrFail($teamId);

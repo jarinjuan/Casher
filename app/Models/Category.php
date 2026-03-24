@@ -52,6 +52,7 @@ class Category extends Model
                 try {
                     $amount = $converter->convert($amount, $transaction->currency, $this->budget_currency, $transaction->created_at);
                 } catch (\Exception $e) {
+                    $amount = 0;
                 }
             }
             $total += $amount;

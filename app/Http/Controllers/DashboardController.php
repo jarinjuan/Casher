@@ -167,6 +167,7 @@ class DashboardController extends Controller
                 try {
                     $amount = $team->convertToDefaultCurrency($amount, $transaction->currency, $transaction->created_at);
                 } catch (\Exception $e) {
+                    $amount = 0;
                 }
             }
             $cashBalance += $transaction->type === 'income' ? $amount : -$amount;
@@ -194,7 +195,6 @@ class DashboardController extends Controller
             try {
                 $investmentPortfolioValue += $team->convertToDefaultCurrency($valueInPriceCurrency, $priceCurrency);
             } catch (\Exception $e) {
-                $investmentPortfolioValue += $valueInPriceCurrency;
             }
         }
 
@@ -213,7 +213,7 @@ class DashboardController extends Controller
                 try {
                     $amount = $team->convertToDefaultCurrency($amount, $transaction->currency, $transaction->created_at);
                 } catch (\Exception $e) {
-                    logger()->warning("Failed to convert {$transaction->currency} to {$team->default_currency}");
+                    $amount = 0;
                 }
             }
             $sum += $amount;

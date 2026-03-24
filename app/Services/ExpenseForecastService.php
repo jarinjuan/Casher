@@ -41,7 +41,9 @@ class ExpenseForecastService
                 if ($team && $expense->currency !== $team->default_currency) {
                     try {
                         $amount = $team->convertToDefaultCurrency($amount, $expense->currency, $expense->created_at);
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                        $amount = 0;
+                    }
                 }
                 $sum += $amount;
             }

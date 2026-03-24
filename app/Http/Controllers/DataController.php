@@ -21,6 +21,21 @@ class DataController extends Controller
         return view('data.index');
     }
 
+    public function template()
+    {
+        $headers = ['Content-Type' => 'text/csv'];
+        $columns = ['Title', 'Amount', 'Type', 'Note', 'Category Name', 'Currency', 'Date'];
+        
+        $callback = function () use ($columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            fputcsv($file, ['Groceries', '50.00', 'expense', 'Weekly groceries', 'Food', 'USD', now()->format('Y-m-d')]);
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers + ['Content-Disposition' => 'attachment; filename="casher_import_template.csv"']);
+    }
+
     public function export(Request $request, ExportService $exportService)
     {
         $types = $request->input('types', []);

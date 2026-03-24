@@ -80,11 +80,16 @@
             </div>
 
             <div class="card p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#8b5cf6]/10">
-                        <i class="fa-solid fa-upload text-[#8b5cf6]"></i>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#8b5cf6]/10">
+                            <i class="fa-solid fa-upload text-[#8b5cf6]"></i>
+                        </div>
+                        <h3 class="text-lg font-bold t-primary">Import Data</h3>
                     </div>
-                    <h3 class="text-lg font-bold t-primary">Import Data</h3>
+                    <a href="{{ route('data.template') }}" class="btn-secondary text-xs px-3 py-2">
+                        <i class="fa-solid fa-file-csv mr-1"></i> Sample CSV
+                    </a>
                 </div>
                 <form method="POST" action="{{ route('data.import') }}" enctype="multipart/form-data" class="space-y-5">
                     @csrf

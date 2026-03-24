@@ -59,7 +59,7 @@ class TransactionController extends Controller
 
     public function edit(Transaction $transaction): View
     {
-        if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
+        $this->authorize('update', $transaction);
         $categories = auth()->user()->categories()->get();
         $budgets = auth()->user()->budgets()->with('category')->get();
         return view('transactions.edit', compact('transaction','categories','budgets'));
@@ -67,7 +67,7 @@ class TransactionController extends Controller
 
     public function update(TransactionRequest $request, Transaction $transaction): RedirectResponse
     {
-        if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
+        $this->authorize('update', $transaction);
         $transaction->update($request->validated());
 
         return redirect()->route('transactions.index')->with('success', 'Transaction updated.');
@@ -75,7 +75,7 @@ class TransactionController extends Controller
 
     public function destroy(Transaction $transaction): RedirectResponse
     {
-        if ($transaction->user_id !== auth()->id() || $transaction->team_id !== auth()->user()->currentTeam->id) abort(403);
+        $this->authorize('delete', $transaction);
         $transaction->delete();
 
         return back()->with('success', 'Transaction deleted.');
