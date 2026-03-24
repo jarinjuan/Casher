@@ -40,8 +40,6 @@
     @if(session('success'))
         <div class="flash-success mb-4">{{ session('success') }}</div>
     @endif
-
-    <!-- Prevent Tailwind purging of grid classes -->
     <div class="hidden sm:grid-cols-1 sm:grid-cols-2 sm:grid-cols-3 sm:grid-cols-4 lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
 
     <div id="transactions-grid" class="grid gap-4 grid-cols-1" :class="{

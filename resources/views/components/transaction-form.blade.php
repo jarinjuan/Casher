@@ -52,8 +52,11 @@
                 <div class="flex flex-col gap-1">
                     <label class="label-dark">Currency</label>
                     <select name="currency" class="select-dark">
+                        @php
+                            $defaultCurrency = $defaultCurrency ?? (auth()->check() && auth()->user()->currentTeam ? auth()->user()->currentTeam->default_currency : 'CZK');
+                        @endphp
                         @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
-                            <option value="{{ $c }}" {{ old('currency', $transaction->currency ?? 'CZK') === $c ? 'selected' : '' }}>{{ $c }}</option>
+                            <option value="{{ $c }}" {{ old('currency', $transaction->currency ?? $defaultCurrency) === $c ? 'selected' : '' }}>{{ $c }}</option>
                         @endforeach
                     </select>
                 </div>

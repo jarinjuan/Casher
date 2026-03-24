@@ -65,13 +65,11 @@ class InvestmentController extends Controller
             
             if ($latestPrice) {
                 $valueInOriginal = $latestPrice * $investment->quantity;
-                // Convert to default currency
                 $valueInDefault = $team->convertToDefaultCurrency($valueInOriginal, $latestPriceCurrency);
                 $totalValue += $valueInDefault;
             }
             
             $costInOriginal = $investment->average_price * $investment->quantity;
-            // Convert cost to default currency (using investment currency)
             $costInDefault = $team->convertToDefaultCurrency($costInOriginal, $investment->currency);
             $totalCost += $costInDefault;
         }
@@ -113,7 +111,6 @@ class InvestmentController extends Controller
 
         $marketData = app(MarketDataService::class);
 
-        // Pro crypto: pokud nebyl zadán external_id, pokus se ho najít podle symbolu
         if ($data['type'] === 'crypto' && empty($data['external_id'])) {
             $externalId = $marketData->cryptoIdFromSymbol($data['symbol']);
             if ($externalId) {
@@ -130,15 +127,12 @@ class InvestmentController extends Controller
             return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu pro vložený symbol. Zkontrolujte prosím symbol a zkuste to znovu.'])->withInput();
         }
 
-        // Pokud uživatel nakupuje za "Total Amount", spočítáme výsledné množství
         if ($data['buy_mode'] === 'amount') {
             $amountInDefault = (float) $data['amount'];
             
-            // Konverze z výchozí měny do měny investice
             $converter = app(\App\Services\CurrencyConverter::class);
             $team = $request->user()->currentTeam;
             try {
-                // Převede se to na měnu, kterou nám vrátilo API (USD atd.), ze které je vypočítaná 'average_price'
                 $amountInTargetCurrency = $converter->convert($amountInDefault, $team->default_currency, $data['currency']);
             } catch (\Exception $e) {
                 return back()->withErrors(['amount' => 'Chyba při konverzi měny ke spočítání akcií. Zkontrolujte si aktuální kurzy.'])->withInput();
@@ -161,7 +155,6 @@ class InvestmentController extends Controller
             $oldAvg = (float) $existing->average_price;
             $newAvg = (float) $data['average_price'];
             
-            // Convert existing average price to the new entry's currency if they differ
             if ($existing->currency !== $data['currency']) {
                 try {
                     $converter = app(\App\Services\CurrencyConverter::class);
@@ -234,6 +227,43 @@ class InvestmentController extends Controller
         return response()->json($marketData->searchStocks($query));
     }
 
+    public function price(Request $request, MarketDataService $marketData, \App\Services\CurrencyConverter $converter): JsonResponse
+    {
+        $type = $request->query('type');
+        $symbol = $request->query('symbol');
+        $externalId = $request->query('external_id');
+        
+        if (!$symbol) {
+            return response()->json(['error' => 'Missing symbol'], 400);
+        }
+
+        $tmp = new Investment([
+            'type' => $type,
+            'symbol' => strtoupper($symbol),
+            'external_id' => $externalId,
+        ]);
+        
+        $priceData = $marketData->getPrice($tmp);
+        if (!$priceData) {
+            return response()->json(['error' => 'Price not found'], 404);
+        }
+        
+        $team = $request->user()->currentTeam;
+        $priceInDefault = $priceData['price'];
+        try {
+           $priceInDefault = $converter->convert($priceData['price'], $team->default_currency, $priceData['currency']);
+        } catch (\Exception $e) {
+            // fallback to original if conversion fails
+        }
+        
+        return response()->json([
+            'price' => $priceData['price'],
+            'currency' => $priceData['currency'],
+            'price_in_default' => $priceInDefault,
+            'default_currency' => $team->default_currency,
+        ]);
+    }
+
     public function destroy(Request $request, Investment $investment): RedirectResponse
     {
         $this->authorizeInvestment($request, $investment);
@@ -251,7 +281,7 @@ class InvestmentController extends Controller
         foreach ($investments as $investment) {
             $latest = $investment->latestPrice;
             if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subMinutes(5))) {
-                continue; // Zamezení spamování ručního refresh tlačítka (5 minutový cooldown)
+                continue;
             }
 
             $price = $marketData->getPrice($investment);
@@ -269,7 +299,7 @@ class InvestmentController extends Controller
             $updated++;
         }
 
-        return back()->with('success', $updated > 0 ? 'Prices refreshed.' : 'No prices updated. Check API settings.');
+        return back()->with('success', $updated > 0 ? 'Prices refreshed.' : 'No prices updated.');
     }
 
     public function livePrices(Request $request, MarketDataService $marketData): JsonResponse
@@ -281,7 +311,6 @@ class InvestmentController extends Controller
             ->with('latestPrice')
             ->get();
 
-        // Refresh prices that are stale (older than 15 minutes to save API requests)
         $refreshed = false;
         foreach ($investments as $investment) {
             $latest = $investment->latestPrice;
@@ -318,11 +347,9 @@ class InvestmentController extends Controller
             $value             = $lastPrice ? $lastPrice * $investment->quantity : null;
             $valueInDefault    = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
 
-            // Convert cost to default currency from investment's stored currency
             $costInOriginal    = $investment->average_price * $investment->quantity;
             $costInDefault     = $team->convertToDefaultCurrency($costInOriginal, $investment->currency);
 
-            // P/L must be computed in a single currency (default) to avoid mixing
             $plInDefault       = $valueInDefault !== null ? $valueInDefault - $costInDefault : null;
             $plPct             = $costInDefault > 0 && $valueInDefault !== null
                                     ? (($valueInDefault - $costInDefault) / $costInDefault) * 100 : null;

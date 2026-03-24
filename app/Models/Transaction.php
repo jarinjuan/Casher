@@ -66,8 +66,6 @@ class Transaction extends Model
                     ->where('team_id', $transaction->team_id)
                     ->where('type', 'expense')
                     ->where('created_at', '>=', $periodStart);
-
-                // Global budget (no category) should sum ALL expenses, not just uncategorized
                 if ($budget->category_id !== null) {
                     $expenseQuery->where('category_id', $budget->category_id);
                 }
@@ -82,7 +80,6 @@ class Transaction extends Model
                         try {
                             $amount = $converter->convert($amount, $expense->currency, $budget->currency, $expense->created_at);
                         } catch (\Exception $e) {
-                            // keep original
                         }
                     }
                     $spent += $amount;

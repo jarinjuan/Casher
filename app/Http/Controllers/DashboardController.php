@@ -31,10 +31,8 @@ class DashboardController extends Controller
         $cashBalance = $this->calculateCashBalance($teamId, $team, $defaultCurrency);
         $investmentPortfolioValue = $this->calculateInvestmentPortfolioValue($teamId, $team);
 
-        // Overall = cash balance + investment portfolio value
         $totalBalance = $cashBalance + $investmentPortfolioValue;
 
-        // Monthly expenses
         $monthlyTransactions = Transaction::where('team_id', $teamId)
             ->where('type', 'expense')
             ->whereYear('created_at', $year)
@@ -43,7 +41,6 @@ class DashboardController extends Controller
         
         $monthlyExpenses = $this->sumTransactionsInDefaultCurrency($monthlyTransactions, $team);
 
-        // Monthly income
         $monthlyIncomeTransactions = Transaction::where('team_id', $teamId)
             ->where('type', 'income')
             ->whereYear('created_at', $year)
@@ -52,7 +49,6 @@ class DashboardController extends Controller
         
         $monthlyIncome = $this->sumTransactionsInDefaultCurrency($monthlyIncomeTransactions, $team);
 
-        // Last month expenses for trend
         $lastMonthTransactions = Transaction::where('team_id', $teamId)
             ->where('type', 'expense')
             ->whereYear('created_at', now()->subMonth()->year)
@@ -62,7 +58,6 @@ class DashboardController extends Controller
         $lastMonthExpenses = $this->sumTransactionsInDefaultCurrency($lastMonthTransactions, $team);
         $expenseTrend = $lastMonthExpenses > 0 ? (($monthlyExpenses - $lastMonthExpenses) / $lastMonthExpenses * 100) : 0;
 
-        // Last month income for trend
         $lastMonthIncomeTransactions = Transaction::where('team_id', $teamId)
             ->where('type', 'income')
             ->whereYear('created_at', now()->subMonth()->year)
@@ -72,10 +67,8 @@ class DashboardController extends Controller
         $lastMonthIncome = $this->sumTransactionsInDefaultCurrency($lastMonthIncomeTransactions, $team);
         $incomeTrend = $lastMonthIncome > 0 ? (($monthlyIncome - $lastMonthIncome) / $lastMonthIncome * 100) : 0;
 
-        // Forecast
         $forecast = $this->forecastService->forecastMonthly($user->id, $teamId, 6);
 
-        // Chart data for last 6 months
         $months = [];
         $expenseData = [];
         $incomeData = [];
@@ -117,10 +110,8 @@ class DashboardController extends Controller
             ]
         ];
 
-        // Categories with budgets
         $categories = $user->categories()->where('monthly_budget', '>', 0)->get();
 
-        // Recent transactions
         $recentTransactions = Transaction::where('team_id', $teamId)
             ->latest()
             ->take(5)
@@ -176,7 +167,6 @@ class DashboardController extends Controller
                 try {
                     $amount = $team->convertToDefaultCurrency($amount, $transaction->currency, $transaction->created_at);
                 } catch (\Exception $e) {
-                    // Keep original amount if conversion fails
                 }
             }
             $cashBalance += $transaction->type === 'income' ? $amount : -$amount;
@@ -204,7 +194,6 @@ class DashboardController extends Controller
             try {
                 $investmentPortfolioValue += $team->convertToDefaultCurrency($valueInPriceCurrency, $priceCurrency);
             } catch (\Exception $e) {
-                // Keep original amount if conversion fails
                 $investmentPortfolioValue += $valueInPriceCurrency;
             }
         }
@@ -224,7 +213,6 @@ class DashboardController extends Controller
                 try {
                     $amount = $team->convertToDefaultCurrency($amount, $transaction->currency, $transaction->created_at);
                 } catch (\Exception $e) {
-                    // Keep original amount if conversion fails
                     logger()->warning("Failed to convert {$transaction->currency} to {$team->default_currency}");
                 }
             }

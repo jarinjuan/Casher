@@ -77,8 +77,6 @@
             </div>
         </div>
     </nav>
-
-    {{-- HERO --}}
     <header class="relative overflow-hidden pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
         <div class="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
         <div class="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
@@ -229,8 +227,6 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- Stats Infographic --}}
                 <div class="bg-[#18181b] p-4 sm:p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden shadow-2xl mt-10 sm:mt-0">
                     <div class="absolute -right-20 -top-20 h-64 w-64 bg-[#8b5cf6]/10 rounded-full blur-3xl"></div>
                     <div class="relative">
@@ -260,8 +256,6 @@
             </div>
         </div>
     </section>
-
-    {{-- INVESTMENTS --}}
     <section id="investments" class="py-14 sm:py-20 bg-[#0a0a0c]">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="text-center mb-10">
@@ -294,8 +288,6 @@
             </div>
         </div>
     </section>
-
-    {{-- MULTI-CURRENCY + WORKSPACES --}}
     <section class="py-14 sm:py-20 bg-[#09090b]">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16">
@@ -343,8 +335,6 @@
             </div>
         </div>
     </section>
-
-    {{-- DATA IMPORT / EXPORT --}}
     <section id="data" class="py-14 sm:py-20 bg-[#0a0a0c]">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-20 items-center">
@@ -399,8 +389,6 @@
             </div>
         </div>
     </section>
-
-    {{-- CTA --}}
     <section class="pt-8 pb-14 sm:pt-12 sm:pb-20 bg-[#09090b] relative overflow-hidden">
         <div class="absolute inset-0 -z-10">
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-[#fbbf24]/5 blur-[150px]"></div>

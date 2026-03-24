@@ -26,17 +26,11 @@ class CurrencyConverter
         if ($from === $to) return $amount;
 
         $date = $date ? Carbon::parse($date)->toDateString() : null;
-
-        // If base is EUR in DB
-        // get rates as currency per EUR (e.g. USD = 1.1234 means 1 EUR = 1.1234 USD)
-
-        // If converting from non-base, we convert to base first
         if ($from !== $this->base) {
             $rFrom = ExchangeRate::latestRate($from, $date);
             if (! $rFrom) {
                 throw new \RuntimeException("Rate for {$from} not found");
             }
-            // amount in base currency (EUR)
             $amount = $amount / (float) $rFrom->rate;
         }
 

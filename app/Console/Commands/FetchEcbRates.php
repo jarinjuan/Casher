@@ -34,8 +34,6 @@ class FetchEcbRates extends Command
         }
 
         $xpath = new \DOMXPath($dom);
-
-        // find the Cube element with time attribute
         $timeNodes = $xpath->query("//*[local-name()='Cube' and @time]");
         if ($timeNodes->length === 0) {
             $this->error('Could not find Cube/time node');
@@ -44,8 +42,6 @@ class FetchEcbRates extends Command
 
         $time = $timeNodes->item(0)->getAttribute('time');
         $date = Carbon::parse($time)->toDateString();
-
-        // store base EUR implicitly: rate 1
         ExchangeRate::updateOrCreate(
             ['date' => $date, 'currency' => 'EUR'],
             ['base' => 'EUR', 'rate' => 1.0]

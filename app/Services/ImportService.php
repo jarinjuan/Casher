@@ -116,8 +116,6 @@ class ImportService
                     $newQty = (float) ($item['quantity'] ?? 0);
                     $oldAvg = (float) $existing->average_price;
                     $newAvg = (float) ($item['average_price'] ?? 0);
-
-                    // Convert existing average price to the import row's currency if they differ
                     $importCurrency = strtoupper($item['currency'] ?? 'USD');
                     if ($existing->currency !== $importCurrency) {
                         try {

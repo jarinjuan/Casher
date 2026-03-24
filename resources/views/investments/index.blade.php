@@ -19,8 +19,6 @@
                 </ul>
             </div>
         @endif
-
-        {{-- Stats --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">Portfolio Value</p>
@@ -43,8 +41,6 @@
                 <p class="text-sm font-semibold t-primary">Monthly: <span class="{{ $monthlyChangePct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400' }}">@money($monthlyChangePct)%</span></p>
             </div>
         </div>
-
-        {{-- Charts --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="card p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -61,8 +57,6 @@
                 <canvas id="monthlyChart" height="120"></canvas>
             </div>
         </div>
-
-        {{-- Holdings + Add Form --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 card p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -78,8 +72,6 @@
                         </form>
                     </div>
                 </div>
-
-                {{-- Unified Grid view --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @forelse($investments as $investment)
                         @php
@@ -177,8 +169,6 @@
                 
                 <form method="POST" action="{{ route('investments.store') }}" class="space-y-4" id="investmentForm">
                     @csrf
-                    
-                    {{-- Basic details (Grid) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="label-dark mb-1.5 block" for="investmentType">Type</label>
@@ -199,17 +189,13 @@
                         <input type="hidden" name="name" id="nameInput">
                         <input type="hidden" name="external_id" id="externalIdInput">
                     </div>
-
-                    {{-- Financial details panel --}}
                     <div class="p-5 rounded-xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5" x-data="{ buyMode: 'quantity' }">
-                        
-                        {{-- Segmented control for Buy Mode --}}
                         <div class="flex justify-center mb-5">
                             <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1">
-                                <button type="button" @click="buyMode = 'quantity'" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                <button type="button" @click="buyMode = 'quantity'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
                                     By Quantity
                                 </button>
-                                <button type="button" @click="buyMode = 'amount'" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                <button type="button" @click="buyMode = 'amount'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
                                     By Amount
                                 </button>
                             </div>
@@ -218,7 +204,6 @@
                         <input type="hidden" name="buy_mode" :value="buyMode">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Toggleable: Quantity OR Amount -->
                             <div x-show="buyMode === 'quantity'">
                                 <label class="label-dark mb-1.5 block" for="quantityInput">Quantity</label>
                                 <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'quantity'">
@@ -231,6 +216,7 @@
                                 <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'amount'">
                             </div>
                         </div>
+                        <div id="buyPreview" class="text-center text-sm font-bold mt-4 t-primary hidden"></div>
                         
                     </div>
 
@@ -252,9 +238,27 @@
         const externalIdInput = document.getElementById('externalIdInput');
         const symbolSuggestions = document.getElementById('symbolSuggestions');
         const SEARCH_URL = '{{ route('investments.search') }}';
+        const PRICE_URL = '{{ route('investments.price') }}';
+
+        function fmtNum(num, dec = 2) {
+            if (num === null || num === undefined) return '--';
+            const n = parseFloat(num);
+            const sign = n < 0 ? '-' : '';
+            const fixed = Math.abs(n).toFixed(dec);
+            const [intPart, fracPart] = fixed.split('.');
+            const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            return sign + intFmt + '.' + fracPart;
+        }
 
         let symbolSearchTimer = null;
         let symbolSearchAbortController = null;
+        let currentFetchedPrice = null;
+        let currentDefaultCurrency = '{{ $defaultCurrency }}';
+        let isFetchingPrice = false;
+        
+        const quantityInput = document.getElementById('quantityInput');
+        const amountInput = document.getElementById('amountInput');
+        const buyPreview = document.getElementById('buyPreview');
 
         function toggleFields() {
             const isCrypto = typeSelect.value === 'crypto';
@@ -314,6 +318,7 @@
                     }
 
                     clearSuggestions();
+                    fetchLivePrice();
                 });
 
                 symbolSuggestions.appendChild(row);
@@ -358,6 +363,88 @@
                     clearSuggestions();
                 });
         }
+        
+        function fetchLivePrice() {
+            const sym = symbolInput.value.trim();
+            if (!sym) return;
+            
+            isFetchingPrice = true;
+            updatePreview();
+            
+            const params = new URLSearchParams({
+                symbol: sym,
+                type: typeSelect.value,
+                external_id: externalIdInput.value
+            });
+            
+            fetch(`${PRICE_URL}?${params.toString()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    isFetchingPrice = false;
+                    if (data && data.price_in_default) {
+                        currentFetchedPrice = data.price_in_default;
+                    } else {
+                        currentFetchedPrice = null;
+                    }
+                    updatePreview();
+                })
+                .catch(() => {
+                    isFetchingPrice = false;
+                    currentFetchedPrice = null;
+                    updatePreview();
+                });
+        }
+        
+        function updatePreview() {
+            const buyModeInput = document.querySelector('input[name="buy_mode"]');
+            const mode = buyModeInput ? buyModeInput.value : 'quantity';
+            
+            const isCrypto = typeSelect.value === 'crypto';
+            const unitSingular = isCrypto ? 'coin' : 'share';
+            const unitPlural = isCrypto ? 'coins' : 'shares';
+            
+            if (isFetchingPrice) {
+                buyPreview.classList.remove('hidden');
+                buyPreview.textContent = 'Fetching current price...';
+                buyPreview.classList.add('animate-pulse', 't-muted');
+                return;
+            }
+            
+            if (!currentFetchedPrice) {
+                buyPreview.classList.add('hidden');
+                return;
+            }
+            
+            buyPreview.classList.remove('hidden', 'animate-pulse', 't-muted');
+            
+            if (mode === 'quantity') {
+                const qty = parseFloat(quantityInput.value);
+                if (!isNaN(qty) && qty > 0) {
+                    const total = qty * currentFetchedPrice;
+                    buyPreview.textContent = `≈ ${fmtNum(total)} ${currentDefaultCurrency}`;
+                } else {
+                    buyPreview.textContent = `1 ${unitSingular} ≈ ${fmtNum(currentFetchedPrice)} ${currentDefaultCurrency}`;
+                }
+            } else {
+                const amount = parseFloat(amountInput.value);
+                if (!isNaN(amount) && amount > 0) {
+                    const qty = amount / currentFetchedPrice;
+                    const formattedQty = qty.toLocaleString(undefined, { maximumFractionDigits: 8 });
+                    buyPreview.textContent = `≈ ${formattedQty} ${unitPlural}`;
+                } else {
+                    buyPreview.textContent = `1 ${unitSingular} ≈ ${fmtNum(currentFetchedPrice)} ${currentDefaultCurrency}`;
+                }
+            }
+        }
+        
+        window.updatePreview = updatePreview;
+        quantityInput.addEventListener('input', updatePreview);
+        amountInput.addEventListener('input', updatePreview);
+        symbolInput.addEventListener('blur', fetchLivePrice);
+        typeSelect.addEventListener('change', () => {
+            currentFetchedPrice = null;
+            updatePreview();
+        });
 
         toggleFields();
         typeSelect.addEventListener('change', toggleFields);
@@ -451,16 +538,6 @@
         // ── Live price auto-update ───────────────────────────────────────
         const LIVE_PRICES_URL = '{{ route('investments.live-prices') }}';
         const POLL_MS = 900000; // refresh every 15 mins (limit API usage)
-
-        function fmtNum(num, dec = 2) {
-            if (num === null || num === undefined) return '--';
-            const n = parseFloat(num);
-            const sign = n < 0 ? '-' : '';
-            const fixed = Math.abs(n).toFixed(dec);
-            const [intPart, fracPart] = fixed.split('.');
-            const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            return sign + intFmt + '.' + fracPart;
-        }
 
         function plColorClass(val) {
             return (val ?? 0) >= 0

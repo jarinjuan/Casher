@@ -42,7 +42,7 @@ return [
         'charts_desc' => 'Use charts & analytics for category pie, 12-month trend, 6-month cash flow, income sources, and top spending categories.',
         'built_around' => 'Built around real screens',
         'built_desc' => 'The welcome page mirrors the actual app modules: Dashboard cards, forecast logic, chart pages, and workspace-based financial organization.',
-        'monthly_trends' => 'Monthly Trends',
+        'monthly_trends' => 'Monthly trends',
         'forecast' => 'Forecast',
         'forecast_desc' => '6-month average of expenses',
         'visualizations' => 'Graphs',

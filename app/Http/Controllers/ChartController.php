@@ -42,8 +42,6 @@ class ChartController extends Controller
             $data[] = (float) $sum;
             $colors[] = $cat->color ?? '#4f46e5';
         }
-
-        // uncategorized expenses
         $uncatExpenses = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->whereNull('category_id')->get();
         $uncat = 0.0;
         foreach ($uncatExpenses as $expense) {

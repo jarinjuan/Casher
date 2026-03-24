@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('charts', [\App\Http\Controllers\ChartController::class, 'index'])->name('charts.index');
     Route::get('investments', [\App\Http\Controllers\InvestmentController::class, 'index'])->name('investments.index');
     Route::get('investments/search', [\App\Http\Controllers\InvestmentController::class, 'search'])->name('investments.search');
+    Route::get('investments/price', [\App\Http\Controllers\InvestmentController::class, 'price'])->name('investments.price');
     Route::get('investments/live-prices', [\App\Http\Controllers\InvestmentController::class, 'livePrices'])->name('investments.live-prices');
     Route::get('investments/{investment}/edit', [\App\Http\Controllers\InvestmentController::class, 'edit'])->name('investments.edit');
     Route::post('investments', [\App\Http\Controllers\InvestmentController::class, 'store'])->name('investments.store');
