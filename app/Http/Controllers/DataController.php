@@ -29,7 +29,7 @@ class DataController extends Controller
         $callback = function () use ($columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
-            fputcsv($file, ['Groceries', '50.00', 'expense', 'Weekly groceries', 'Food', 'USD', now()->format('Y-m-d')]);
+            fputcsv($file, ['Groceries', '50.00', 'expense', 'Weekly groceries', 'Food', 'USD', now()->format('d. m. Y')]);
             fclose($file);
         };
         
@@ -207,7 +207,7 @@ class DataController extends Controller
                     'note' => $t->note,
                     'category_name' => $t->category?->name ?? '',
                     'currency' => $t->currency,
-                    'created_at' => $t->created_at->toDateString(),
+                    'created_at' => $t->created_at->format('d. m. Y'),
                 ];
             })->toArray();
         }

@@ -21,5 +21,9 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Blade::directive('money', function ($expression) {
             return "<?php echo \App\Helpers\Number::format($expression); ?>";
         });
+
+        \Illuminate\Support\Facades\Blade::directive('date', function ($expression) {
+            return "<?php echo ($expression) ? ($expression)->format('d. m. Y') : ''; ?>";
+        });
     }
 }

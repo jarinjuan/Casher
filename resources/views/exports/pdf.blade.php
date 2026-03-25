@@ -20,7 +20,7 @@
 <body>
     <div class="header">
         <h1>Casher Export Report</h1>
-        <p>Generated: {{ now()->format('Y-m-d H:i:s') }}</p>
+        <p>Generated: @date(now())</p>
     </div>
 
     @if(isset($data['transactions']) && !empty($data['transactions']))

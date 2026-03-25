@@ -69,7 +69,7 @@
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="radio" name="format" value="pdf" class="w-4 h-4 border-gray-300 dark:border-white/20 text-[#fbbf24] focus:ring-[#fbbf24]">
-                                <span class="text-sm t-secondary">{{ __('PDF Report') }}</span>
+                                <span class="text-sm t-secondary">{{ __('PDF report') }}</span>
                             </label>
                         </div>
                     </div>

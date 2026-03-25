@@ -21,12 +21,12 @@
         @endif
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
-                <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Portfolio Value') }}</p>
+                <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Portfolio value') }}</p>
                 <p class="mt-2 text-2xl font-extrabold t-primary" id="stat-portfolio-value">@money($totalValue) {{ $currencySymbol }}</p>
                 <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
             <div class="card p-5">
-                <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Invested Capital') }}</p>
+                <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Invested capital') }}</p>
                 <p class="mt-2 text-2xl font-extrabold t-primary">@money($totalCost) {{ $currencySymbol }}</p>
                 <p class="text-xs t-muted mt-1">{{ $defaultCurrency }}</p>
             </div>
@@ -110,7 +110,7 @@
                                     <div class="font-semibold t-secondary">@money($investment->quantity, 6)</div>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] uppercase tracking-widest t-muted font-bold">{{ __('Avg Price') }}</div>
+                                    <div class="text-[10px] uppercase tracking-widest t-muted font-bold">{{ __('Avg price') }}</div>
                                     <div class="font-semibold t-secondary">@money($investment->average_price) {{ $investment->currency }}</div>
                                 </div>
                                 <div>

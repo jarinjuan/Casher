@@ -51,7 +51,7 @@
                     @csrf
 
                     <div>
-                        <label for="name" class="label-dark">{{ __('Full Name') }}</label>
+                        <label for="name" class="label-dark">{{ __('Full name') }}</label>
                         <input
                             id="name"
                             type="text"

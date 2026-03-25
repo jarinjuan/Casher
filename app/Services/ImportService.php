@@ -58,6 +58,7 @@ class ImportService
                     'note' => $item['note'] ?? '',
                     'category_id' => $categoryId,
                     'currency' => $item['currency'] ?? 'USD',
+                    'created_at' => isset($item['created_at']) ? \Illuminate\Support\Carbon::parse($item['created_at']) : now(),
                 ]);
 
                 $result['success']['transactions']++;

@@ -188,13 +188,15 @@
 </div>
 
 <script>
+const STR_COPIED = '{{ __('Copied!') }}';
+
 function copyInviteCode(event, text) {
     const btn = event.currentTarget;
     const span = btn.querySelector('span');
     const originalText = span.innerText;
 
     const successFallback = () => {
-        span.innerText = 'Copied!';
+        span.innerText = STR_COPIED;
         btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-500');
         setTimeout(() => {
             span.innerText = originalText;

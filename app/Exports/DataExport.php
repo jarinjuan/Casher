@@ -19,15 +19,15 @@ class DataExport implements WithMultipleSheets
     {
         $sheets = [];
 
-        if (isset($this->data['transactions']) && ! empty($this->data['transactions'])) {
+        if (isset($this->data['transactions']) && !empty($this->data['transactions'])) {
             $sheets[] = new TransactionSheet($this->data['transactions']);
         }
 
-        if (isset($this->data['categories']) && ! empty($this->data['categories'])) {
+        if (isset($this->data['categories']) && !empty($this->data['categories'])) {
             $sheets[] = new CategorySheet($this->data['categories']);
         }
 
-        if (isset($this->data['investments']) && ! empty($this->data['investments'])) {
+        if (isset($this->data['investments']) && !empty($this->data['investments'])) {
             $sheets[] = new InvestmentSheet($this->data['investments']);
         }
 
@@ -43,7 +43,7 @@ class TransactionSheet implements FromArray, WithHeadings
     {
         $this->data = $data;
     }
-    
+
     public function array(): array
     {
         return $this->data;
@@ -101,7 +101,7 @@ class InvestmentSheet implements FromArray, WithHeadings
 
     public function headings(): array
     {
-        return [__('Type'), __('Name'), __('Symbol'), __('External ID'), __('Quantity'), __('Average Price'), __('Currency')];
+        return [__('Type'), __('Name'), __('Symbol'), __('External ID'), __('Quantity'), __('Average price'), __('Currency')];
     }
 
     public function title(): string

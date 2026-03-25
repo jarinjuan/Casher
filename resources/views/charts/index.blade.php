@@ -21,7 +21,7 @@
 
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $monthLabels[] = $date->format('M Y');
+            $monthLabels[] = $date->format('m/Y');
 
             $income = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'income')
@@ -54,7 +54,7 @@
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $last6Months[] = $date->format('M Y');
+            $last6Months[] = $date->format('m/Y');
 
             $income = \App\Models\Transaction::where('team_id', $teamId)
                 ->where('type', 'income')

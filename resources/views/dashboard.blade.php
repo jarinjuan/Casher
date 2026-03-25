@@ -17,8 +17,8 @@
                     </div>
                     <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">@money($totalBalance) {{ $currencySymbol }}</p>
                     
-                    <p id="overall-balance-cash" class="text-xs t-muted mt-1">{{ __('Cash') }}: @money($cashBalance) {{ $currencySymbol }}</p>
-                    <p id="overall-balance-investments" class="text-xs t-muted">{{ __('Investments') }}: @money($investmentPortfolioValue) {{ $currencySymbol }}</p>
+                    <p class="text-xs t-muted mt-1">{{ __('Cash') }}: <span id="overall-balance-cash-value">@money($cashBalance)</span> {{ $currencySymbol }}</p>
+                    <p class="text-xs t-muted">{{ __('Investments') }}: <span id="overall-balance-investments-value">@money($investmentPortfolioValue)</span> {{ $currencySymbol }}</p>
                 </div>
                 <div class="card p-6">
                     <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Monthly expenses') }}</p>
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="truncate font-bold t-primary text-sm">{{ $t->title }}</p>
-                                        <p class="truncate text-xs t-muted">{{ $t->created_at->format('M d, Y') }}</p>
+                                        <p class="truncate text-xs t-muted">@date($t->created_at)</p>
                                     </div>
                                 </div>
                                 <div class="text-right shrink-0">
@@ -159,6 +159,8 @@
     <script>
         const DASHBOARD_LIVE_BALANCE_URL = '{{ route('dashboard.live-balance') }}';
         const DASHBOARD_POLL_MS = 30000;
+        const STR_UPDATED = '{{ __('Updated') }}';
+        const STR_UPDATE_FAILED = '{{ __('Update failed') }}';
 
         function fmtWhole(value) {
             const num = Number(value ?? 0);
@@ -185,14 +187,14 @@
                         totalEl.textContent = fmtWhole(data.total_balance) + ' ' + symbol;
                     }
 
-                    const cashEl = document.getElementById('overall-balance-cash');
-                    if (cashEl) {
-                        cashEl.textContent = 'Cash: ' + fmtWhole(data.cash_balance) + ' ' + symbol;
+                    const cashValueEl = document.getElementById('overall-balance-cash-value');
+                    if (cashValueEl) {
+                        cashValueEl.textContent = fmtWhole(data.cash_balance);
                     }
 
-                    const invEl = document.getElementById('overall-balance-investments');
-                    if (invEl) {
-                        invEl.textContent = 'Investments: ' + fmtWhole(data.investment_portfolio_value) + ' ' + symbol;
+                    const invValueEl = document.getElementById('overall-balance-investments-value');
+                    if (invValueEl) {
+                        invValueEl.textContent = fmtWhole(data.investment_portfolio_value);
                     }
 
                     if (dot) {
@@ -204,7 +206,7 @@
                         const ts = now.getHours().toString().padStart(2, '0') + ':'
                             + now.getMinutes().toString().padStart(2, '0') + ':'
                             + now.getSeconds().toString().padStart(2, '0');
-                        label.textContent = 'Updated ' + ts;
+                        label.textContent = STR_UPDATED + ' ' + ts;
                     }
                 })
                 .catch(() => {
@@ -212,7 +214,7 @@
                         dot.className = 'inline-block w-2 h-2 rounded-full bg-red-500';
                     }
                     if (label) {
-                        label.textContent = 'Update failed';
+                        label.textContent = STR_UPDATE_FAILED;
                     }
                 });
         }
