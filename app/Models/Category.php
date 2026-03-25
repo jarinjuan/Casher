@@ -11,6 +11,7 @@ class Category extends Model
 
     protected $fillable = [
         'user_id',
+        'team_id',
         'name',
         'color',
         'monthly_budget',
@@ -20,6 +21,11 @@ class Category extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function transactions()

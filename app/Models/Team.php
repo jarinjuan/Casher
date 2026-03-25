@@ -92,4 +92,14 @@ class Team extends Model
     {
         return $this->hasMany(Investment::class);
     }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
 }

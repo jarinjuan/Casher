@@ -24,8 +24,10 @@ class TransactionRequest extends FormRequest
                 'integer',
                 'exists:categories,id',
                 function ($attribute, $value, $fail) {
-                    if ($value && \App\Models\Category::where('id', '=', $value)->where('user_id', '=', auth()->id())->doesntExist()) {
-                        $fail('Selected category does not belong to you.');
+                    if ($value && \App\Models\Category::where('id', $value)
+                        ->where('team_id', auth()->user()->current_team_id)
+                        ->doesntExist()) {
+                        $fail(__('Selected category does not belong to this workspace.'));
                     }
                 },
             ],

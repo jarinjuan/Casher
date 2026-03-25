@@ -39,8 +39,7 @@ class ImportService
 
                 $categoryId = null;
                 if (! empty($item['category_name'])) {
-                    $category = Category::where('user_id', auth()->id())
-                        ->where('team_id', $teamId)
+                    $category = Category::where('team_id', $teamId)
                         ->where('name', $item['category_name'])
                         ->first();
 
@@ -74,8 +73,7 @@ class ImportService
             try {
                 $row = $row + 2;
 
-                $existing = Category::where('user_id', auth()->id())
-                    ->where('team_id', $teamId)
+                $existing = Category::where('team_id', $teamId)
                     ->where('name', $item['name'])
                     ->first();
 

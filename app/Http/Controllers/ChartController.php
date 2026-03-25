@@ -15,18 +15,22 @@ class ChartController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $teamId = $user->currentTeam->id;
+        $team = clone $user->currentTeam;
+        $teamId = $team->id;
 
-        $categories = $user->categories()->orderBy('name')->get();
+        // Use categories belonging to the current team
+        $categories = $team->categories()->orderBy('name')->get();
 
         $labels = [];
         $data = [];
         $colors = [];
 
-        $team = clone $user->currentTeam;
-
         foreach ($categories as $cat) {
-            $expenses = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->where('category_id', $cat->id)->get();
+            $expenses = \App\Models\Transaction::where('team_id', $teamId)
+                ->where('type', 'expense')
+                ->where('category_id', $cat->id)
+                ->get();
+            
             $sum = 0.0;
             foreach ($expenses as $expense) {
                 $amount = $expense->amount;
@@ -40,9 +44,13 @@ class ChartController extends Controller
             if ($sum <= 0) continue;
             $labels[] = $cat->name;
             $data[] = (float) $sum;
-            $colors[] = $cat->color ?? '#4f46e5';
+            $colors[] = $cat->color ?? '#fbbf24';
         }
-        $uncatExpenses = \App\Models\Transaction::where('team_id', $teamId)->where('type', 'expense')->whereNull('category_id')->get();
+
+        $uncatExpenses = \App\Models\Transaction::where('team_id', $teamId)
+            ->where('type', 'expense')
+            ->whereNull('category_id')
+            ->get();
         $uncat = 0.0;
         foreach ($uncatExpenses as $expense) {
             $amount = $expense->amount;

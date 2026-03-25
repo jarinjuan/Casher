@@ -11,6 +11,7 @@ class Budget extends Model
 
     protected $fillable = [
         'user_id',
+        'team_id',
         'category_id',
         'amount',
         'period',
@@ -26,6 +27,11 @@ class Budget extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function category()

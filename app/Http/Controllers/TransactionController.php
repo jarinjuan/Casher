@@ -42,8 +42,8 @@ class TransactionController extends Controller
     public function create(): View
     {
         $transaction = new Transaction();
-        $categories = auth()->user()->categories()->get();
-        $budgets = auth()->user()->budgets()->with('category')->get();
+        $categories = auth()->user()->currentTeam->categories()->orderBy('name')->get();
+        $budgets = auth()->user()->currentTeam->budgets()->with('category')->get();
         return view('transactions.create', compact('transaction','categories','budgets'));
     }
 
@@ -60,8 +60,8 @@ class TransactionController extends Controller
     public function edit(Transaction $transaction): View
     {
         $this->authorize('update', $transaction);
-        $categories = auth()->user()->categories()->get();
-        $budgets = auth()->user()->budgets()->with('category')->get();
+        $categories = auth()->user()->currentTeam->categories()->orderBy('name')->get();
+        $budgets = auth()->user()->currentTeam->budgets()->with('category')->get();
         return view('transactions.edit', compact('transaction','categories','budgets'));
     }
 

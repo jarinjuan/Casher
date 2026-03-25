@@ -17,7 +17,7 @@ class CategoryController extends Controller
 
     public function index(Request $request): View
     {
-        $categories = $request->user()->categories()->orderBy('name')->get();
+        $categories = $request->user()->currentTeam->categories()->orderBy('name')->get();
         return view('categories.index', compact('categories'));
     }
 
@@ -34,7 +34,10 @@ class CategoryController extends Controller
             $data['budget_currency'] = $request->user()->currentTeam->default_currency ?? 'CZK';
         }
 
-        $request->user()->categories()->create($data);
+        $data['user_id'] = $request->user()->id;
+        $data['team_id'] = $request->user()->currentTeam->id;
+        
+        Category::create($data);
 
         return back()->with('success', __('Category created.'));
     }

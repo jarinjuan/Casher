@@ -213,8 +213,7 @@ class DataController extends Controller
         }
 
         if (in_array('categories', $types)) {
-            $categories = \App\Models\Category::where('user_id', auth()->id())
-                ->where('team_id', $teamId)
+            $categories = \App\Models\Category::where('team_id', $teamId)
                 ->orderBy('name')
                 ->get();
 

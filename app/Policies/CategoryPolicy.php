@@ -9,16 +9,16 @@ class CategoryPolicy
 {
     public function view(User $user, Category $category): bool
     {
-        return $category->user_id === $user->id;
+        return $user->teams->contains('id', $category->team_id);
     }
 
     public function update(User $user, Category $category): bool
     {
-        return $category->user_id === $user->id;
+        return $user->teams->contains('id', $category->team_id);
     }
 
     public function delete(User $user, Category $category): bool
     {
-        return $category->user_id === $user->id;
+        return $user->teams->contains('id', $category->team_id);
     }
 }
