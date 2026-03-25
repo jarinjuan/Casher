@@ -221,8 +221,6 @@
     "New Zealand dollar": "Novozélandský dolar",
     "Chinese yuan": "Čínský jüan",
     "Sign in": "Přihlásit se",
-    "Sign in": "Přihlásit se",
-    "Create account": "Vytvořit účet",
     "Create account": "Vytvořit účet",
     "Welcome back": "Vítejte zpět",
     "Sign in to access your dashboard": "Přihlaste se pro přístup k nástěnce",
@@ -258,5 +256,14 @@
     "Symbol cannot be changed after creation.": "Symbol po vytvoření již nelze měnit.",
     "Fetching current price...": "Získávám aktuální cenu...",
     "Last 30 days": "Posledních 30 dní",
-    "Last 12 months": "Posledních 12 měsíců"
+    "Last 12 months": "Posledních 12 měsíců",
+    "Category with this name already exists in this workspace.": "Kategorie s tímto názvem již v tomto pracovním prostoru existuje.",
+    "Category name is required.": "Název kategorie je povinný.",
+    "Name must not exceed 255 characters.": "Název nesmí být delší než 255 znaků.",
+    "Color must be a valid HEX code (e.g. #FF5733).": "Barva musí být platný HEX kód (např. #FF5733).",
+    "Monthly budget must be a number.": "Měsíční rozpočet musí být číslo.",
+    "Monthly budget must not be negative.": "Měsíční rozpočet nesmí být záporný.",
+    "Monthly budget must not exceed 999,999,999,999.99.": "Měsíční rozpočet nesmí překročit 999 999 999 999,99.",
+    "Invalid currency.": "Neplatná měna.",
+    "No budget set": "Rozpočet nenastaven"
 }

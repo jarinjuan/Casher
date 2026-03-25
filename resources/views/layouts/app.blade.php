@@ -8,14 +8,14 @@
         <title>{{ config('app.name', 'Casher') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=outfit:400,500,600,700,800,900&display=swap" rel="stylesheet" />
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
         <link rel="shortcut icon" href="{{ asset('favicon.svg') }}">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
-            body { font-family: 'Plus Jakarta Sans', sans-serif; }
+            body { font-family: 'Outfit', sans-serif; }
         </style>
         <script>
             if (localStorage.getItem('theme') === 'light') {
