@@ -65,11 +65,10 @@
                     <ul class="divide-y divide-gray-100 dark:divide-white/5">
                         @foreach($recentTransactions as $t)
                             @php
-                                $amountInDefault = $t->amount;
-                                if ($t->currency !== $defaultCurrency) {
-                                    try {
-                                        $amountInDefault = $team->convertToDefaultCurrency($t->amount, $t->currency, $t->created_at);
-                                    } catch (\Exception $e) {}
+                                try {
+                                    $amountInDefault = $team->convertToDefaultCurrency($t->amount, $t->currency, $t->created_at);
+                                } catch (\Exception $e) {
+                                    $amountInDefault = $t->amount;
                                 }
                             @endphp
                             <li class="p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition flex items-center justify-between gap-4">
@@ -90,11 +89,9 @@
                                     <p class="font-extrabold text-sm {{ $t->type === 'income' ? 'text-emerald-500 dark:text-emerald-400' : 't-primary' }}">
                                         {{ $t->type === 'income' ? '+' : '-' }}@money($amountInDefault) {{ $currencySymbol }}
                                     </p>
-                                    @if($t->currency !== $defaultCurrency)
-                                        <p class="text-[10px] t-muted">
-                                            {{ __('Orig') }}: @money($t->amount) {{ $t->currency }}
-                                        </p>
-                                    @endif
+                                    <p class="text-[10px] t-muted">
+                                        {{ __('Orig') }}: @money($t->amount) {{ $t->currency }}
+                                    </p>
                                 </div>
                             </li>
                         @endforeach

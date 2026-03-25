@@ -39,8 +39,8 @@ class PortfolioAnalyticsService
 
         foreach ($prices as $price) {
             $key = $bucket === 'month'
-                ? $price->recorded_at->format('Y-m')
-                : $price->recorded_at->toDateString();
+                ? $price->recorded_at->format('m.Y')
+                : $price->recorded_at->format('d.m.Y');
 
             if ($currentKey !== null && $key !== $currentKey) {
                 $labels[] = $currentKey;

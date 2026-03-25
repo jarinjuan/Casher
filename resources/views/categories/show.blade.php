@@ -33,8 +33,13 @@
                             <div class="text-xs t-muted">{{ $t->note }}</div>
                         </div>
                         <div class="sm:text-right">
-                            <div class="font-semibold t-primary">@money($t->amount) {{ $t->currency }}</div>
-                            <div class="text-xs t-muted">@date($t->created_at)</div>
+                            <div class="font-semibold t-primary">
+                                @money($currentTeam->convertToDefaultCurrency($t->amount, $t->currency, $t->created_at)) {{ $currencySymbol }}
+                            </div>
+                            <div class="text-[10px] t-muted">
+                                {{ __('Originally') }}: @money($t->amount) {{ $t->currency }}
+                            </div>
+                            <div class="text-[10px] t-muted mt-0.5">@date($t->created_at)</div>
                         </div>
                     </li>
                 @endforeach

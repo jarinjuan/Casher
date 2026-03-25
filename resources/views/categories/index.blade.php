@@ -6,9 +6,6 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto px-4 py-6">
-    @if(session('success'))
-        <div class="flash-success mb-4">{{ session('success') }}</div>
-    @endif
 
     <div class="card p-6 mb-6">
         <form method="POST" action="{{ route('categories.store') }}" class="flex flex-col gap-3">
@@ -38,36 +35,50 @@
         </form>
     </div>
 
-    <h3 class="font-bold t-primary mb-3">{{ __('Category list') }}</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @foreach($categories as $cat)
-            <div class="card p-5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group">
-                <div class="flex items-center gap-3 mb-1">
-                    <div class="flex items-center justify-center w-9 h-9 rounded-lg" style="background:{{ $cat->color ?? '#fbbf24' }}20">
-                        <div class="w-3.5 h-3.5 rounded" style="background:{{ $cat->color ?? '#fbbf24' }}"></div>
+    @if($categories->isEmpty())
+        <div class="py-10 text-center t-muted border border-dashed border-gray-200 dark:border-white/5 rounded-2xl mt-4">
+            <span class="font-bold t-primary uppercase tracking-widest text-xs">{{ __('No categories yet.') }}</span>
+        </div>
+    @else
+        <h3 class="font-bold t-primary mb-3 text-sm uppercase tracking-wider">{{ __('Category list') }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @foreach($categories as $cat)
+                <div class="card p-5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group">
+                    <div class="flex items-center gap-3 mb-1">
+                        <div class="flex items-center justify-center w-9 h-9 rounded-lg" style="background:{{ $cat->color ?? '#fbbf24' }}20">
+                            <div class="w-3.5 h-3.5 rounded" style="background:{{ $cat->color ?? '#fbbf24' }}"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <a href="{{ route('categories.show', $cat) }}" class="truncate font-bold t-primary hover:text-[#fbbf24] transition block">{{ $cat->name }}</a>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <a href="{{ route('categories.show', $cat) }}" class="truncate font-bold t-primary hover:text-[#fbbf24] transition block">{{ $cat->name }}</a>
+                    <div class="flex items-end justify-between mt-1">
+                        <div>
+                            @if($cat->monthly_budget)
+                                <span class="font-extrabold text-lg t-primary group-hover:text-[#fbbf24] transition">@money($cat->monthly_budget) {{ $cat->budget_currency ?? 'CZK' }}</span>
+                                <div class="text-xs mt-0.5 font-bold uppercase tracking-widest t-muted">{{ __('Monthly budget') }}</div>
+                            @endif
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{{ route('categories.edit', $cat) }}" class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
+                            <form method="POST" action="{{ route('categories.destroy', $cat) }}" 
+                                x-data 
+                                @submit.prevent="$dispatch('confirm', { 
+                                    title: '{{ __('Delete category?') }}',
+                                    message: '{{ __('Are you sure you want to delete this category? This action cannot be undone.') }}',
+                                    confirmText: '{{ __('Delete') }}',
+                                    variant: 'danger',
+                                    onConfirm: () => $el.submit()
+                                })">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn-danger">{{ __('Delete') }}</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-end justify-between mt-1">
-                    <div>
-                        @if($cat->monthly_budget)
-                            <span class="font-extrabold text-lg t-primary group-hover:text-[#fbbf24] transition">@money($cat->monthly_budget) {{ $cat->budget_currency ?? 'CZK' }}</span>
-                            <div class="text-xs mt-0.5 font-bold uppercase tracking-widest t-muted">{{ __('Monthly budget') }}</div>
-                        @endif
-                    </div>
-                    <div class="flex gap-2">
-                        <a href="{{ route('categories.edit', $cat) }}" class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
-                        <form method="POST" action="{{ route('categories.destroy', $cat) }}" onsubmit="return confirm('{{ __('Delete category?') }}')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn-danger">{{ __('Delete') }}</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
+    @endif
 </div>
 @endsection

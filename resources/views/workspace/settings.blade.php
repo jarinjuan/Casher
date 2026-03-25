@@ -6,12 +6,6 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-    @if(session('success'))
-        <div class="flash-success">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="flash-error">{{ session('error') }}</div>
-    @endif
 
     <div class="card p-6">
         <h3 class="text-lg font-bold t-primary mb-4">{{ $team->name }}</h3>
@@ -67,7 +61,15 @@
                                     </span>
                                 @endif
                                 @if(auth()->id() === $team->user_id && $member->id !== auth()->id())
-                                    <form method="POST" action="{{ route('workspace.remove-member', ['team' => $team->id, 'user' => $member->id]) }}" onsubmit="return confirm('{{ __('Are you sure you want to remove this member from the workspace? They will no longer be able to access it or rejoin using the current invite code.') }}')">
+                                    <form method="POST" action="{{ route('workspace.remove-member', ['team' => $team->id, 'user' => $member->id]) }}" 
+                                        x-data
+                                        @submit.prevent="$dispatch('confirm', {
+                                            title: '{{ __('Remove member?') }}',
+                                            message: '{{ __('Are you sure you want to remove this member from the workspace? They will no longer be able to access it or rejoin using the current invite code.') }}',
+                                            confirmText: '{{ __('Remove') }}',
+                                            variant: 'danger',
+                                            onConfirm: () => $el.submit()
+                                        })">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors" title="Remove member">
@@ -178,7 +180,15 @@
         <div class="card p-6 border border-red-200 dark:border-red-900/30">
             <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2">{{ __('Leave workspace') }}</h3>
             <p class="text-sm t-muted mb-4">{{ __('Are you sure you want to leave this workspace? You will lose access to all its data and will need a new invite code from the owner to rejoin.') }}</p>
-            <form method="POST" action="{{ route('workspace.leave', $team->id) }}" onsubmit="return confirm('{{ __('Are you sure you want to leave this workspace? You will lose access immediately.') }}')">
+            <form method="POST" action="{{ route('workspace.leave', $team->id) }}" 
+                x-data
+                @submit.prevent="$dispatch('confirm', {
+                    title: '{{ __('Leave workspace?') }}',
+                    message: '{{ __('Are you sure you want to leave this workspace? You will lose access immediately.') }}',
+                    confirmText: '{{ __('Leave') }}',
+                    variant: 'danger',
+                    onConfirm: () => $el.submit()
+                })">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn-primary !bg-red-600 hover:!bg-red-700 !text-white !border-red-600 text-sm transition-colors">{{ __('Leave workspace') }}</button>

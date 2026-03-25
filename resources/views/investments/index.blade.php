@@ -6,19 +6,6 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        @if(session('success'))
-            <div class="flash-success">{{ session('success') }}</div>
-        @endif
-
-        @if($errors->any())
-            <div class="flash-error">
-                <ul class="list-disc list-inside">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Portfolio value') }}</p>
@@ -45,14 +32,14 @@
             <div class="card p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-bold t-primary">{{ __('Daily performance') }}</h3>
-                    <span class="text-xs t-muted">Last 30 days</span>
+                    <span class="text-xs t-muted">{{ __('Last 30 days') }}</span>
                 </div>
                 <canvas id="dailyChart" height="120"></canvas>
             </div>
             <div class="card p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-bold t-primary">{{ __('Monthly performance') }}</h3>
-                    <span class="text-xs t-muted">Last 12 months</span>
+                    <span class="text-xs t-muted">{{ __('Last 12 months') }}</span>
                 </div>
                 <canvas id="monthlyChart" height="120"></canvas>
             </div>
@@ -149,7 +136,16 @@
 
                             <div class="mt-4 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                                 <a href="{{ route('investments.edit', $investment) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
-                                <form method="POST" action="{{ route('investments.destroy', $investment) }}" onsubmit="return confirm('{{ __('Delete?') }}')" class="flex-1 flex">
+                                <form method="POST" action="{{ route('investments.destroy', $investment) }}" 
+                                    x-data
+                                    @submit.prevent="$dispatch('confirm', {
+                                        title: '{{ __('Delete investment?') }}',
+                                        message: '{{ __('Are you sure you want to delete this investment? All historical price data for this holding will rest in peace.') }}',
+                                        confirmText: '{{ __('Delete') }}',
+                                        variant: 'danger',
+                                        onConfirm: () => $el.submit()
+                                    })"
+                                    class="flex-1 flex">
                                     @csrf
                                     @method('DELETE')
                                     <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">{{ __('Delete') }}</button>
@@ -405,7 +401,7 @@
             
             if (isFetchingPrice) {
                 buyPreview.classList.remove('hidden');
-                buyPreview.textContent = 'Fetching current price...';
+                buyPreview.textContent = '{{ __('Fetching current price...') }}';
                 buyPreview.classList.add('animate-pulse', 't-muted');
                 return;
             }
@@ -631,12 +627,12 @@
                         const ts = now.getHours().toString().padStart(2,'0') + ':'
                                  + now.getMinutes().toString().padStart(2,'0') + ':'
                                  + now.getSeconds().toString().padStart(2,'0');
-                        label.textContent = 'Updated ' + ts;
+                        label.textContent = '{{ __('Updated') }} ' + ts;
                     }
                 })
                 .catch(() => {
                     if (dot)  dot.className = 'inline-block w-2 h-2 rounded-full bg-red-500';
-                    if (label) label.textContent = 'Update failed';
+                    if (label) label.textContent = '{{ __('Update failed') }}';
                 });
         }
 

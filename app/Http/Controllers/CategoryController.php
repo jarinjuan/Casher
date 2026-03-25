@@ -50,7 +50,11 @@ class CategoryController extends Controller
         $this->authorize('view', $category);
 
         $transactions = $category->transactions()->where('type', 'expense')->latest()->paginate(20);
-        return view('categories.show', compact('category', 'transactions'));
+        $currentTeam = auth()->user()->currentTeam;
+        $defaultCurrency = $currentTeam->default_currency;
+        $currencySymbol = $currentTeam->getCurrencySymbol();
+
+        return view('categories.show', compact('category', 'transactions', 'currentTeam', 'defaultCurrency', 'currencySymbol'));
     }
 
     public function update(CategoryRequest $request, Category $category): RedirectResponse

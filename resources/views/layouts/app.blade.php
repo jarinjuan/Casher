@@ -110,6 +110,9 @@
 
             </div>
         </div>
+
+        <x-confirm-dialog />
+        <x-toast />
     </body>
 
     @stack('scripts')

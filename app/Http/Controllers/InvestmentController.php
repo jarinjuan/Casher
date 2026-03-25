@@ -111,7 +111,7 @@ class InvestmentController extends Controller
 
         $marketData = app(MarketDataService::class);
 
-        if ($data['type'] === 'crypto' && empty($data['external_id'])) {
+        if ($data['type'] === 'crypto' && empty($data['external_id'] ?? null)) {
             $externalId = $marketData->cryptoIdFromSymbol($data['symbol']);
             if ($externalId) {
                 $data['external_id'] = $externalId;
@@ -174,7 +174,7 @@ class InvestmentController extends Controller
                 'quantity' => $totalQty,
                 'average_price' => $weightedAvg,
                 'name' => $data['name'] ?: $existing->name,
-                'external_id' => $data['external_id'] ?: $existing->external_id,
+                'external_id' => ($data['external_id'] ?? null) ?: $existing->external_id,
                 'currency' => $data['currency'],
             ]);
 
