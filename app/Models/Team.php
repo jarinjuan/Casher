@@ -36,19 +36,28 @@ class Team extends Model
         return $value;
     }
 
+    public static function getCurrencySymbolFor(string $currency): string
+    {
+        return match($currency) {
+            'CZK' => 'Kč',
+            'EUR' => '€',
+            'USD', 'CAD', 'AUD', 'NZD' => '$',
+            'GBP' => '£',
+            'JPY', 'CNY' => '¥',
+            'CHF' => 'Fr.',
+            'PLN' => 'zł',
+            'SEK', 'NOK', 'DKK' => 'kr',
+            'HUF' => 'Ft',
+            default => $currency,
+        };
+    }
+
     /**
      * Get currency symbol for the team's default currency
      */
     public function getCurrencySymbol(): string
     {
-        return match($this->default_currency) {
-            'CZK' => 'CZK',
-            'EUR' => '€',
-            'USD' => '$',
-            'GBP' => '£',
-            'JPY' => '¥',
-            default => $this->default_currency,
-        };
+        return static::getCurrencySymbolFor($this->default_currency);
     }
 
     /**

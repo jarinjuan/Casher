@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign In | Casher</title>
+    <title>{{ __('Sign in') }} | Casher</title>
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="shortcut icon" href="{{ asset('favicon.svg') }}">
@@ -29,7 +29,7 @@
             </a>
 
             <div class="flex items-center gap-4">
-                <a href="{{ route('register') }}" class="text-sm font-semibold t-secondary hover:text-[#fbbf24] transition">Create Account</a>
+                <a href="{{ route('register') }}" class="text-sm font-semibold t-secondary hover:text-[#fbbf24] transition">{{ __('Create account') }}</a>
             </div>
         </div>
     </nav>
@@ -43,8 +43,8 @@
             <div class="relative card rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10">
 
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-extrabold t-primary mb-2">Welcome Back</h1>
-                    <p class="t-secondary">Sign in to access your dashboard</p>
+                    <h1 class="text-3xl font-extrabold t-primary mb-2">{{ __('Welcome back') }}</h1>
+                    <p class="t-secondary">{{ __('Sign in to access your dashboard') }}</p>
                 </div>
 
                 <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -53,7 +53,7 @@
                     @csrf
 
                     <div>
-                        <label for="email" class="label-dark">Email</label>
+                        <label for="email" class="label-dark">{{ __('Email') }}</label>
                         <input
                             id="email"
                             type="email"
@@ -69,7 +69,7 @@
                     </div>
 
                     <div>
-                        <label for="password" class="label-dark">Password</label>
+                        <label for="password" class="label-dark">{{ __('Password') }}</label>
                         <input
                             id="password"
                             type="password"
@@ -90,29 +90,25 @@
                                 name="remember"
                                 class="rounded bg-black/40 border-white/20 text-[#fbbf24] focus:ring-[#fbbf24] focus:ring-offset-0 cursor-pointer"
                             />
-                            <span class="ml-2 text-sm t-secondary group-hover:text-[#fbbf24] transition">Remember me</span>
+                            <span class="ml-2 text-sm t-secondary group-hover:text-[#fbbf24] transition">{{ __('Remember me') }}</span>
                         </label>
 
-                        @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="text-sm t-secondary hover:text-[#fbbf24] transition font-semibold">
-                                Forgot password?
-                            </a>
-                        @endif
+
                     </div>
 
                     <button
                         type="submit"
                         class="btn-primary w-full py-4 rounded-xl shadow-lg shadow-[#fbbf24]/20 hover:shadow-[#fbbf24]/40"
                     >
-                        Sign In
+                        {{ __('Sign in') }}
                     </button>
                 </form>
 
                 <div class="mt-8 pt-6 border-t border-white/5 text-center">
                     <p class="t-secondary text-sm">
-                        Don't have an account?
+                        {{ __("Don't have an account?") }}
                         <a href="{{ route('register') }}" class="text-[#fbbf24] hover:text-[#f59e0b] font-semibold transition">
-                            Create one now
+                            {{ __('Create one now') }}
                         </a>
                     </p>
                 </div>

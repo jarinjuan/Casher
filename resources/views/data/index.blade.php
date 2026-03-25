@@ -85,7 +85,7 @@
                         <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#8b5cf6]/10">
                             <i class="fa-solid fa-upload text-[#8b5cf6]"></i>
                         </div>
-                        <h3 class="text-lg font-bold t-primary">{{ __('Import Data') }}</h3>
+                        <h3 class="text-lg font-bold t-primary">{{ __('Import data') }}</h3>
                     </div>
                     <a href="{{ route('data.template') }}" class="btn-secondary text-xs px-3 py-2">
                         <i class="fa-solid fa-file-csv mr-1"></i> {{ __('Sample CSV') }}

@@ -70,7 +70,7 @@
                                     <form method="POST" action="{{ route('workspace.remove-member', ['team' => $team->id, 'user' => $member->id]) }}" onsubmit="return confirm('{{ __('Are you sure you want to remove this member from the workspace? They will no longer be able to access it or rejoin using the current invite code.') }}')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors" title="Remove Member">
+                                        <button type="submit" class="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors" title="Remove member">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                             </svg>
@@ -90,18 +90,18 @@
         </div>
     </div>
 
-    <!-- Language Settings -->
+    
     <div class="card p-6">
-        <h3 class="text-lg font-bold t-primary mb-4">{{ __('Language Settings') }}</h3>
+        <h3 class="text-lg font-bold t-primary mb-4">{{ __('Language settings') }}</h3>
         <div>
             
             <p class="text-xs t-muted mb-3">{{ __('Choose your preferred language for the application interface.') }}</p>
             <div class="flex gap-4">
                 <a href="{{ route('locale.switch', 'en') }}" class="flex-1 flex items-center justify-center py-3 px-4 rounded-xl border {{ app()->getLocale() === 'en' ? 'border-[#fbbf24] bg-amber-50 dark:bg-[#fbbf24]/10 text-[#d97706] dark:text-[#fbbf24]' : 'border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 t-secondary hover:bg-gray-100 dark:hover:bg-white/10' }} transition-colors font-bold text-sm">
-                    English
+                    {{ __('English') }}
                 </a>
                 <a href="{{ route('locale.switch', 'cs') }}" class="flex-1 flex items-center justify-center py-3 px-4 rounded-xl border {{ app()->getLocale() === 'cs' ? 'border-[#fbbf24] bg-amber-50 dark:bg-[#fbbf24]/10 text-[#d97706] dark:text-[#fbbf24]' : 'border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 t-secondary hover:bg-gray-100 dark:hover:bg-white/10' }} transition-colors font-bold text-sm">
-                    Čeština
+                    {{ __('Czech') }}
                 </a>
             </div>
         </div>
@@ -116,17 +116,29 @@
                 <div>
                     
                     <p class="text-xs t-muted mb-3">{{ __('All transactions and investments will be displayed in this currency.') }}</p>
+                    @php
+                        $currenciesList = [
+                            'CZK' => 'Czech koruna',
+                            'EUR' => 'Euro',
+                            'USD' => 'US dollar',
+                            'GBP' => 'British pound',
+                            'JPY' => 'Japanese yen',
+                            'CHF' => 'Swiss franc',
+                            'PLN' => 'Polish zloty',
+                            'SEK' => 'Swedish krona',
+                            'NOK' => 'Norwegian krone',
+                            'DKK' => 'Danish krone',
+                            'HUF' => 'Hungarian forint',
+                            'CAD' => 'Canadian dollar',
+                            'AUD' => 'Australian dollar',
+                            'NZD' => 'New Zealand dollar',
+                            'CNY' => 'Chinese yuan',
+                        ];
+                    @endphp
                     <select name="default_currency" class="select-dark">
-                        <option value="CZK" {{ $team->default_currency === 'CZK' ? 'selected' : '' }}>CZK - Czech Koruna</option>
-                        <option value="EUR" {{ $team->default_currency === 'EUR' ? 'selected' : '' }}>EUR - Euro</option>
-                        <option value="USD" {{ $team->default_currency === 'USD' ? 'selected' : '' }}>USD - US Dollar</option>
-                        <option value="GBP" {{ $team->default_currency === 'GBP' ? 'selected' : '' }}>GBP - British Pound</option>
-                        <option value="JPY" {{ $team->default_currency === 'JPY' ? 'selected' : '' }}>JPY - Japanese Yen</option>
-                        <option value="CHF" {{ $team->default_currency === 'CHF' ? 'selected' : '' }}>CHF - Swiss Franc</option>
-                        <option value="PLN" {{ $team->default_currency === 'PLN' ? 'selected' : '' }}>PLN - Polish Zloty</option>
-                        <option value="SEK" {{ $team->default_currency === 'SEK' ? 'selected' : '' }}>SEK - Swedish Krona</option>
-                        <option value="NOK" {{ $team->default_currency === 'NOK' ? 'selected' : '' }}>NOK - Norwegian Krone</option>
-                        <option value="DKK" {{ $team->default_currency === 'DKK' ? 'selected' : '' }}>DKK - Danish Krone</option>
+                        @foreach($currenciesList as $code => $name)
+                            <option value="{{ $code }}" {{ $team->default_currency === $code ? 'selected' : '' }}>{{ $code }} ({{ \App\Models\Team::getCurrencySymbolFor($code) }}) - {{ __($name) }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="bg-amber-50 dark:bg-[#fbbf24]/5 border border-amber-200 dark:border-[#fbbf24]/10 rounded-xl p-4">
@@ -134,12 +146,12 @@
                         <strong>{{ __('Current:') }}</strong> {{ $team->default_currency }} - {{ $team->getCurrencySymbol() }}
                     </p>
                 </div>
-                <button type="submit" class="btn-primary text-sm">{{ __('Update Currency') }}</button>
+                <button type="submit" class="btn-primary text-sm">{{ __('Update currency') }}</button>
             </form>
         </div>
 
         <div class="card p-6">
-            <h3 class="text-lg font-bold t-primary mb-4">{{ __('Invite Members') }}</h3>
+            <h3 class="text-lg font-bold t-primary mb-4">{{ __('Invite members') }}</h3>
             @if($team->invite_code)
                 <div class="bg-violet-50 dark:bg-[#8b5cf6]/5 border border-violet-200 dark:border-[#8b5cf6]/10 rounded-xl p-4 mb-4">
                     <p class="text-xs t-secondary mb-2">{{ __('Current invite code:') }}</p>
@@ -157,7 +169,7 @@
             <form method="POST" action="{{ route('workspace.generate-invite') }}">
                 @csrf
                 <button type="submit" class="btn-primary text-sm">
-                    {{ $team->invite_code ? __('Generate New Code') : __('Generate Invite Code') }}
+                    {{ $team->invite_code ? __('Generate new code') : __('Generate Invite Code') }}
                 </button>
             </form>
         </div>

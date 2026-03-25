@@ -16,7 +16,7 @@
                         
                     </div>
                     <p id="overall-balance-value" class="text-2xl font-extrabold t-primary mt-2">@money($totalBalance) {{ $currencySymbol }}</p>
-                    <p class="text-xs t-muted mt-1">{{ __('In') }} {{ $defaultCurrency }}</p>
+                    
                     <p id="overall-balance-cash" class="text-xs t-muted mt-1">{{ __('Cash') }}: @money($cashBalance) {{ $currencySymbol }}</p>
                     <p id="overall-balance-investments" class="text-xs t-muted">{{ __('Investments') }}: @money($investmentPortfolioValue) {{ $currencySymbol }}</p>
                 </div>

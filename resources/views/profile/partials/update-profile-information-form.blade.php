@@ -1,7 +1,7 @@
 <section>
     <header>
         <h2 class="text-lg font-medium t-primary">
-            {{ __('Profile Information') }}
+            {{ __('Profile information') }}
         </h2>
 
         <p class="mt-1 text-sm t-secondary">

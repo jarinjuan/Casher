@@ -13,7 +13,7 @@
     <div class="card p-6 mb-6">
         <form method="POST" action="{{ route('categories.store') }}" class="flex flex-col gap-3">
             @csrf
-            <h2 class="t-primary text-xs font-extrabold tracking-wider leading-tight uppercase mb-1">{{ __('Add Category') }}</h2>
+            <h2 class="t-primary text-xs font-extrabold tracking-wider leading-tight uppercase mb-1">{{ __('Add category') }}</h2>
             <div class="flex flex-col gap-1">
                 <label class="label-dark">{{ __('Name') }}</label>
                 <input name="name" type="text" required class="input-dark" placeholder="{{ __('Category name') }}" maxlength="255" />
@@ -30,15 +30,15 @@
                 <label class="label-dark">{{ __('Currency') }}</label>
                 <select name="budget_currency" class="select-dark">
                     @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
-                        <option value="{{ $c }}" {{ (old('budget_currency') ?? auth()->user()->currentTeam->default_currency ?? 'CZK') === $c ? 'selected' : '' }}>{{ $c }}</option>
+                        <option value="{{ $c }}" {{ (old('budget_currency') ?? auth()->user()->currentTeam->default_currency ?? 'CZK') === $c ? 'selected' : '' }}>{{ $c }} ({{ \App\Models\Team::getCurrencySymbolFor($c) }})</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn-primary w-full text-sm mt-1">{{ __('Add Category') }}</button>
+            <button type="submit" class="btn-primary w-full text-sm mt-1">{{ __('Add category') }}</button>
         </form>
     </div>
 
-    <h3 class="font-bold t-primary mb-3">{{ __('Category List') }}</h3>
+    <h3 class="font-bold t-primary mb-3">{{ __('Category list') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @foreach($categories as $cat)
             <div class="card p-5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group">

@@ -21,39 +21,43 @@
 
     <nav x-data="{ open: false }" class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/60 backdrop-blur-md">
         <div class="container mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
-            <div class="flex items-center gap-2">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">
-                    C$
+            <div class="flex items-center gap-8 xl:gap-12">
+                <a href="{{ url('/') }}" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+                        C$
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight text-white italic">CASHER</span>
+                </a>
+
+                <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
+                    <a href="#features" class="hover:text-[#fbbf24] transition">{{ __('welcome.nav.features') }}</a>
+                    <a href="#investments" class="hover:text-[#fbbf24] transition">{{ __('welcome.nav.investments') }}</a>
+                    <a href="#data" class="hover:text-[#fbbf24] transition">{{ __('welcome.nav.data') }}</a>
                 </div>
-                <span class="text-xl font-extrabold tracking-tight text-white italic">CASHER</span>
             </div>
 
-            <button @click="open = !open" class="md:hidden flex items-center px-3 py-2 border rounded text-gray-400 border-gray-600 hover:text-white hover:border-white focus:outline-none" aria-label="Open Menu">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
-                <a href="#features" class="hover:text-[#fbbf24] transition">{{ __('welcome.nav.features') }}</a>
-                <a href="#investments" class="hover:text-[#fbbf24] transition">{{ __('welcome.nav.investments') }}</a>
-                <a href="#data" class="hover:text-[#fbbf24] transition">{{ __('welcome.nav.data') }}</a>
-            </div>
-
-            <div class="hidden sm:flex items-center gap-4">
-                <div class="flex items-center gap-2 mr-2 text-sm font-semibold text-gray-400">
-                    <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'text-white font-bold' : 'hover:text-white transition' }}">EN</a>
-                    <span>|</span>
-                    <a href="{{ route('lang.switch', 'cs') }}" class="{{ app()->getLocale() === 'cs' ? 'text-white font-bold' : 'hover:text-white transition' }}">CS</a>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-4">
+                    <div class="flex items-center gap-2 mr-2 text-sm font-semibold text-gray-400">
+                        <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'text-white font-bold' : 'hover:text-white transition' }}">EN</a>
+                        <span>|</span>
+                        <a href="{{ route('lang.switch', 'cs') }}" class="{{ app()->getLocale() === 'cs' ? 'text-white font-bold' : 'hover:text-white transition' }}">CS</a>
+                    </div>
+                    @if (Route::has('login'))
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="rounded-full bg-white/10 px-6 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">{{ __('welcome.nav.dashboard') }}</a>
+                        @else
+                            <a href="{{ route('login') }}" class="hidden sm:block text-sm font-semibold hover:text-[#fbbf24] transition">{{ __('welcome.nav.sign_in') }}</a>
+                            <a href="{{ route('register') }}" class="rounded-full bg-[#fbbf24] px-6 py-2 text-sm font-bold text-black hover:bg-[#f59e0b] transition shadow-lg shadow-[#fbbf24]/20">{{ __('welcome.nav.get_started') }}</a>
+                        @endauth
+                    @endif
                 </div>
-                @if (Route::has('login'))
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="rounded-full bg-white/10 px-6 py-2 text-sm font-semibold text-white hover:bg-white/20 transition">{{ __('welcome.nav.dashboard') }}</a>
-                    @else
-                        <a href="{{ route('login') }}" class="hidden sm:block text-sm font-semibold hover:text-[#fbbf24] transition">{{ __('welcome.nav.sign_in') }}</a>
-                        <a href="{{ route('register') }}" class="rounded-full bg-[#fbbf24] px-6 py-2 text-sm font-bold text-black hover:bg-[#f59e0b] transition shadow-lg shadow-[#fbbf24]/20">{{ __('welcome.nav.get_started') }}</a>
-                    @endauth
-                @endif
+                
+                <button @click="open = !open" class="md:hidden flex items-center px-3 py-2 border rounded text-gray-400 border-gray-600 hover:text-white hover:border-white focus:outline-none" aria-label="Open Menu">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
             </div>
         </div>
         <!-- Mobile menu -->
@@ -107,15 +111,15 @@
                         <div class="rounded-xl border border-white/10 bg-[#111114] overflow-hidden">
                             <div class="grid grid-cols-12">
                                 <aside class="col-span-3 hidden sm:block border-r border-white/5 bg-[#0d0d10] p-4">
-                                    <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3">Workspace</div>
-                                    <div class="text-sm font-bold text-white mb-4">Family budget</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3">{{ __('welcome.hero.workspace') }}</div>
+                                    <div class="text-sm font-bold text-white mb-4">{{ __('welcome.hero.family_budget') }}</div>
                                     <ul class="space-y-2 text-xs">
                                         <li class="text-[#fbbf24] font-bold">{{ __('welcome.nav.dashboard') }}</li>
-                                        <li class="text-gray-400">Transactions</li>
-                                        <li class="text-gray-400">Categories</li>
+                                        <li class="text-gray-400">{{ __('welcome.hero.transactions') }}</li>
+                                        <li class="text-gray-400">{{ __('welcome.hero.categories') }}</li>
                                         <li class="text-gray-400">{{ __('welcome.nav.data') }}</li>
                                         <li class="text-gray-400">{{ __('welcome.nav.investments') }}</li>
-                                        <li class="text-gray-400">Import / export</li>
+                                        <li class="text-gray-400">{{ __('welcome.hero.import_export') }}</li>
                                     </ul>
                                 </aside>
 
@@ -123,7 +127,7 @@
                                     <div class="flex items-center justify-between mb-4">
                                         <div class="text-lg font-extrabold text-white">{{ __('welcome.nav.dashboard') }}</div>
                                         <div class="flex items-center gap-2 text-[10px]">
-                                            <span class="px-2 py-1 rounded-md bg-white/5 text-gray-400">Logout</span>
+                                            <span class="px-2 py-1 rounded-md bg-white/5 text-gray-400">{{ __('welcome.hero.logout') }}</span>
                                         </div>
                                     </div>
 
@@ -303,7 +307,7 @@
                         </div>
                         <p class="text-gray-400 mb-8 leading-relaxed">{{ __('welcome.multi_currency.mc_desc') }}</p>
                         <div class="flex flex-wrap gap-2">
-                            @foreach(['CZK', 'EUR', 'USD', 'GBP', 'JPY', 'CHF', 'PLN', 'SEK'] as $cur)
+                            @foreach(['CZK', 'EUR', 'USD', 'GBP', 'JPY', 'CHF', 'PLN', 'SEK', 'NOK', 'DKK', 'HUF', 'CAD', 'AUD', 'NZD', 'CNY'] as $cur)
                                 <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-gray-300">{{ $cur }}</span>
                             @endforeach
                         </div>
@@ -402,10 +406,10 @@
 
     <footer class="py-8 sm:py-12 border-t border-white/5 bg-black">
         <div class="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-8">
-            <div class="flex items-center gap-2">
+            <a href="{{ url('/') }}" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]">C$</div>
                 <span class="font-extrabold tracking-tight text-white italic">CASHER</span>
-            </div>
+            </a>
             
             <p class="text-xs text-gray-600 font-medium uppercase tracking-[0.3em]">
                 &copy; {{ date('Y') }} Jaroslav Rašovský. {{ __('welcome.cta.rights') }}

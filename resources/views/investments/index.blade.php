@@ -221,7 +221,7 @@
                     </div>
 
                     <button type="submit" class="btn-primary w-full py-3 text-sm flex justify-center items-center gap-2 hover:scale-[1.02] transition-transform">
-                        <i class="fa-solid fa-check"></i> {{ __('Add to Portfolio') }}
+                        <i class="fa-solid fa-check"></i> {{ __('Add to portfolio') }}
                     </button>
                 </form>
             </div>

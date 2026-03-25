@@ -27,7 +27,7 @@
                 <label class="label-dark">Budget currency</label>
                 <select name="budget_currency" class="select-dark">
                     @foreach(['CZK','EUR','USD','GBP','JPY','CHF','PLN','SEK','NOK','DKK','HUF','CAD','AUD','NZD','CNY'] as $c)
-                        <option value="{{ $c }}" {{ old('budget_currency', $category->budget_currency) === $c ? 'selected' : '' }}>{{ $c }}</option>
+                        <option value="{{ $c }}" {{ old('budget_currency', $category->budget_currency) === $c ? 'selected' : '' }}>{{ $c }} ({{ \App\Models\Team::getCurrencySymbolFor($c) }})</option>
                     @endforeach
                 </select>
             </div>

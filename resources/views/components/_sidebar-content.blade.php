@@ -8,7 +8,7 @@
         </div>
         <div class="flex-1">
             <h1 class="text-sm font-bold t-primary">Casher</h1>
-            <p class="text-xs t-muted">{{ __('Expense Tracker') }}</p>
+            <p class="text-xs t-muted">{{ __('Expense tracker') }}</p>
         </div>
     </div>
 

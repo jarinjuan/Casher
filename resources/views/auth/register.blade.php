@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create Account | Casher</title>
+    <title>{{ __('Create account') }} | Casher</title>
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="shortcut icon" href="{{ asset('favicon.svg') }}">
@@ -29,7 +29,7 @@
             </a>
 
             <div class="flex items-center gap-4">
-                <a href="{{ route('login') }}" class="text-sm font-semibold t-secondary hover:text-[#fbbf24] transition">Sign In</a>
+                <a href="{{ route('login') }}" class="text-sm font-semibold t-secondary hover:text-[#fbbf24] transition">{{ __('Sign in') }}</a>
             </div>
         </div>
     </nav>
@@ -43,15 +43,15 @@
             <div class="relative card rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10">
 
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-extrabold t-primary mb-2">Create Account</h1>
-                    <p class="t-secondary">Join Casher and start managing your finances</p>
+                    <h1 class="text-3xl font-extrabold t-primary mb-2">{{ __('Create account') }}</h1>
+                    <p class="t-secondary">{{ __('Join Casher and start managing your finances') }}</p>
                 </div>
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-5">
                     @csrf
 
                     <div>
-                        <label for="name" class="label-dark">Full Name</label>
+                        <label for="name" class="label-dark">{{ __('Full Name') }}</label>
                         <input
                             id="name"
                             type="text"
@@ -69,7 +69,7 @@
                     </div>
 
                     <div>
-                        <label for="email" class="label-dark">Email</label>
+                        <label for="email" class="label-dark">{{ __('Email') }}</label>
                         <input
                             id="email"
                             type="email"
@@ -86,7 +86,7 @@
                     </div>
 
                     <div>
-                        <label for="password" class="label-dark">Password</label>
+                        <label for="password" class="label-dark">{{ __('Password') }}</label>
                         <input
                             id="password"
                             type="password"
@@ -102,7 +102,7 @@
                     </div>
 
                     <div>
-                        <label for="password_confirmation" class="label-dark">Confirm Password</label>
+                        <label for="password_confirmation" class="label-dark">{{ __('Confirm password') }}</label>
                         <input
                             id="password_confirmation"
                             type="password"
@@ -121,15 +121,15 @@
                         type="submit"
                         class="btn-primary w-full py-4 rounded-xl shadow-lg shadow-[#fbbf24]/20 hover:shadow-[#fbbf24]/40"
                     >
-                        Create Account
+                        {{ __('Create account') }}
                     </button>
                 </form>
 
                 <div class="mt-8 pt-6 border-t border-white/5 text-center">
                     <p class="t-secondary text-sm">
-                        Already have an account?
+                        {{ __('Already have an account?') }}
                         <a href="{{ route('login') }}" class="text-[#fbbf24] hover:text-[#f59e0b] font-semibold transition">
-                            Sign in here
+                            {{ __('Sign in here') }}
                         </a>
                     </p>
                 </div>
