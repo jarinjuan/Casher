@@ -84,7 +84,7 @@
                     @endforeach
                     @if($members->count() <= 1)
                         <div class="p-6 text-center">
-                            <p class="text-sm t-muted">{{ __('No other members in this workspace yet.') }}</p>
+                            <p class="text-sm t-secondary">{{ __('No other members in this workspace yet.') }}</p>
                         </div>
                     @endif
                 </div>

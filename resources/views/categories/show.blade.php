@@ -71,7 +71,7 @@
             </ul>
             <div class="mt-4">{{ $transactions->links() }}</div>
         @else
-            <div class="t-muted text-sm">{{ __('No expenses in this category.') }}</div>
+            <div class="t-secondary text-sm">{{ __('No expenses in this category.') }}</div>
         @endif
     </div>
 </div>

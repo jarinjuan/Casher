@@ -163,7 +163,7 @@
                             @endif
                         </div>
                     @empty
-                        <div class="col-span-1 md:col-span-2 py-8 text-center t-muted border border-dashed border-gray-300 dark:border-white/10 rounded-xl">{{ __('No investments yet.') }}</div>
+                        <div class="col-span-1 md:col-span-2 py-8 text-center t-secondary text-sm border border-dashed border-gray-300 dark:border-white/10 rounded-xl">{{ __('No investments yet.') }}</div>
                     @endforelse
                 </div>
             </div>

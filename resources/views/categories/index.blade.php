@@ -47,8 +47,8 @@
     @endcan
 
     @if($categories->isEmpty())
-        <div class="py-10 text-center t-muted border border-dashed border-gray-200 dark:border-white/5 rounded-2xl mt-4">
-            <span class="font-bold t-primary uppercase tracking-widest text-xs">{{ __('No categories yet.') }}</span>
+        <div class="py-10 text-center border border-dashed border-gray-200 dark:border-white/5 rounded-2xl mt-4">
+            <span class="t-secondary text-sm">{{ __('No categories yet.') }}</span>
         </div>
     @else
         <h3 class="font-bold t-primary mb-3 text-sm uppercase tracking-wider">{{ __('Category list') }}</h3>
