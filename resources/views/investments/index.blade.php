@@ -6,6 +6,12 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        @if($errors->has('refresh'))
+            <div class="flash-error mb-6 flex items-center gap-3">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div class="text-sm font-medium leading-tight">{{ $errors->first('refresh') }}</div>
+            </div>
+        @endif
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card p-5">
                 <p class="text-xs uppercase tracking-widest t-muted font-bold">{{ __('Portfolio value') }}</p>
@@ -76,9 +82,9 @@
                             $plPct = $costInDefault > 0 && $valueInDefault !== null
                                 ? (($valueInDefault - $costInDefault) / $costInDefault) * 100 : null;
                         @endphp
-                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200 dark:border-white/5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group relative" data-inv-id="{{ $investment->id }}">
+                        <div class="bg-gray-50 dark:bg-white/[0.03] rounded-xl p-5 flex flex-col gap-2 hover:border-[#fbbf24]/30 transition group relative" data-inv-id="{{ $investment->id }}">
                             <div class="flex items-center gap-3 mb-1">
-                                <div class="flex items-center justify-center w-10 h-10 rounded-lg shrink-0 bg-[#8b5cf6]/10 text-[#8b5cf6]">
+                                <div class="flex items-center justify-center w-9 h-9 rounded-lg shrink-0 bg-[#8b5cf6]/10 text-[#8b5cf6]">
                                     @if($investment->type === 'crypto')
                                         <i class="fa-brands fa-bitcoin"></i>
                                     @else
@@ -134,7 +140,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full appearance-none">
                                 <a href="{{ route('investments.edit', $investment) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
                                 <form method="POST" action="{{ route('investments.destroy', $investment) }}" 
                                     x-data

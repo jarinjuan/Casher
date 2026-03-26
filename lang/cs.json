@@ -179,6 +179,7 @@
     "Investment updated.": "Investice aktualizována.",
     "Investment deleted.": "Investice smazána.",
     "Prices refreshed.": "Ceny byly aktualizovány.",
+    "Prices are already up to date (last updated less than 5 minutes ago).": "Ceny jsou již aktuální (poslední aktualizace proběhla před méně než 5 minutami).",
     "No prices updated.": "Žádné ceny nebyly aktualizovány.",
     "Transaction saved.": "Transakce uložena.",
     "Transaction updated.": "Transakce aktualizována.",

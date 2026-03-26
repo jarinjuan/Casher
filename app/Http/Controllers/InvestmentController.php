@@ -251,7 +251,7 @@ class InvestmentController extends Controller
         $team = $request->user()->currentTeam;
         $priceInDefault = $priceData['price'];
         try {
-           $priceInDefault = $converter->convert($priceData['price'], $team->default_currency, $priceData['currency']);
+           $priceInDefault = $converter->convert($priceData['price'], $priceData['currency'], $team->default_currency);
         } catch (\Exception $e) {
             // fallback to original if conversion fails
         }
@@ -299,7 +299,11 @@ class InvestmentController extends Controller
             $updated++;
         }
 
-        return back()->with('success', $updated > 0 ? __('Prices refreshed.') : __('No prices updated.'));
+        if ($updated === 0) {
+            return back()->withErrors(['refresh' => __('Prices are already up to date (last updated less than 5 minutes ago).')]);
+        }
+
+        return back()->with('success', __('Prices refreshed.'));
     }
 
     public function livePrices(Request $request, MarketDataService $marketData): JsonResponse

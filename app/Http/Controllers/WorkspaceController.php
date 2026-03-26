@@ -39,7 +39,7 @@ class WorkspaceController extends Controller
         }
 
         $team->update([
-            'invite_code' => Str::random(12),
+            'invite_code' => Str::random(5),
         ]);
 
         return back()->with('success', __('Invite code generated: :code', ['code' => $team->invite_code]));
