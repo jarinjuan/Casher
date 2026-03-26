@@ -21,6 +21,9 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         $team = $user->currentTeam;
+        if (!$team) {
+            return view('workspace.join');
+        }
         $teamId = $team->id;
         $defaultCurrency = $team->default_currency;
         $currencySymbol = $team->getCurrencySymbol();
@@ -110,7 +113,7 @@ class DashboardController extends Controller
             ]
         ];
 
-        $categories = $user->categories()->where('monthly_budget', '>', 0)->get();
+        $categories = $team->categories()->where('monthly_budget', '>', 0)->get();
 
         $recentTransactions = Transaction::where('team_id', $teamId)
             ->with(['category'])

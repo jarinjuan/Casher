@@ -15,7 +15,13 @@ class ChartController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $team = clone $user->currentTeam;
+        $team = $user->currentTeam;
+
+        if (!$team) {
+            return redirect()->route('dashboard')->with('error', __('No workspace selected'));
+        }
+
+        $team = clone $team;
         $teamId = $team->id;
 
         // 1. Expenses by category (Main Pie)
@@ -76,20 +82,42 @@ class ChartController extends Controller
             $date = now()->subMonths($i);
             $trendLabels[] = $date->format('m/Y');
 
-            $income = \App\Models\Transaction::where('team_id', '=', $teamId)
+            $incomeTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
                 ->where('type', '=', 'income')
                 ->whereYear('created_at', '=', $date->year)
                 ->whereMonth('created_at', '=', $date->month)
-                ->sum('amount');
+                ->get();
 
-            $expense = \App\Models\Transaction::where('team_id', '=', $teamId)
+            $incomeSum = 0.0;
+            foreach ($incomeTransactions as $tx) {
+                $amount = $tx->amount;
+                if ($tx->currency !== $team->default_currency) {
+                    try {
+                        $amount = $team->convertToDefaultCurrency($amount, $tx->currency, $tx->created_at);
+                    } catch (\Exception $e) {}
+                }
+                $incomeSum += $amount;
+            }
+
+            $expenseTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
                 ->where('type', '=', 'expense')
                 ->whereYear('created_at', '=', $date->year)
                 ->whereMonth('created_at', '=', $date->month)
-                ->sum('amount');
+                ->get();
 
-            $trendIncome[] = (float) $income;
-            $trendExpense[] = (float) $expense;
+            $expenseSum = 0.0;
+            foreach ($expenseTransactions as $tx) {
+                $amount = $tx->amount;
+                if ($tx->currency !== $team->default_currency) {
+                    try {
+                        $amount = $team->convertToDefaultCurrency($amount, $tx->currency, $tx->created_at);
+                    } catch (\Exception $e) {}
+                }
+                $expenseSum += $amount;
+            }
+
+            $trendIncome[] = $incomeSum;
+            $trendExpense[] = $expenseSum;
         }
 
         // 3. Monthly Bar Chart (Last 6 Months)
@@ -101,20 +129,42 @@ class ChartController extends Controller
             $date = now()->subMonths($i);
             $last6Labels[] = $date->format('m/Y');
 
-            $income = \App\Models\Transaction::where('team_id', '=', $teamId)
+            $incomeTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
                 ->where('type', '=', 'income')
                 ->whereYear('created_at', '=', $date->year)
                 ->whereMonth('created_at', '=', $date->month)
-                ->sum('amount');
+                ->get();
 
-            $expense = \App\Models\Transaction::where('team_id', '=', $teamId)
+            $incomeSum = 0.0;
+            foreach ($incomeTransactions as $tx) {
+                $amount = $tx->amount;
+                if ($tx->currency !== $team->default_currency) {
+                    try {
+                        $amount = $team->convertToDefaultCurrency($amount, $tx->currency, $tx->created_at);
+                    } catch (\Exception $e) {}
+                }
+                $incomeSum += $amount;
+            }
+
+            $expenseTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
                 ->where('type', '=', 'expense')
                 ->whereYear('created_at', '=', $date->year)
                 ->whereMonth('created_at', '=', $date->month)
-                ->sum('amount');
+                ->get();
 
-            $last6Income[] = (float) $income;
-            $last6Expense[] = (float) $expense;
+            $expenseSum = 0.0;
+            foreach ($expenseTransactions as $tx) {
+                $amount = $tx->amount;
+                if ($tx->currency !== $team->default_currency) {
+                    try {
+                        $amount = $team->convertToDefaultCurrency($amount, $tx->currency, $tx->created_at);
+                    } catch (\Exception $e) {}
+                }
+                $expenseSum += $amount;
+            }
+
+            $last6Income[] = $incomeSum;
+            $last6Expense[] = $expenseSum;
         }
 
         // 4. Income sources by category (doughnut)

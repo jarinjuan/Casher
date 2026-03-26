@@ -38,12 +38,14 @@ class DataController extends Controller
 
     public function export(Request $request, ExportService $exportService)
     {
+        $request->validate([
+            'types' => 'required|array|min:1',
+            'types.*' => 'in:transactions,categories,investments',
+            'format' => 'required|in:xlsx,csv,pdf',
+        ]);
+
         $types = $request->input('types', []);
         $format = $request->input('format', 'xlsx');
-
-        if (empty($types)) {
-            return back()->withErrors(['types' => 'Please select at least one data type to export.']);
-        }
 
         $teamId = $request->user()->currentTeam->id ?? null;
 
@@ -70,7 +72,7 @@ class DataController extends Controller
 
             return back()->withErrors(['format' => 'Invalid format.']);
         } catch (\Throwable $e) {
-            return back()->withErrors(['export' => 'Export failed: ' . $e->getMessage()]);
+            return back()->withErrors(['export' => __('Export failed. Please try again later.')]);
         }
     }
 

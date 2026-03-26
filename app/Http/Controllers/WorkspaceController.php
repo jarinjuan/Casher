@@ -128,13 +128,17 @@ class WorkspaceController extends Controller
     public function updateRole(Request $request, $teamId, $userId): RedirectResponse
     {
         $team = \App\Models\Team::findOrFail($teamId);
-        if (auth()->id() !== $team->user_id) abort(403);
+        if ((int) auth()->id() !== (int) $team->user_id) abort(403);
 
         $data = $request->validate([
             'role' => 'required|in:editor,reader'
         ]);
 
-        $team->users()->updateExistingPivot($userId, ['role' => $data['role']]);
+        if (!$team->users()->where('user_id', (int) $userId)->exists()) {
+            return back()->with('error', __('User is not a member of this workspace'));
+        }
+
+        $team->users()->updateExistingPivot((int) $userId, ['role' => $data['role']]);
 
         return back()->with('success', __('Member role updated successfully.'));
     }
@@ -147,7 +151,7 @@ class WorkspaceController extends Controller
             return back()->with('error', __('Only workspace owner can remove members'));
         }
 
-        if ($userId == auth()->id()) {
+        if ((int) $userId === (int) auth()->id()) {
             return back()->with('error', __('You cannot remove yourself from the workspace'));
         }
 
@@ -166,7 +170,7 @@ class WorkspaceController extends Controller
         $team->users()->detach($userId);
 
         $removedUser = \App\Models\User::find($userId);
-        if ($removedUser && $removedUser->current_team_id == $team->id) {
+        if ($removedUser && (int) $removedUser->current_team_id === (int) $team->id) {
             $fallbackTeam = $removedUser->ownedTeams()->first();
             $removedUser->update([
                 'current_team_id' => $fallbackTeam ? $fallbackTeam->id : null,
@@ -194,7 +198,7 @@ class WorkspaceController extends Controller
 
         $team->users()->detach($user->id);
 
-        if ($user->current_team_id == $team->id) {
+        if ((int) $user->current_team_id === (int) $team->id) {
             $fallbackTeam = $user->ownedTeams()->first();
             $user->update([
                 'current_team_id' => $fallbackTeam ? $fallbackTeam->id : null,

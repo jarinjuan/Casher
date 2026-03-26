@@ -58,10 +58,10 @@
                             <i class="fa-solid fa-tags" style="color: {{ $cat->color ?? '#fbbf24' }}"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="truncate font-bold t-primary">{{ $cat->name }}</div>
+                            <a href="{{ route('categories.show', $cat) }}" class="truncate font-bold t-primary hover:text-[#fbbf24] transition">{{ $cat->name }}</a>
                         </div>
                     </div>
-                    <div class="mt-2 h-16 flex flex-col justify-center">
+                    <a href="{{ route('categories.show', $cat) }}" class="mt-2 h-16 flex flex-col justify-center group-hover:opacity-80 transition">
                         @if($cat->monthly_budget)
                             <span class="font-extrabold text-xl t-primary group-hover:text-[#fbbf24] transition">
                                 @money($cat->monthly_budget) {{ $cat->budget_currency ?? 'CZK' }}
@@ -72,8 +72,9 @@
                         @else
                             <span class="text-sm t-muted italic">{{ __('No budget set') }}</span>
                         @endif
-                    </div>
+                    </a>
                     <div class="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full">
+                        <a href="{{ route('categories.show', $cat) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#fbbf24] bg-[#fbbf24]/10 hover:bg-[#fbbf24]/20 transition">{{ __('View') }}</a>
                         <a href="{{ route('categories.edit', $cat) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
                         <form method="POST" action="{{ route('categories.destroy', $cat) }}" 
                             x-data

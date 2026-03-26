@@ -20,9 +20,19 @@ class TransactionController extends Controller
     public function index(Request $request): View
     {
         $currentTeam = $request->user()->currentTeam;
+
+        if (!$currentTeam) {
+            return view('transactions.index', [
+                'transactions' => collect(),
+                'currentTeam' => null,
+                'defaultCurrency' => 'CZK',
+                'currencySymbol' => 'Kč',
+            ]);
+        }
+
         $search = $request->query('search');
 
-        $query = Transaction::where('team_id', $currentTeam->id ?? null);
+        $query = Transaction::where('team_id', $currentTeam->id);
 
         if ($search) {
             $query->where(function ($q) use ($search) {

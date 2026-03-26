@@ -22,6 +22,31 @@
         </div>
     </div>
 
+    @if($category->monthly_budget > 0)
+        @php
+            $budgetSpent = $category->getMonthlySpent();
+            $budgetPct = min(100, $category->monthly_budget > 0 ? ($budgetSpent / $category->monthly_budget) * 100 : 0);
+            $remaining = max(0, $category->monthly_budget - $budgetSpent);
+            $barColor = $budgetPct < 60 ? 'bg-emerald-500' : ($budgetPct < 85 ? 'bg-yellow-500' : 'bg-red-500');
+            $budgetCurrencySymbol = \App\Models\Team::getCurrencySymbolFor($category->budget_currency ?? $defaultCurrency);
+        @endphp
+        <div class="card p-5 mb-4">
+            <div class="flex items-center justify-between mb-3">
+                <h4 class="font-bold t-primary text-sm">{{ __('Monthly budget') }}</h4>
+                <span class="text-xs font-semibold {{ $budgetPct >= 100 ? 'text-red-500 dark:text-red-400' : 't-muted' }}">
+                    @money($budgetSpent) / @money($category->monthly_budget) {{ $budgetCurrencySymbol }}
+                </span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-white/10 rounded-full h-3 overflow-hidden">
+                <div class="{{ $barColor }} h-3 rounded-full transition-all duration-500" style="width: {{ $budgetPct }}%"></div>
+            </div>
+            <div class="flex items-center justify-between mt-2">
+                <span class="text-xs t-muted">{{ \App\Helpers\Number::format($budgetPct, 1) }}% {{ __('used') }}</span>
+                <span class="text-xs t-muted">{{ __('Remaining') }}: @money($remaining) {{ $budgetCurrencySymbol }}</span>
+            </div>
+        </div>
+    @endif
+
     <div class="card p-5">
         <h4 class="font-bold t-primary mb-3">{{ __('Expenses') }}</h4>
         @if($transactions->count())

@@ -54,8 +54,7 @@ class ExportService
         }
 
         if (in_array('categories', $types)) {
-            $categories = Category::where('user_id', auth()->id())
-                ->where('team_id', $teamId)
+            $categories = Category::where('team_id', $teamId)
                 ->orderBy('name')
                 ->get();
 

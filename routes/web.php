@@ -23,9 +23,8 @@ Route::get('/locale/{lang}', function ($lang) {
     return back();
 })->name('locale.switch');
 
-Route::get('/analysis', function () {
-    return view('analysis');
-})->middleware(['auth', 'verified'])->name('analysis');
+
+
 
 
 Route::middleware('auth')->group(function () {

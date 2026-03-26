@@ -62,7 +62,7 @@ class ImportService
 
                 $result['success']['transactions']++;
             } catch (\Throwable $e) {
-                $result['errors'][] = "Transaction row $row: " . $e->getMessage();
+                $result['errors'][] = __("Transaction row :row: :message", ['row' => $row, 'message' => $e->getMessage()]);
             }
         }
     }
@@ -94,7 +94,7 @@ class ImportService
 
                 $result['success']['categories']++;
             } catch (\Throwable $e) {
-                $result['errors'][] = "Category row $row: " . $e->getMessage();
+                $result['errors'][] = __("Category row :row: :message", ['row' => $row, 'message' => $e->getMessage()]);
             }
         }
     }
@@ -121,7 +121,7 @@ class ImportService
                             $converter = app(\App\Services\CurrencyConverter::class);
                             $oldAvg = $converter->convert($oldAvg, $existing->currency, $importCurrency);
                         } catch (\Exception $e) {
-                            $result['errors'][] = "Investment row $row: Failed to convert currency for merge ({$existing->currency} → {$importCurrency})";
+                            $result['errors'][] = __("Investment row :row: Failed to convert currency for merge (:from → :to)", ['row' => $row, 'from' => $existing->currency, 'to' => $importCurrency]);
                             continue;
                         }
                     }
@@ -155,7 +155,7 @@ class ImportService
 
                 $result['success']['investments']++;
             } catch (\Throwable $e) {
-                $result['errors'][] = "Investment row $row: " . $e->getMessage();
+                $result['errors'][] = __("Investment row :row: :message", ['row' => $row, 'message' => $e->getMessage()]);
             }
         }
     }

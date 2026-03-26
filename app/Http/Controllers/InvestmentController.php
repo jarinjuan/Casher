@@ -31,31 +31,6 @@ class InvestmentController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        foreach ($investments as $investment) {
-            $latest = $investment->latestPrice;
-            if ($latest && $latest->recorded_at && $latest->recorded_at->gt(now()->subMinutes(15))) {
-                continue;
-            }
-
-            $price = $marketData->getPrice($investment);
-            if (! $price) {
-                continue;
-            }
-
-            InvestmentPrice::create([
-                'investment_id' => $investment->id,
-                'price' => $price['price'],
-                'currency' => $price['currency'],
-                'recorded_at' => now(),
-                'source' => $price['source'],
-            ]);
-        }
-
-        $investments = Investment::where('team_id', $teamId)
-            ->with('latestPrice')
-            ->orderByDesc('created_at')
-            ->get();
-
         $totalValue = 0.0;
         $totalCost = 0.0;
 
@@ -101,9 +76,25 @@ class InvestmentController extends Controller
 
     public function store(InvestmentRequest $request): RedirectResponse
     {
+        $team = $request->user()->currentTeam;
+        if (!$team) {
+            return redirect()->route('dashboard')->with('error', __('No workspace selected'));
+        }
+
+        // Authorize: only owner or editor can create investments
+        $isOwner = $team->user_id === $request->user()->id;
+        $isEditor = \Illuminate\Support\Facades\DB::table('team_user')
+            ->where('team_id', $team->id)
+            ->where('user_id', $request->user()->id)
+            ->where('role', 'editor')
+            ->exists();
+        if (!$isOwner && !$isEditor) {
+            abort(403);
+        }
+
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
-        $data['team_id'] = $request->user()->currentTeam->id ?? null;
+        $data['team_id'] = $team->id;
         $data['symbol'] = strtoupper($data['symbol']);
         if (isset($data['currency'])) {
             $data['currency'] = strtoupper($data['currency']);
@@ -124,7 +115,7 @@ class InvestmentController extends Controller
             $data['average_price'] = $price['price'];
             $data['currency'] = strtoupper($price['currency']);
         } else {
-            return back()->withErrors(['average_price' => 'Nepodařilo se stáhnout aktuální cenu pro vložený symbol. Zkontrolujte prosím symbol a zkuste to znovu.'])->withInput();
+            return back()->withErrors(['average_price' => __('Failed to fetch the current price for the entered symbol. Please check the symbol and try again.')])->withInput();
         }
 
         if ($data['buy_mode'] === 'amount') {
@@ -135,7 +126,7 @@ class InvestmentController extends Controller
             try {
                 $amountInTargetCurrency = $converter->convert($amountInDefault, $team->default_currency, $data['currency']);
             } catch (\Exception $e) {
-                return back()->withErrors(['amount' => 'Chyba při konverzi měny ke spočítání akcií. Zkontrolujte si aktuální kurzy.'])->withInput();
+                return back()->withErrors(['amount' => __('Currency conversion error. Please check the current exchange rates.')])->withInput();
             }
 
             $data['quantity'] = $amountInTargetCurrency / (float) $data['average_price'];
@@ -160,7 +151,7 @@ class InvestmentController extends Controller
                     $converter = app(\App\Services\CurrencyConverter::class);
                     $oldAvg = $converter->convert($oldAvg, $existing->currency, $data['currency']);
                 } catch (\Exception $e) {
-                    return back()->withErrors(['currency' => 'Nepodařilo se převést měny pro sloučení investic. Zkontrolujte API nebo zadejte kompatibilní měnu.'])->withInput();
+                    return back()->withErrors(['currency' => __('Failed to convert currencies for merging investments. Please check the API or enter a compatible currency.')])->withInput();
                 }
             }
             
