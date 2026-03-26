@@ -11,42 +11,21 @@ class TransactionPolicy
 {
     public function view(User $user, Transaction $transaction): bool
     {
-        return $transaction->team_id === $user->current_team_id;
+        return $transaction->team_id === (int) $user->current_team_id;
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->canEdit((int) $user->current_team_id);
     }
 
     public function update(User $user, Transaction $transaction): bool
     {
-        if ($transaction->team_id !== $user->current_team_id) {
-            return false;
-        }
-
-        $team = Team::find($transaction->team_id, '*');
-        if ($team && $team->user_id === $user->id) {
-            return true;
-        }
-
-        return DB::table('team_user')
-            ->where('team_id', $transaction->team_id)
-            ->where('user_id', $user->id)
-            ->where('role', 'editor')
-            ->exists();
+        return $transaction->team_id === (int) $user->current_team_id && $user->canEdit($transaction->team_id);
     }
 
     public function delete(User $user, Transaction $transaction): bool
     {
-        if ($transaction->team_id !== $user->current_team_id) {
-            return false;
-        }
-
-        $team = Team::find($transaction->team_id, '*');
-        if ($team && $team->user_id === $user->id) {
-            return true;
-        }
-
-        return DB::table('team_user')
-            ->where('team_id', $transaction->team_id)
-            ->where('user_id', $user->id)
-            ->where('role', 'editor')
-            ->exists();
+        return $transaction->team_id === (int) $user->current_team_id && $user->canEdit($transaction->team_id);
     }
 }

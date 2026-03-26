@@ -81,37 +81,39 @@
                 </form>
             </div>
 
-            <div class="card p-6 flex flex-col">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#8b5cf6]/10">
-                            <i class="fa-solid fa-upload text-[#8b5cf6]"></i>
+            @if(auth()->user()->canEdit(auth()->user()->current_team_id))
+                <div class="card p-6 flex flex-col">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#8b5cf6]/10">
+                                <i class="fa-solid fa-upload text-[#8b5cf6]"></i>
+                            </div>
+                            <h3 class="text-lg font-bold t-primary">{{ __('Import data') }}</h3>
                         </div>
-                        <h3 class="text-lg font-bold t-primary">{{ __('Import data') }}</h3>
+                        <a href="{{ route('data.template') }}" class="btn-secondary text-xs px-3 py-2">
+                            <i class="fa-solid fa-file-csv mr-1"></i> {{ __('Sample CSV') }}
+                        </a>
                     </div>
-                    <a href="{{ route('data.template') }}" class="btn-secondary text-xs px-3 py-2">
-                        <i class="fa-solid fa-file-csv mr-1"></i> {{ __('Sample CSV') }}
-                    </a>
+                    <form method="POST" action="{{ route('data.import') }}" enctype="multipart/form-data" class="flex-1 flex flex-col">
+                        @csrf
+                        <div class="flex-1 space-y-5 mb-5">
+                            <div>
+                                <label class="label-dark mb-2">{{ __('Select file:') }}</label>
+                                <input type="file" name="file" accept=".xlsx,.csv,.xls" class="w-full px-4 py-3 border border-gray-300 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/5 t-secondary cursor-pointer file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#fbbf24] file:text-black hover:file:bg-[#f59e0b]" required>
+                                <p class="text-xs t-muted mt-2">{{ __('Supported: .xlsx, .csv, .xls') }}</p>
+                            </div>
+                            <div class="bg-[#8b5cf6]/5 border border-[#8b5cf6]/10 rounded-xl p-4">
+                                <p class="text-xs text-[#7c3aed] dark:text-[#a78bfa]">
+                                    <strong>{{ __('Note:') }}</strong> {{ __('Import will merge data with existing records.') }}
+                                </p>
+                            </div>
+                        </div>
+                        <button class="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-bold py-2.5 rounded-lg transition shadow-lg shadow-[#8b5cf6]/10 text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-upload"></i> {{ __('Import') }}
+                        </button>
+                    </form>
                 </div>
-                <form method="POST" action="{{ route('data.import') }}" enctype="multipart/form-data" class="flex-1 flex flex-col">
-                    @csrf
-                    <div class="flex-1 space-y-5 mb-5">
-                        <div>
-                            <label class="label-dark mb-2">{{ __('Select file:') }}</label>
-                            <input type="file" name="file" accept=".xlsx,.csv,.xls" class="w-full px-4 py-3 border border-gray-300 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/5 t-secondary cursor-pointer file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#fbbf24] file:text-black hover:file:bg-[#f59e0b]" required>
-                            <p class="text-xs t-muted mt-2">{{ __('Supported: .xlsx, .csv, .xls') }}</p>
-                        </div>
-                        <div class="bg-[#8b5cf6]/5 border border-[#8b5cf6]/10 rounded-xl p-4">
-                            <p class="text-xs text-[#7c3aed] dark:text-[#a78bfa]">
-                                <strong>{{ __('Note:') }}</strong> {{ __('Import will merge data with existing records.') }}
-                            </p>
-                        </div>
-                    </div>
-                    <button class="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] text-white font-bold py-2.5 rounded-lg transition shadow-lg shadow-[#8b5cf6]/10 text-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-upload"></i> {{ __('Import') }}
-                    </button>
-                </form>
-            </div>
+            @endif
         </div>
 
 

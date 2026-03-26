@@ -78,6 +78,10 @@ class DataController extends Controller
 
     public function import(Request $request, ImportService $importService)
     {
+        if (!$request->user()->canEdit($request->user()->current_team_id)) {
+            abort(403);
+        }
+
         $request->validate([
             'file' => 'required|file|mimes:xlsx,csv,xls|max:10240',
         ]);

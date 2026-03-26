@@ -51,6 +51,7 @@ class TransactionController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', Transaction::class);
         $transaction = new Transaction();
         $categories = auth()->user()->currentTeam->categories()->orderBy('name')->get();
         $budgets = auth()->user()->currentTeam->budgets()->with('category')->get();
@@ -59,6 +60,7 @@ class TransactionController extends Controller
 
     public function store(TransactionRequest $request): RedirectResponse
     {
+        $this->authorize('create', Transaction::class);
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
         $data['team_id'] = $request->user()->currentTeam->id;

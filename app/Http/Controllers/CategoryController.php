@@ -28,6 +28,7 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request): RedirectResponse
     {
+        $this->authorize('create', Category::class);
         $data = $request->validated();
 
         if (!isset($data['budget_currency'])) {

@@ -85,4 +85,34 @@ class User extends Authenticatable
         return $this->belongsTo(Team::class, 'current_team_id');
     }
 
+    /**
+     * Check if user has a specific role in a specific team.
+     */
+    public function hasRole(string $role, int $teamId): bool
+    {
+        if ($this->ownedTeams()->where('id', $teamId)->exists()) {
+            return true;
+        }
+
+        return $this->teams()
+            ->where('team_id', $teamId)
+            ->where('role', $role)
+            ->exists();
+    }
+
+    /**
+     * Check if user can edit in a specific team (Owner or Editor).
+     */
+    public function canEdit(int $teamId): bool
+    {
+        if ($this->ownedTeams()->where('id', $teamId)->exists()) {
+            return true;
+        }
+
+        return $this->teams()
+            ->where('team_id', $teamId)
+            ->where('role', 'editor')
+            ->exists();
+    }
+
 }

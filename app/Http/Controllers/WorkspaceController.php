@@ -75,7 +75,7 @@ class WorkspaceController extends Controller
             return back()->with('info', __('You are already member of this workspace'));
         }
 
-        $team->users()->attach(auth()->id(), ['role' => 'member']);
+        $team->users()->attach(auth()->id(), ['role' => 'editor']);
 
         auth()->user()->update(['current_team_id' => $team->id]);
         auth()->setUser(auth()->user()->fresh());

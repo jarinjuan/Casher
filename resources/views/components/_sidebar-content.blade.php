@@ -61,12 +61,14 @@
 
 {{-- Navigation --}}
 <div class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
-    <a href="{{ route('transactions.create') }}" class="block">
-        <button class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-black font-bold py-2.5 px-4 rounded-lg transition shadow-lg shadow-[#fbbf24]/10 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-plus text-xs"></i>
-            <span class="text-sm">{{ __('Add transaction') }}</span>
-        </button>
-    </a>
+    @can('create', \App\Models\Transaction::class)
+        <a href="{{ route('transactions.create') }}" class="block">
+            <button class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-black font-bold py-2.5 px-4 rounded-lg transition shadow-lg shadow-[#fbbf24]/10 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus text-xs"></i>
+                <span class="text-sm">{{ __('Add transaction') }}</span>
+            </button>
+        </a>
+    @endcan
 
     <nav class="space-y-1 pt-2">
         @foreach($menuItems as $item)

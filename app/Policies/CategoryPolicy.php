@@ -11,42 +11,21 @@ class CategoryPolicy
 {
     public function view(User $user, Category $category): bool
     {
-        return $user->teams->contains('id', $category->team_id);
+        return $category->team_id === (int) $user->current_team_id;
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->canEdit((int) $user->current_team_id);
     }
 
     public function update(User $user, Category $category): bool
     {
-        if (!$user->teams->contains('id', $category->team_id)) {
-            return false;
-        }
-
-        $team = Team::find($category->team_id);
-        if ($team && $team->user_id === $user->id) {
-            return true;
-        }
-
-        return DB::table('team_user')
-            ->where('team_id', $category->team_id)
-            ->where('user_id', $user->id)
-            ->where('role', 'editor')
-            ->exists();
+        return $category->team_id === (int) $user->current_team_id && $user->canEdit($category->team_id);
     }
 
     public function delete(User $user, Category $category): bool
     {
-        if (!$user->teams->contains('id', $category->team_id)) {
-            return false;
-        }
-
-        $team = Team::find($category->team_id);
-        if ($team && $team->user_id === $user->id) {
-            return true;
-        }
-
-        return DB::table('team_user')
-            ->where('team_id', $category->team_id)
-            ->where('user_id', $user->id)
-            ->where('role', 'editor')
-            ->exists();
+        return $category->team_id === (int) $user->current_team_id && $user->canEdit($category->team_id);
     }
 }

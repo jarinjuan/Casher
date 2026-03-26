@@ -81,16 +81,7 @@ class InvestmentController extends Controller
             return redirect()->route('dashboard')->with('error', __('No workspace selected'));
         }
 
-        // Authorize: only owner or editor can create investments
-        $isOwner = $team->user_id === $request->user()->id;
-        $isEditor = \Illuminate\Support\Facades\DB::table('team_user')
-            ->where('team_id', $team->id)
-            ->where('user_id', $request->user()->id)
-            ->where('role', 'editor')
-            ->exists();
-        if (!$isOwner && !$isEditor) {
-            abort(403);
-        }
+        $this->authorize('create', Investment::class);
 
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
@@ -265,6 +256,7 @@ class InvestmentController extends Controller
 
     public function refresh(Request $request, MarketDataService $marketData): RedirectResponse
     {
+        $this->authorize('create', Investment::class);
         $teamId = $request->user()->currentTeam->id ?? null;
         $investments = Investment::where('team_id', $teamId)->with('latestPrice')->get();
 

@@ -59,10 +59,12 @@
                             <span id="live-dot" class="inline-block w-2 h-2 rounded-full bg-gray-400"></span>
                             <span id="live-label" title="Auto-updating every 15 minutes to save API requests.">{{ __('Auto-updates (15m)') }}</span>
                         </span>
-                        <form method="POST" action="{{ route('investments.refresh') }}">
-                            @csrf
-                            <button class="text-xs font-bold px-4 py-2 rounded-lg bg-[#8b5cf6] text-white hover:bg-[#7c3aed] transition shadow-lg shadow-[#8b5cf6]/10">{{ __('Refresh prices') }}</button>
-                        </form>
+                        @can('create', \App\Models\Investment::class)
+                            <form method="POST" action="{{ route('investments.refresh') }}">
+                                @csrf
+                                <button class="text-xs font-bold px-4 py-2 rounded-lg bg-[#8b5cf6] text-white hover:bg-[#7c3aed] transition shadow-lg shadow-[#8b5cf6]/10">{{ __('Refresh prices') }}</button>
+                            </form>
+                        @endcan
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -140,23 +142,25 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full appearance-none">
-                                <a href="{{ route('investments.edit', $investment) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
-                                <form method="POST" action="{{ route('investments.destroy', $investment) }}" 
-                                    x-data
-                                    @submit.prevent="$dispatch('confirm', {
-                                        title: '{{ __('Delete investment?') }}',
-                                        message: '{{ __('Are you sure you want to delete this investment? All historical price data for this holding will rest in peace.') }}',
-                                        confirmText: '{{ __('Delete') }}',
-                                        variant: 'danger',
-                                        onConfirm: () => $el.submit()
-                                    })"
-                                    class="flex-1 flex">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">{{ __('Delete') }}</button>
-                                </form>
-                            </div>
+                            @if(auth()->user()->canEdit($investment->team_id))
+                                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex gap-2 w-full appearance-none">
+                                    <a href="{{ route('investments.edit', $investment) }}" class="flex-1 flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 transition">{{ __('Edit') }}</a>
+                                    <form method="POST" action="{{ route('investments.destroy', $investment) }}" 
+                                        x-data
+                                        @submit.prevent="$dispatch('confirm', {
+                                            title: '{{ __('Delete investment?') }}',
+                                            message: '{{ __('Are you sure you want to delete this investment? All historical price data for this holding will rest in peace.') }}',
+                                            confirmText: '{{ __('Delete') }}',
+                                            variant: 'danger',
+                                            onConfirm: () => $el.submit()
+                                        })"
+                                        class="flex-1 flex">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="w-full flex justify-center items-center rounded-lg px-2 py-2 text-xs font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 transition">{{ __('Delete') }}</button>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     @empty
                         <div class="col-span-1 md:col-span-2 py-8 text-center t-muted border border-dashed border-gray-300 dark:border-white/10 rounded-xl">{{ __('No investments yet.') }}</div>
@@ -164,69 +168,71 @@
                 </div>
             </div>
 
-            <div class="card p-6">
-                <h3 class="text-lg font-bold t-primary mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle text-[#8b5cf6]"></i> {{ __('Add investment') }}
-                </h3>
-                
-                <form method="POST" action="{{ route('investments.store') }}" class="space-y-4" id="investmentForm">
-                    @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="label-dark mb-1.5 block" for="investmentType">{{ __('Type') }}</label>
-                            <select name="type" id="investmentType" class="select-dark w-full">
-                                <option value="stock">{{ __('Stock') }}</option>
-                                <option value="crypto">{{ __('Crypto') }}</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="label-dark mb-1.5 block" for="symbolInput">{{ __('Symbol') }}</label>
-                            <div class="relative">
-                                <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="ex. AAPL, BTC..." autocomplete="off" required maxlength="15">
-                                <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="name" id="nameInput">
-                        <input type="hidden" name="external_id" id="externalIdInput">
-                    </div>
-                    <div class="p-5 rounded-xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5" x-data="{ buyMode: 'quantity' }">
-                        <div class="flex justify-center mb-5">
-                            <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1">
-                                <button type="button" @click="buyMode = 'quantity'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
-                                    {{ __('By quantity') }}
-                                </button>
-                                <button type="button" @click="buyMode = 'amount'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
-                                    {{ __('By amount') }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="buy_mode" :value="buyMode">
-
+            @can('create', \App\Models\Investment::class)
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold t-primary mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-[#8b5cf6]"></i> {{ __('Add investment') }}
+                    </h3>
+                    
+                    <form method="POST" action="{{ route('investments.store') }}" class="space-y-4" id="investmentForm">
+                        @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div x-show="buyMode === 'quantity'">
-                                <label class="label-dark mb-1.5 block" for="quantityInput">{{ __('Quantity') }}</label>
-                                <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'quantity'">
+                            <div>
+                                <label class="label-dark mb-1.5 block" for="investmentType">{{ __('Type') }}</label>
+                                <select name="type" id="investmentType" class="select-dark w-full">
+                                    <option value="stock">{{ __('Stock') }}</option>
+                                    <option value="crypto">{{ __('Crypto') }}</option>
+                                </select>
                             </div>
-                            <div x-show="buyMode === 'amount'" style="display: none;">
-                                <label class="label-dark mb-1.5 flex justify-between items-center" for="amountInput">
-                                    <span>{{ __('Amount') }}</span>
-                                    <span class="text-xs px-2 py-0.5 rounded bg-[#8b5cf6]/20 text-[#8b5cf6] font-bold">{{ $defaultCurrency }}</span>
-                                </label>
-                                <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'amount'">
-                            </div>
-                        </div>
-                        <div id="buyPreview" class="text-center text-sm font-bold mt-4 t-primary hidden"></div>
-                        
-                    </div>
 
-                    <button type="submit" class="btn-primary w-full py-3 text-sm flex justify-center items-center gap-2 hover:scale-[1.02] transition-transform">
-                        <i class="fa-solid fa-check"></i> {{ __('Add to portfolio') }}
-                    </button>
-                </form>
-            </div>
+                            <div>
+                                <label class="label-dark mb-1.5 block" for="symbolInput">{{ __('Symbol') }}</label>
+                                <div class="relative">
+                                    <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="ex. AAPL, BTC..." autocomplete="off" required maxlength="15">
+                                    <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="name" id="nameInput">
+                            <input type="hidden" name="external_id" id="externalIdInput">
+                        </div>
+                        <div class="p-5 rounded-xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5" x-data="{ buyMode: 'quantity' }">
+                            <div class="flex justify-center mb-5">
+                                <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1">
+                                    <button type="button" @click="buyMode = 'quantity'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                        {{ __('By quantity') }}
+                                    </button>
+                                    <button type="button" @click="buyMode = 'amount'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                        {{ __('By amount') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="buy_mode" :value="buyMode">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div x-show="buyMode === 'quantity'">
+                                    <label class="label-dark mb-1.5 block" for="quantityInput">{{ __('Quantity') }}</label>
+                                    <input name="quantity" type="number" step="0.00000001" min="0.00000001" max="9999999999" id="quantityInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'quantity'">
+                                </div>
+                                <div x-show="buyMode === 'amount'" style="display: none;">
+                                    <label class="label-dark mb-1.5 flex justify-between items-center" for="amountInput">
+                                        <span>{{ __('Amount') }}</span>
+                                        <span class="text-xs px-2 py-0.5 rounded bg-[#8b5cf6]/20 text-[#8b5cf6] font-bold">{{ $defaultCurrency }}</span>
+                                    </label>
+                                    <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'amount'">
+                                </div>
+                            </div>
+                            <div id="buyPreview" class="text-center text-sm font-bold mt-4 t-primary hidden"></div>
+                            
+                        </div>
+
+                        <button type="submit" class="btn-primary w-full py-3 text-sm flex justify-center items-center gap-2 hover:scale-[1.02] transition-transform">
+                            <i class="fa-solid fa-check"></i> {{ __('Add to portfolio') }}
+                        </button>
+                    </form>
+                </div>
+            @endcan
         </div>
     </div>
 @endsection
