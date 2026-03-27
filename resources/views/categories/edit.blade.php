@@ -26,7 +26,7 @@
             </div>
             <div>
                 <label class="label-dark">{{ __('Color') }}</label>
-                <input type="color" name="color" value="{{ old('color', $category->color ?? '#fbbf24') }}" class="w-10 h-9 bg-transparent border border-gray-300 dark:border-white/10 rounded-lg cursor-pointer">
+                <x-color-picker name="color" :value="old('color', $category->color ?? '#fbbf24')" />
             </div>
             <div>
                 <label class="label-dark">{{ __('Monthly budget') }}</label>

@@ -12,7 +12,7 @@ class ChartController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): \Illuminate\View\View|\Illuminate\Http\RedirectResponse
     {
         $user = $request->user();
         $team = $user->currentTeam;
@@ -198,21 +198,15 @@ class ChartController extends Controller
             $incomeSourceColors[] = $cat?->color ?? '#fbbf24';
         }
 
-        // 5. Top spending categories (bar)
+        // 5. Top spending categories (bar) - now by transaction count
         $expenseTransactionsForTop = \App\Models\Transaction::where('team_id', '=', $teamId)
             ->where('type', '=', 'expense')
             ->get();
 
-        $expenseTopMap = []; // category_id => total
+        $expenseTopMap = []; // category_id => count
         foreach ($expenseTransactionsForTop as $tx) {
             $catId = $tx->category_id ?? 0;
-            $amount = $tx->amount;
-            if ($tx->currency !== $team->default_currency) {
-                try {
-                    $amount = $team->convertToDefaultCurrency($amount, $tx->currency, $tx->created_at);
-                } catch (\Exception $e) {}
-            }
-            $expenseTopMap[$catId] = ($expenseTopMap[$catId] ?? 0) + $amount;
+            $expenseTopMap[$catId] = ($expenseTopMap[$catId] ?? 0) + 1;
         }
         arsort($expenseTopMap);
         $topExpenseSubset = array_slice($expenseTopMap, 0, 5, true);

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-bold text-xl t-primary leading-tight">{{ __('Workspace settings') }}</h2>
+    <h2 class="font-bold text-xl t-primary leading-tight">{{ __('Settings') }}</h2>
 @endsection
 
 @section('content')

@@ -126,7 +126,7 @@
                 data: {
                     labels: @json($topCategoryLabels),
                     datasets: [{ 
-                        label: '{{ __('Total Spent') }}', 
+                        label: '{{ __('Transaction count') }}', 
                         data: @json($topCategoryData), 
                         backgroundColor: @json($topCategoryColors), 
                         borderRadius: 4 
