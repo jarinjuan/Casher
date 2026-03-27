@@ -62,10 +62,9 @@
                             required
                             autofocus
                             autocomplete="username"
-                            class="input-dark rounded-xl py-3"
+                            class="input-dark rounded-xl py-3 @error('email') border-red-500 @enderror"
                             placeholder="your@email.com"
                         />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-sm" />
                     </div>
 
                     <div>
@@ -76,9 +75,10 @@
                             name="password"
                             required
                             autocomplete="current-password"
-                            class="input-dark rounded-xl py-3"
+                            class="input-dark rounded-xl py-3 @error('email') border-red-500 @enderror @error('password') border-red-500 @enderror"
                             placeholder="********"
                         />
+                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-sm" />
                         <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-sm" />
                     </div>
 
