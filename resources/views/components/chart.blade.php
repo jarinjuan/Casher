@@ -44,12 +44,29 @@
                     responsive: true,
                     maintainAspectRatio: {{ $wrapperClass ? 'false' : 'true' }},
                     plugins: {
-                        legend: { labels: { color: legendColor } }
+                        legend: { labels: { color: legendColor } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(context.parsed.y).replace(/,/g, ' ');
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { color: tickColor },
+                            ticks: {
+                                color: tickColor,
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value).replace(/,/g, ' ');
+                                }
+                            },
                             grid: { color: gridColor }
                         },
                         x: {

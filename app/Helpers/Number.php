@@ -14,6 +14,11 @@ class Number
             return '';
         }
         
-        return number_format((float)$amount, $decimals, ',', ' ');
+        /** @var string $decimalSeparator Default to dot for global consistency */
+        $decimalSeparator = '.';
+        /** @var string $thousandsSeparator Default to space for thousands */
+        $thousandsSeparator = ' ';
+
+        return number_format((float)$amount, $decimals, $decimalSeparator, $thousandsSeparator);
     }
 }

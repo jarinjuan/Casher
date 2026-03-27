@@ -429,7 +429,13 @@
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } },
+                        y: {
+                            ticks: {
+                                color: chartTickColor,
+                                callback: function(v) { return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(v).replace(/,/g, ' '); }
+                            },
+                            grid: { color: chartGridColor }
+                        },
                         x: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } }
                     }
                 }
@@ -454,7 +460,13 @@
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } },
+                        y: {
+                            ticks: {
+                                color: chartTickColor,
+                                callback: function(v) { return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(v).replace(/,/g, ' '); }
+                            },
+                            grid: { color: chartGridColor }
+                        },
                         x: { ticks: { color: chartTickColor }, grid: { color: chartGridColor } }
                     }
                 }
