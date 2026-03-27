@@ -272,7 +272,7 @@
     "Monthly budget must not exceed 999,999,999,999.99.": "Měsíční rozpočet nesmí překročit 999 999 999 999,99.",
     "Invalid currency.": "Neplatná měna.",
     "No budget set": "Rozpočet nenastaven",
-    "Failed to fetch the current price for the entered symbol. Please check the symbol and try again.": "Nepodařilo se stáhnout aktuální cenu pro vložený symbol. Zkontrolujte prosím symbol a zkuste to znovu.",
+    "Symbol not supported.": "Symbol není podporován.",
     "Currency conversion error. Please check the current exchange rates.": "Chyba při konverzi měny. Zkontrolujte si aktuální kurzy.",
     "Failed to convert currencies for merging investments. Please check the API or enter a compatible currency.": "Nepodařilo se převést měny pro sloučení investic. Zkontrolujte API nebo zadejte kompatibilní měnu.",
     "Export failed. Please try again later.": "Export selhal. Zkuste to prosím později.",

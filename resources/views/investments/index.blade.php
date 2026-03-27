@@ -6,10 +6,14 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        @if($errors->has('refresh'))
+        @if($errors->any())
             <div class="flash-error mb-6 flex items-center gap-3">
                 <i class="fa-solid fa-circle-exclamation"></i>
-                <div class="text-sm font-medium leading-tight">{{ $errors->first('refresh') }}</div>
+                <div class="text-sm font-medium leading-tight">
+                    @foreach($errors->all() as $error)
+                        <div class="first:mt-0 mt-1">{{ $error }}</div>
+                    @endforeach
+                </div>
             </div>
         @endif
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -190,12 +194,6 @@
                                 <div class="relative">
                                     <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="ex. AAPL, BTC..." autocomplete="off" required maxlength="15" value="{{ old('symbol') }}">
                                     <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
-                                    @error('symbol')
-                                        <div class="mt-1.5 text-xs text-red-500 font-bold flex items-center gap-1 backdrop-blur-sm bg-red-500/5 p-2 rounded-lg border border-red-500/20">
-                                            <i class="fa-solid fa-circle-exclamation"></i>
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
                                 </div>
                             </div>
 
