@@ -199,10 +199,10 @@
                         <div class="p-5 rounded-xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5" x-data="{ buyMode: 'quantity' }">
                             <div class="flex justify-center mb-5">
                                 <div class="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl inline-flex gap-1">
-                                    <button type="button" @click="buyMode = 'quantity'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                    <button type="button" @click="buyMode = 'quantity'" :class="buyMode === 'quantity' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
                                         {{ __('By quantity') }}
                                     </button>
-                                    <button type="button" @click="buyMode = 'amount'; setTimeout(window.updatePreview, 10)" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
+                                    <button type="button" @click="buyMode = 'amount'" :class="buyMode === 'amount' ? 'bg-white dark:bg-[#18181b] shadow-sm text-[#8b5cf6] dark:text-[#fbbf24]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'" class="px-5 py-2 rounded-lg text-sm font-bold transition">
                                         {{ __('By amount') }}
                                     </button>
                                 </div>
@@ -223,7 +223,7 @@
                                     <input name="amount" type="number" step="0.01" min="0.01" max="9999999999" id="amountInput" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" :required="buyMode === 'amount'">
                                 </div>
                             </div>
-                            <div id="buyPreview" class="text-center text-sm font-bold mt-4 t-primary hidden"></div>
+
                             
                         </div>
 
@@ -260,13 +260,10 @@
 
         let symbolSearchTimer = null;
         let symbolSearchAbortController = null;
-        let currentFetchedPrice = null;
         let currentDefaultCurrency = '{{ $defaultCurrency }}';
-        let isFetchingPrice = false;
         
         const quantityInput = document.getElementById('quantityInput');
         const amountInput = document.getElementById('amountInput');
-        const buyPreview = document.getElementById('buyPreview');
 
         function toggleFields() {
             const isCrypto = typeSelect.value === 'crypto';
@@ -326,7 +323,6 @@
                     }
 
                     clearSuggestions();
-                    fetchLivePrice();
                 });
 
                 symbolSuggestions.appendChild(row);
@@ -372,88 +368,6 @@
                 });
         }
         
-        function fetchLivePrice() {
-            const sym = symbolInput.value.trim();
-            if (!sym) return;
-            
-            isFetchingPrice = true;
-            updatePreview();
-            
-            const params = new URLSearchParams({
-                symbol: sym,
-                type: typeSelect.value,
-                external_id: externalIdInput.value
-            });
-            
-            fetch(`${PRICE_URL}?${params.toString()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(res => res.ok ? res.json() : null)
-                .then(data => {
-                    isFetchingPrice = false;
-                    if (data && data.price_in_default) {
-                        currentFetchedPrice = data.price_in_default;
-                    } else {
-                        currentFetchedPrice = null;
-                    }
-                    updatePreview();
-                })
-                .catch(() => {
-                    isFetchingPrice = false;
-                    currentFetchedPrice = null;
-                    updatePreview();
-                });
-        }
-        
-        function updatePreview() {
-            const buyModeInput = document.querySelector('input[name="buy_mode"]');
-            const mode = buyModeInput ? buyModeInput.value : 'quantity';
-            
-            const isCrypto = typeSelect.value === 'crypto';
-            const unitSingular = isCrypto ? 'coin' : 'share';
-            const unitPlural = isCrypto ? 'coins' : 'shares';
-            
-            if (isFetchingPrice) {
-                buyPreview.classList.remove('hidden');
-                buyPreview.textContent = '{{ __('Fetching current price...') }}';
-                buyPreview.classList.add('animate-pulse', 't-muted');
-                return;
-            }
-            
-            if (!currentFetchedPrice) {
-                buyPreview.classList.add('hidden');
-                return;
-            }
-            
-            buyPreview.classList.remove('hidden', 'animate-pulse', 't-muted');
-            
-            if (mode === 'quantity') {
-                const qty = parseFloat(quantityInput.value);
-                if (!isNaN(qty) && qty > 0) {
-                    const total = qty * currentFetchedPrice;
-                    buyPreview.textContent = `≈ ${fmtNum(total)} ${currentDefaultCurrency}`;
-                } else {
-                    buyPreview.textContent = `1 ${unitSingular} ≈ ${fmtNum(currentFetchedPrice)} ${currentDefaultCurrency}`;
-                }
-            } else {
-                const amount = parseFloat(amountInput.value);
-                if (!isNaN(amount) && amount > 0) {
-                    const qty = amount / currentFetchedPrice;
-                    const formattedQty = qty.toLocaleString(undefined, { maximumFractionDigits: 8 });
-                    buyPreview.textContent = `≈ ${formattedQty} ${unitPlural}`;
-                } else {
-                    buyPreview.textContent = `1 ${unitSingular} ≈ ${fmtNum(currentFetchedPrice)} ${currentDefaultCurrency}`;
-                }
-            }
-        }
-        
-        window.updatePreview = updatePreview;
-        quantityInput.addEventListener('input', updatePreview);
-        amountInput.addEventListener('input', updatePreview);
-        symbolInput.addEventListener('blur', fetchLivePrice);
-        typeSelect.addEventListener('change', () => {
-            currentFetchedPrice = null;
-            updatePreview();
-        });
-
         toggleFields();
         typeSelect.addEventListener('change', toggleFields);
 
