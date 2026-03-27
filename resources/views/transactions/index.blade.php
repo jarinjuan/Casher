@@ -59,8 +59,13 @@
                         @endif
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="truncate font-bold t-primary">{{ $t->title }}</div>
-                        <div class="truncate text-xs t-muted">{{ $t->note }}</div>
+                        <div class="truncate font-bold t-primary leading-tight">{{ $t->title }}</div>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span class="text-[10px] uppercase font-bold tracking-wider t-muted">@date($t->created_at)</span>
+                        </div>
+                        @if($t->note)
+                            <div class="truncate text-xs t-muted mt-0.5">{{ $t->note }}</div>
+                        @endif
                     </div>
                 </div>
                 <div class="mt-1">
