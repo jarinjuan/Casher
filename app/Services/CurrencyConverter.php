@@ -26,10 +26,17 @@ class CurrencyConverter
         if ($from === $to) return $amount;
 
         $date = $date ? Carbon::parse($date)->toDateString() : null;
+        
+        // Try to fetch once if rate is missing
         if ($from !== $this->base) {
             $rFrom = ExchangeRate::latestRate($from, $date);
             if (! $rFrom) {
-                throw new \RuntimeException("Rate for {$from} not found");
+                \Illuminate\Support\Facades\Artisan::call('fx:fetch-ecb');
+                $rFrom = ExchangeRate::latestRate($from, $date);
+            }
+            
+            if (! $rFrom) {
+                throw new \RuntimeException("Rate for {$from} not found even after refresh");
             }
             $amount = $amount / (float) $rFrom->rate;
         }
@@ -40,7 +47,16 @@ class CurrencyConverter
 
         $rTo = ExchangeRate::latestRate($to, $date);
         if (! $rTo) {
-            throw new \RuntimeException("Rate for {$to} not found");
+            // We already tried calling Artisan above if $from was different from base, 
+            // but if $from was base, we might need to call it here.
+            if ($from === $this->base) {
+                \Illuminate\Support\Facades\Artisan::call('fx:fetch-ecb');
+                $rTo = ExchangeRate::latestRate($to, $date);
+            }
+        }
+
+        if (! $rTo) {
+            throw new \RuntimeException("Rate for {$to} not found even after refresh");
         }
 
         return (float) ($amount * (float) $rTo->rate);

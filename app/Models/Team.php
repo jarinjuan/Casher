@@ -24,11 +24,11 @@ class Team extends Model
         if (str_starts_with($value, 'Team: ')) {
             return __('Team: :name', ['name' => str_replace('Team: ', '', $value)]);
         }
-        
+
         if (str_starts_with($value, 'Tým: ')) {
             return __('Team: :name', ['name' => str_replace('Tým: ', '', $value)]);
         }
-        
+
         if (str_ends_with($value, "'s team")) {
             return __('Team: :name', ['name' => str_replace("'s team", "", $value)]);
         }
@@ -38,18 +38,18 @@ class Team extends Model
 
     public static function getCurrencySymbolFor(string $currency): string
     {
-        return match($currency) {
-            'CZK' => 'Kč',
-            'EUR' => '€',
-            'USD', 'CAD', 'AUD', 'NZD' => '$',
-            'GBP' => '£',
-            'JPY', 'CNY' => '¥',
-            'CHF' => 'Fr.',
-            'PLN' => 'zł',
-            'SEK', 'NOK', 'DKK' => 'kr',
-            'HUF' => 'Ft',
-            default => $currency,
-        };
+        return match ($currency) {
+                'CZK' => 'Kč',
+                'EUR' => '€',
+                'USD', 'CAD', 'AUD', 'NZD' => '$',
+                'GBP' => '£',
+                'JPY', 'CNY' => '¥',
+                'CHF' => 'Fr.',
+                'PLN' => 'zł',
+                'SEK', 'NOK', 'DKK' => 'kr',
+                'HUF' => 'Ft',
+                default => $currency,
+            };
     }
 
     /**
@@ -72,7 +72,8 @@ class Team extends Model
         try {
             $converter = app(\App\Services\CurrencyConverter::class);
             return $converter->convert($amount, $fromCurrency, $this->default_currency, $date);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             logger()->warning("Currency conversion failed: {$e->getMessage()}");
             return $amount;
         }
@@ -80,7 +81,7 @@ class Team extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class , 'user_id');
     }
 
     public function users()
@@ -98,8 +99,4 @@ class Team extends Model
         return $this->hasMany(Category::class);
     }
 
-    public function budgets()
-    {
-        return $this->hasMany(Budget::class);
-    }
 }

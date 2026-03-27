@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Casher Export Report</title>
+    <title>Casher export report</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .header { background: #fbbf24; padding: 20px; border-radius: 5px; margin-bottom: 20px; }

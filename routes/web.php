@@ -42,7 +42,6 @@ Route::middleware('auth')->group(function () {
     Route::put('investments/{investment}', [\App\Http\Controllers\InvestmentController::class, 'update'])->name('investments.update');
     Route::delete('investments/{investment}', [\App\Http\Controllers\InvestmentController::class, 'destroy'])->name('investments.destroy');
     Route::post('investments/refresh', [\App\Http\Controllers\InvestmentController::class, 'refresh'])->name('investments.refresh');
-    Route::get('currency/convert', [\App\Http\Controllers\CurrencyController::class, 'convert'])->name('currency.convert');
 
     // Data Import/Export routes
     Route::get('data', [\App\Http\Controllers\DataController::class, 'index'])->name('data.index');
@@ -54,6 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('workspace/settings', [\App\Http\Controllers\WorkspaceController::class, 'settings'])->name('workspace.settings');
     Route::post('workspace/generate-invite', [\App\Http\Controllers\WorkspaceController::class, 'generateInviteCode'])->name('workspace.generate-invite');
     Route::put('workspace/currency', [\App\Http\Controllers\WorkspaceController::class, 'updateCurrency'])->name('workspace.update-currency');
+    Route::put('workspace/{team}/name', [\App\Http\Controllers\WorkspaceController::class, 'updateName'])->name('workspace.update-name');
     Route::get('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'joinForm'])->name('workspace.join');
     Route::post('workspace/join', [\App\Http\Controllers\WorkspaceController::class, 'join'])->name('workspace.join.submit');
     Route::post('workspace/switch/{teamId}', [\App\Http\Controllers\WorkspaceController::class, 'switchWorkspace'])->name('workspace.switch');

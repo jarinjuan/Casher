@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactionRequest;
 use App\Models\Transaction;
 use App\Models\Category;
-use App\Models\Budget;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -54,8 +53,7 @@ class TransactionController extends Controller
         $this->authorize('create', Transaction::class);
         $transaction = new Transaction();
         $categories = auth()->user()->currentTeam->categories()->orderBy('name')->get();
-        $budgets = auth()->user()->currentTeam->budgets()->with('category')->get();
-        return view('transactions.create', compact('transaction','categories','budgets'));
+        return view('transactions.create', compact('transaction','categories'));
     }
 
     public function store(TransactionRequest $request): RedirectResponse
@@ -73,8 +71,7 @@ class TransactionController extends Controller
     {
         $this->authorize('update', $transaction);
         $categories = auth()->user()->currentTeam->categories()->orderBy('name')->get();
-        $budgets = auth()->user()->currentTeam->budgets()->with('category')->get();
-        return view('transactions.edit', compact('transaction','categories','budgets'));
+        return view('transactions.edit', compact('transaction','categories'));
     }
 
     public function update(TransactionRequest $request, Transaction $transaction): RedirectResponse

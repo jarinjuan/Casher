@@ -1,4 +1,4 @@
-@props(['transaction' => null, 'action' => null, 'method' => null, 'buttonText' => 'Add transaction', 'categories' => [], 'budgets' => []])
+@props(['transaction' => null, 'action' => null, 'method' => null, 'buttonText' => 'Add transaction', 'categories' => []])
 
 <div class="w-full max-w-[480px] card overflow-hidden flex flex-col mx-auto my-6">
     <div class="px-5 pt-5 pb-1">
@@ -70,16 +70,5 @@
                     {{ __($buttonText) }}
                 </button>
             </div>
-
-            @if(count($budgets))
-                <div class="pb-2 text-xs border-t border-gray-200 dark:border-white/10 pt-3">
-                    <p class="font-bold text-[#fbbf24] mb-1">{{ __('Budgets:') }}</p>
-                    <ul class="space-y-0.5 t-secondary">
-                        @foreach($budgets as $b)
-                            <li>{{ $b->category?->name ?? __('All') }} -- @money($b->amount) {{ $b->currency }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
         </form>
 </div>

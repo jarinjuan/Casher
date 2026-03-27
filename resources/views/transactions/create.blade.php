@@ -6,6 +6,6 @@
 
 @section('content')
 <div class="max-w-lg mx-auto px-4 py-6">
-    <x-transaction-form :transaction="$transaction" :categories="$categories" :budgets="$budgets" action="{{ route('transactions.store') }}" buttonText="Save" />
+    <x-transaction-form :transaction="$transaction" :categories="$categories" action="{{ route('transactions.store') }}" buttonText="Save" />
 </div>
 @endsection

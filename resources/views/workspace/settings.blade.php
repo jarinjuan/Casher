@@ -92,6 +92,25 @@
         </div>
     </div>
 
+    <div class="card p-6">
+        <h3 class="text-lg font-bold t-primary mb-4">{{ __('Workspace name') }}</h3>
+        <p class="text-sm t-secondary mb-4">{{ __('Edit your workspace name.') }}</p>
+        <form method="POST" action="{{ route('workspace.update-name', $team->id) }}">
+            @csrf
+            @method('PUT')
+            <div class="space-y-4">
+                <div>
+                    <label class="label-dark">{{ __('Name') }}</label>
+                    <input type="text" name="name" value="{{ $team->name }}" required class="input-dark w-full" />
+                    @if ($errors->has('name'))
+                        <p class="text-xs text-red-500 mt-1">{{ $errors->first('name') }}</p>
+                    @endif
+                </div>
+                <button type="submit" class="btn-primary text-sm">{{ __('Update') }}</button>
+            </div>
+        </form>
+    </div>
+
     
     <div class="card p-6">
         <h3 class="text-lg font-bold t-primary mb-4">{{ __('Language settings') }}</h3>

@@ -1,4 +1,4 @@
-# 💰 Casher
+# Casher
 
 <center><img src="CasherLogo.png"></center>
 

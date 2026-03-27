@@ -18,6 +18,7 @@
     "Expenses vs income": "Výdaje vs příjmy",
     "Recent transactions": "Nedávné transakce",
     "View all": "Zobrazit vše",
+    "View": "Zobrazit",
     "Orig": "Pův",
     "Monthly budget": "Měsíční rozpočet",
     "Exceeded by": "Překročeno o",
@@ -63,6 +64,10 @@
     "Amount": "Částka",
     "Add to portfolio": "Přidat do portfolia",
     "Workspace settings": "Nastavení pracovního prostoru",
+    "Workspace name": "Název pracovního prostoru",
+    "Edit your workspace name.": "Upravte název vašeho pracovního prostoru.",
+    "Workspace name updated successfully.": "Název pracovního prostoru byl úspěšně aktualizován.",
+    "Only workspace owner can change workspace name": "Název pracovního prostoru může měnit pouze vlastník.",
     "Owner": "Vlastník",
     "Members": "Členové",
     "Editor": "Editor",
@@ -288,5 +293,11 @@
     "Transaction row :row: :message": "Řádek transakce :row: :message",
     "Category row :row: :message": "Řádek kategorie :row: :message",
     "Investment row :row: :message": "Řádek investice :row: :message",
-    "Investment row :row: Failed to convert currency for merge (:from → :to)": "Řádek investice :row: Nepodařilo se převést měnu pro sloučení (:from → :to)"
+    "Investment row :row: Failed to convert currency for merge (:from → :to)": "Řádek investice :row: Nepodařilo se převést měnu pro sloučení (:from → :to)",
+    "No account exists for this email. If you recently changed your email, sign in with the new one.": "Účet s tímto e-mailem neexistuje. Pokud jste e-mail měnili, přihlaste se novým e-mailem.",
+    "The provided password is incorrect.": "Zadané heslo není správné.",
+    "Too many login attempts. Please try again in :seconds seconds.": "Příliš mnoho pokusů o přihlášení. Zkuste to prosím znovu za :seconds sekund.",
+    "Page expired": "Stránka vypršela",
+    "Your session has expired. Please refresh the page or go back to continue.": "Vaše relace vypršela. Prosím obnovte stránku nebo se vraťte zpět.",
+    "Refresh": "Obnovit"
 }

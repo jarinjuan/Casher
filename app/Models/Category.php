@@ -33,10 +33,6 @@ class Category extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function budgets()
-    {
-        return $this->hasMany(Budget::class);
-    }
 
     public function getMonthlySpent($year = null, $month = null)
     {

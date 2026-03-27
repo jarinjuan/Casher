@@ -123,6 +123,28 @@ class WorkspaceController extends Controller
     }
 
     /**
+     * Update workspace name
+     */
+    public function updateName(Request $request, $teamId)
+    {
+        $team = Team::findOrFail($teamId);
+
+        if ($team->user_id !== auth()->id()) {
+            return back()->with('error', __('Only workspace owner can change workspace name'));
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $team->update([
+            'name' => $request->name,
+        ]);
+
+        return back()->with('success', __('Workspace name updated successfully.'));
+    }
+
+    /**
      * Remove member from workspace
      */
     public function updateRole(Request $request, $teamId, $userId): RedirectResponse

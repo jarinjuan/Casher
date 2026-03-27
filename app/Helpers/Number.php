@@ -14,6 +14,6 @@ class Number
             return '';
         }
         
-        return number_format((float)$amount, $decimals, '.', ' ');
+        return number_format((float)$amount, $decimals, ',', ' ');
     }
 }

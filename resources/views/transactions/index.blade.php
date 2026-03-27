@@ -45,7 +45,7 @@
         'sm:grid-cols-3 lg:grid-cols-3': cols === 3,
         'sm:grid-cols-3 lg:grid-cols-4': cols === 4
     }">
-        @foreach($transactions as $t)
+        @forelse($transactions as $t)
             @php
                 $amountInDefault = $currentTeam->convertToDefaultCurrency($t->amount, $t->currency, $t->created_at);
             @endphp
@@ -92,7 +92,17 @@
                     </div>
                 @endif
             </div>
-        @endforeach
+        @empty
+            <div class="col-span-full py-12 flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-receipt text-2xl t-muted"></i>
+                </div>
+                <p class="text-sm t-secondary">{{ __('No transactions yet.') }}</p>
+                @can('create', \App\Models\Transaction::class)
+                    <p class="text-xs t-muted mt-1">{{ __('Start by adding your first income or expense.') }}</p>
+                @endcan
+            </div>
+        @endforelse
     </div>
 
     <div id="transactions-pagination" class="mt-6">{{ $transactions->links() }}</div>

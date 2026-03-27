@@ -11,20 +11,12 @@ return new class extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             $table->decimal('amount', 14, 2)->change();
         });
-
-        Schema::table('budgets', function (Blueprint $table) {
-            $table->decimal('amount', 14, 2)->change();
-        });
     }
 
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
             $table->decimal('amount', 10, 2)->change();
-        });
-
-        Schema::table('budgets', function (Blueprint $table) {
-            $table->decimal('amount', 12, 2)->change();
         });
     }
 };
