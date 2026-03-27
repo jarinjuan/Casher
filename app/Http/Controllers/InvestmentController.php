@@ -106,7 +106,7 @@ class InvestmentController extends Controller
             $data['average_price'] = $price['price'];
             $data['currency'] = strtoupper($price['currency']);
         } else {
-            return back()->withErrors(['average_price' => __('Failed to fetch the current price for the entered symbol. Please check the symbol and try again.')])->withInput();
+            return back()->withErrors(['symbol' => __('Failed to fetch the current price for the entered symbol. Please check the symbol and try again.')])->withInput();
         }
 
         if ($data['buy_mode'] === 'amount') {

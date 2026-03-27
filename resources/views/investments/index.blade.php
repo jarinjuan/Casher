@@ -188,8 +188,14 @@
                             <div>
                                 <label class="label-dark mb-1.5 block" for="symbolInput">{{ __('Symbol') }}</label>
                                 <div class="relative">
-                                    <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="ex. AAPL, BTC..." autocomplete="off" required maxlength="15">
+                                    <input name="symbol" id="symbolInput" type="text" class="input-dark w-full focus:ring-[#8b5cf6] focus:border-[#8b5cf6]" placeholder="ex. AAPL, BTC..." autocomplete="off" required maxlength="15" value="{{ old('symbol') }}">
                                     <div id="symbolSuggestions" class="hidden absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#18181b] shadow-xl"></div>
+                                    @error('symbol')
+                                        <div class="mt-1.5 text-xs text-red-500 font-bold flex items-center gap-1 backdrop-blur-sm bg-red-500/5 p-2 rounded-lg border border-red-500/20">
+                                            <i class="fa-solid fa-circle-exclamation"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
                             </div>
 

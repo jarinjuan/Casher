@@ -27,6 +27,8 @@ class MarketDataService
         $items = $data['data'] ?? [];
 
         return collect($items)
+            ->filter(fn ($item) => ($item['instrument_type'] ?? null) === 'Common Stock')
+            ->filter(fn ($item) => in_array($item['exchange'] ?? '', ['NASDAQ', 'NYSE', 'ARCA', 'AMEX', 'BATS', 'TSX', 'TSXV', 'LSE', 'Xetra']))
             ->take(10)
             ->map(fn ($item) => [
                 'symbol' => $item['symbol'] ?? null,
