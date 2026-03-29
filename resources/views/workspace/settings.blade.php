@@ -13,16 +13,18 @@
             <!-- Profil vlastníka -->
             <div>
                 <p class="text-xs uppercase tracking-widest t-muted font-bold mb-3">{{ __('Owner') }}</p>
-                <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10">
-                    <div class="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-sm">
-                        {{ strtoupper(substr($owner->name, 0, 1)) }}
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ strtoupper(substr($owner->name, 0, 1)) }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-bold t-primary truncate">{{ $owner->name }}</p>
+                            <p class="text-sm t-muted truncate">{{ $owner->email }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-bold t-primary">{{ $owner->name }}</p>
-                        <p class="text-sm t-muted">{{ $owner->email }}</p>
-                    </div>
-                    <div class="ml-auto">
-                        <span class="text-xs bg-violet-100 text-violet-700 dark:bg-[#8b5cf6]/10 dark:text-[#a78bfa] border border-violet-200 dark:border-[#8b5cf6]/20 px-3 py-1 rounded-full font-bold">
+                    <div class="sm:ml-auto self-start sm:self-auto">
+                        <span class="text-xs bg-violet-100 text-violet-700 dark:bg-[#8b5cf6]/10 dark:text-[#a78bfa] border border-violet-200 dark:border-[#8b5cf6]/20 px-3 py-1 rounded-full font-bold whitespace-nowrap">
                             {{ __('Owner') }}
                         </span>
                     </div>
