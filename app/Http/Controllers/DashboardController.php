@@ -6,6 +6,7 @@ use App\Models\Investment;
 use App\Models\Transaction;
 use App\Services\CurrencyConverter;
 use App\Services\ExpenseForecastService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -30,6 +31,7 @@ class DashboardController extends Controller
 
         $month = now()->month;
         $year = now()->year;
+        $prevMonth = now()->startOfMonth()->subMonthNoOverflow();
 
         $cashBalance = $this->calculateCashBalance($teamId, $team, $defaultCurrency);
         $investmentPortfolioValue = $this->calculateInvestmentPortfolioValue($teamId, $team);
@@ -54,8 +56,8 @@ class DashboardController extends Controller
 
         $lastMonthTransactions = Transaction::where('team_id', $teamId)
             ->where('type', 'expense')
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', $prevMonth->year)
+            ->whereMonth('created_at', $prevMonth->month)
             ->get();
         
         $lastMonthExpenses = $this->sumTransactionsInDefaultCurrency($lastMonthTransactions, $team);
@@ -63,8 +65,8 @@ class DashboardController extends Controller
 
         $lastMonthIncomeTransactions = Transaction::where('team_id', $teamId)
             ->where('type', 'income')
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', $prevMonth->year)
+            ->whereMonth('created_at', $prevMonth->month)
             ->get();
         
         $lastMonthIncome = $this->sumTransactionsInDefaultCurrency($lastMonthIncomeTransactions, $team);
@@ -77,8 +79,8 @@ class DashboardController extends Controller
         $incomeData = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $months[] = $date->format('M Y');
+            $date = now()->startOfMonth()->subMonthsNoOverflow($i);
+            $months[] = $this->formatMonthLabel($date);
 
             $expenses = Transaction::where('team_id', $teamId)
                 ->where('type', 'expense')
@@ -223,5 +225,11 @@ class DashboardController extends Controller
             $sum += $amount;
         }
         return $sum;
+    }
+
+    private function formatMonthLabel(Carbon $date): string
+    {
+        $label = $date->locale(app()->getLocale())->translatedFormat('M Y');
+        return mb_strtoupper(mb_substr($label, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($label, 1, null, 'UTF-8');
     }
 }

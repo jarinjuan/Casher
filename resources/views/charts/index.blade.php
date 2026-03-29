@@ -131,7 +131,7 @@
                 options: {
                     indexAxis: 'y', responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { x: { beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }
+                    scales: { x: { beginAtZero: true, ticks: { color: tickColor, stepSize: 1, precision: 0 }, grid: { color: gridColor } }, y: { ticks: { color: tickColor }, grid: { color: gridColor } } }
                 }
             });
         })();
