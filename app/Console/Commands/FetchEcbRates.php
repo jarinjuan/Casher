@@ -47,7 +47,6 @@ class FetchEcbRates extends Command
             ['base' => 'EUR', 'rate' => 1.0]
         );
 
-        // find child Cube nodes that have currency/rate
         $rateNodes = $xpath->query("//*[local-name()='Cube' and @currency and @rate]");
         foreach ($rateNodes as $node) {
             $currency = $node->getAttribute('currency');

@@ -54,7 +54,6 @@
             const tickColor = isDark ? '#6b7280' : '#94a3b8';
             const legendColor = isDark ? '#9ca3af' : '#475569';
 
-            // 1. Expenses by Category
             new Chart(document.getElementById('categoryPie').getContext('2d'), {
                 type: 'pie',
                 data: {
@@ -72,7 +71,7 @@
                 }
             });
 
-            // 2. Trend Chart
+
             new Chart(document.getElementById('trendLineChart').getContext('2d'), {
                 type: 'line',
                 data: {
@@ -89,7 +88,6 @@
                 }
             });
 
-            // 3. Monthly Bar Chart
             new Chart(document.getElementById('monthlyBarChart').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -106,7 +104,6 @@
                 }
             });
 
-            // 4. Income Source Pie
             new Chart(document.getElementById('incomeSourcePie').getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -120,7 +117,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: legendColor } } } }
             });
 
-            // 5. Top Categories Bar
             new Chart(document.getElementById('topCategoriesBar').getContext('2d'), {
                 type: 'bar',
                 data: {

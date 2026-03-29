@@ -1,6 +1,6 @@
-{{-- Sidebar content partial (used by both desktop and mobile) --}}
+{{-- Obsah postranního panelu (desktop i mobil) --}}
 
-{{-- Logo & Workspace --}}
+{{-- Logo a pracovní prostor --}}
 <div class="px-4 pt-6 pb-4 border-b border-gray-200 dark:border-white/10">
     <div class="flex items-center gap-3 mb-4">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#fbbf24] text-sm font-bold text-black shadow-[0_0_20px_rgba(251,191,36,0.2)]">
@@ -59,7 +59,7 @@
     @endif
 </div>
 
-{{-- Navigation --}}
+{{-- Navigace --}}
 <div class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
     @can('create', \App\Models\Transaction::class)
         <a href="{{ route('transactions.create') }}" class="block">
@@ -87,7 +87,7 @@
     </nav>
 </div>
 
-{{-- Footer --}}
+{{-- Patička --}}
 <div class="px-4 space-y-2 border-t border-gray-200 dark:border-white/10 pt-4">
     <a href="{{ route('workspace.settings') }}" class="flex items-center px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">
         <i class="fa-solid fa-cog text-sm mr-3 w-5"></i>

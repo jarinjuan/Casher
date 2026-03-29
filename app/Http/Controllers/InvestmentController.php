@@ -235,7 +235,7 @@ class InvestmentController extends Controller
         try {
            $priceInDefault = $converter->convert($priceData['price'], $priceData['currency'], $team->default_currency);
         } catch (\Exception $e) {
-            // fallback to original if conversion fails
+            
         }
         
         return response()->json([

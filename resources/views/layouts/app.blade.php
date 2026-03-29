@@ -27,7 +27,7 @@
     <body class="antialiased bg-slate-50 dark:bg-[#09090b] text-gray-800 dark:text-gray-200">
         <div class="min-h-screen relative">
 
-            {{-- Background ambient glow (dark mode only) --}}
+            {{-- Ambientní pozadí (jen pro tmavý režim) --}}
             <div class="hidden dark:block fixed top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/5 blur-[150px]"></div>
             <div class="hidden dark:block fixed bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/3 blur-[120px]"></div>
 
@@ -74,13 +74,13 @@
 
             <x-sidebar :menu-items="$menuItems" />
 
-            {{-- Main content area --}}
+            {{-- Hlavní obsah --}}
             <div class="flex-1 lg:ml-64 transition-all">
 
-                {{-- Top header bar --}}
+                {{-- Horní lišta --}}
                 <header class="sticky top-0 z-30 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#09090b]/80 backdrop-blur-xl">
                     <div class="flex items-center justify-between max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                        {{-- Mobile menu toggle --}}
+                        {{-- Přepínač menu pro mobil --}}
                         <button onclick="document.getElementById('mobile-sidebar').classList.toggle('hidden')" class="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">
                             <i class="fa-solid fa-bars"></i>
                         </button>
@@ -99,7 +99,7 @@
                     </div>
                 </header>
 
-                {{-- Page content --}}
+                {{-- Obsah stránky --}}
                 <main class="pb-8">
                     @isset($slot)
                         {{ $slot }}

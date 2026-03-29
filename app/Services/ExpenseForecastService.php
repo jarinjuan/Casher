@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class ExpenseForecastService
 {
     /**
-     * 
+     * Odhadne průměrné měsíční výdaje za poslední období.
      * @param int $userId
      * @param int $teamId
      * @param int $months

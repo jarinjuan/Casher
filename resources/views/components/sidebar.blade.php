@@ -10,7 +10,7 @@
     $currentTeam = auth()->user()->currentTeam;
 @endphp
 
-{{-- Mobile overlay --}}
+{{-- Překrytí pro mobil --}}
 <div id="mobile-sidebar" class="hidden lg:hidden fixed inset-0 z-50">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="document.getElementById('mobile-sidebar').classList.add('hidden')"></div>
     <aside class="relative w-72 h-full bg-white dark:bg-[#18181b] border-r border-gray-200 dark:border-white/10 flex flex-col pb-4 overflow-y-auto">
@@ -18,7 +18,7 @@
     </aside>
 </div>
 
-{{-- Desktop sidebar --}}
+{{-- Postranní panel pro desktop --}}
 <aside class="hidden lg:flex w-64 bg-white dark:bg-[#18181b] border-r border-gray-200 dark:border-white/10 h-screen fixed flex-col pb-4 z-40">
     @include('components._sidebar-content', ['menuItems' => $menuItems, 'userTeams' => $userTeams, 'currentTeam' => $currentTeam])
 </aside>

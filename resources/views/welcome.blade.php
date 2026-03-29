@@ -60,7 +60,7 @@
                 </button>
             </div>
         </div>
-        <!-- Mobile menu -->
+        <!-- Mobilní menu -->
         <div x-show="open" class="md:hidden bg-black/95 border-t border-white/10 px-4 pb-4 pt-2">
             <a href="#features" class="block py-2 text-gray-300 hover:text-[#fbbf24]">{{ __('welcome.nav.features') }}</a>
             <a href="#investments" class="block py-2 text-gray-300 hover:text-[#fbbf24]">{{ __('welcome.nav.investments') }}</a>

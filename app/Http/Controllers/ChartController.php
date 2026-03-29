@@ -24,7 +24,6 @@ class ChartController extends Controller
         $team = clone $team;
         $teamId = $team->id;
 
-        // 1. Expenses by category (Main Pie)
         $categories = $team->categories()->orderBy('name')->get();
         $expenseLabels = [];
         $expenseData = [];
@@ -73,13 +72,13 @@ class ChartController extends Controller
             $expenseColors[] = '#d1d5db';
         }
 
-        // 2. Trend Chart (12 Months)
+        
         $trendLabels = [];
         $trendIncome = [];
         $trendExpense = [];
 
         for ($i = 11; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
+            $date = now()->startOfMonth()->subMonthsNoOverflow($i);
             $trendLabels[] = $date->format('m/Y');
 
             $incomeTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
@@ -120,13 +119,13 @@ class ChartController extends Controller
             $trendExpense[] = $expenseSum;
         }
 
-        // 3. Monthly Bar Chart (Last 6 Months)
+        
         $last6Labels = [];
         $last6Income = [];
         $last6Expense = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
+            $date = now()->startOfMonth()->subMonthsNoOverflow($i);
             $last6Labels[] = $date->format('m/Y');
 
             $incomeTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
@@ -167,12 +166,11 @@ class ChartController extends Controller
             $last6Expense[] = $expenseSum;
         }
 
-        // 4. Income sources by category (doughnut)
         $incomeTransactions = \App\Models\Transaction::where('team_id', '=', $teamId)
             ->where('type', '=', 'income')
             ->get();
 
-        $incomeMap = []; // category_id => total
+        $incomeMap = []; 
         foreach ($incomeTransactions as $tx) {
             $catId = $tx->category_id ?? 0;
             $amount = $tx->amount;
@@ -198,12 +196,11 @@ class ChartController extends Controller
             $incomeSourceColors[] = $cat?->color ?? '#fbbf24';
         }
 
-        // 5. Top spending categories (bar) - now by transaction count
         $expenseTransactionsForTop = \App\Models\Transaction::where('team_id', '=', $teamId)
             ->where('type', '=', 'expense')
             ->get();
 
-        $expenseTopMap = []; // category_id => count
+        $expenseTopMap = []; 
         foreach ($expenseTransactionsForTop as $tx) {
             $catId = $tx->category_id ?? 0;
             $expenseTopMap[$catId] = ($expenseTopMap[$catId] ?? 0) + 1;

@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    {{-- Email verification form removed if not used --}}
+    {{-- Formulář pro ověření e-mailu je vypnutý, pokud se nepoužívá --}}
     {{-- <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form> --}}

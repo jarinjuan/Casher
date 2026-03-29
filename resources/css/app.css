@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Casher Design System ── */
+/* ── Design systém Casher ── */
 
 @layer base {
     :root {
@@ -33,7 +33,7 @@
 
 @layer components {
 
-    /* Cards */
+    /* Karty */
     .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -57,7 +57,7 @@
         box-shadow: 0 0 40px rgba(139, 92, 246, 0.03), 0 0 80px rgba(251, 191, 36, 0.02);
     }
 
-    /* Inputs */
+    /* Vstupy */
     .input-dark {
         width: 100%;
         background: var(--bg-input);
@@ -103,7 +103,7 @@
         color: var(--text-primary);
     }
 
-    /* Buttons */
+    /* Tlačítka */
     .btn-primary {
         @apply bg-[#fbbf24] hover:bg-[#f59e0b] text-black font-bold py-2.5 px-6 rounded-lg transition shadow-lg shadow-[#fbbf24]/10;
     }
@@ -123,7 +123,7 @@
         @apply bg-red-500/10 border border-red-500/20 text-red-500 font-semibold py-1.5 px-3 rounded-lg hover:bg-red-500/20 transition text-xs;
     }
 
-    /* Labels */
+    /* Popisky */
     .label-dark {
         display: block;
         font-size: 0.75rem;
@@ -134,7 +134,7 @@
         margin-bottom: 0.25rem;
     }
 
-    /* Flash messages */
+    /* Stavové hlášky */
     .flash-success {
         @apply p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl;
     }
@@ -147,7 +147,7 @@
         @apply p-4 bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 text-[#7c3aed] dark:text-[#a78bfa] rounded-xl;
     }
 
-    /* Auto text colors for card content */
+    /* Pomocné barvy textu v kartách */
     .t-primary {
         color: var(--text-primary);
     }
@@ -161,7 +161,7 @@
     }
 }
 
-/* Scrollbar */
+/* Posuvník */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -187,15 +187,15 @@
     background: #3f3f46;
 }
 
-/* Selection */
+/* Výběr */
 ::selection {
     background: rgba(251, 191, 36, 0.3);
     color: var(--text-primary);
 }
 
-/* ── Responsive Utilities ── */
+/* ── Responzivní utility ── */
 
-/* Chart height utilities */
+/* Utility pro výšku grafů */
 .chart-h-sm {
     height: 220px;
 }
@@ -222,9 +222,9 @@
     }
 }
 
-/* Mobile-specific adjustments */
+/* Úpravy pro mobil */
 @media (max-width: 639px) {
-    /* Reduce oversized value text on small screens */
+    /* Zmenšení velkých čísel na malých displejích */
     .card .text-2xl {
         font-size: 1.25rem;
     }

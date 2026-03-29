@@ -26,7 +26,7 @@
     <body class="font-sans antialiased bg-slate-50 dark:bg-[#09090b] text-gray-800 dark:text-gray-200">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-6">
 
-            {{-- Background Effects (dark only) --}}
+            {{-- Efekty pozadí (jen tmavý režim) --}}
             <div class="hidden dark:block absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-[#8b5cf6]/10 blur-[120px]"></div>
             <div class="hidden dark:block absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-[#fbbf24]/5 blur-[100px]"></div>
 
@@ -40,7 +40,7 @@
                 </a>
             </div>
 
-            {{-- Content Card --}}
+            {{-- Karta obsahu --}}
             <div class="w-full sm:max-w-md relative">
                 <div class="hidden dark:block absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#fbbf24] to-[#8b5cf6] opacity-20 blur"></div>
                 <div class="relative card rounded-3xl shadow-2xl p-8 md:p-10">

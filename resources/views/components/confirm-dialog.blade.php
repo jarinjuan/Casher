@@ -29,7 +29,7 @@
     class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
     style="display: none;"
 >
-    {{-- Backdrop --}}
+    {{-- Pozadí --}}
     <div
         x-show="show"
         x-transition:enter="transition ease-out duration-300"
@@ -42,7 +42,7 @@
         @click="show = false"
     ></div>
 
-    {{-- Modal Content --}}
+    {{-- Obsah modalu --}}
     <div
         x-show="show"
         x-transition:enter="transition ease-out duration-300"

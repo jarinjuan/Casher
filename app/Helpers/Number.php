@@ -5,8 +5,8 @@ namespace App\Helpers;
 class Number
 {
     /**
-     * Format a given amount to the application's global standard:
-     * e.g., 1 234 567,89 (space for thousands, comma for decimals)
+     * Naformátuje částku do jednotného formátu aplikace:
+     * např. 1 234 567.89 (mezera pro tisíce, tečka pro desetinná místa)
      */
     public static function format($amount, $decimals = 2)
     {
@@ -14,9 +14,9 @@ class Number
             return '';
         }
         
-        /** @var string $decimalSeparator Default to dot for global consistency */
+        /** @var string $decimalSeparator Výchozí tečka pro jednotný formát */
         $decimalSeparator = '.';
-        /** @var string $thousandsSeparator Default to space for thousands */
+        /** @var string $thousandsSeparator Výchozí mezera pro oddělení tisíců */
         $thousandsSeparator = ' ';
 
         return number_format((float)$amount, $decimals, $decimalSeparator, $thousandsSeparator);

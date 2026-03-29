@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class WorkspaceController extends Controller
 {
     /**
-     * Show workspace settings
+     * Zobrazí nastavení pracovního prostoru
      */
     public function settings()
     {
@@ -28,7 +28,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Generate new invite code
+     * Vygeneruje nový zvací kód
      */
     public function generateInviteCode()
     {
@@ -46,7 +46,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Show join workspace form
+     * Zobrazí formulář pro připojení do prostoru
      */
     public function joinForm()
     {
@@ -54,7 +54,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Join workspace with invite code
+     * Připojí uživatele do prostoru pomocí zvacího kódu
      */
     public function join(Request $request)
     {
@@ -84,7 +84,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Switch current workspace
+     * Přepne aktuální pracovní prostor
      */
     public function switchWorkspace($teamId)
     {
@@ -101,7 +101,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Update workspace currency
+     * Změní výchozí měnu prostoru
      */
     public function updateCurrency(Request $request)
     {
@@ -123,7 +123,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Update workspace name
+     * Změní název prostoru
      */
     public function updateName(Request $request, $teamId)
     {
@@ -145,7 +145,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Remove member from workspace
+     * Změní roli člena v prostoru
      */
     public function updateRole(Request $request, $teamId, $userId): RedirectResponse
     {
@@ -203,7 +203,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Leave a workspace
+     * Opustí pracovní prostor
      */
     public function leaveWorkspace($teamId)
     {

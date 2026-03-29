@@ -17,7 +17,7 @@ class Team extends Model
     ];
 
     /**
-     * Dynamically translate the default team name.
+     * Dynamicky přeloží výchozí název týmu.
      */
     public function getNameAttribute($value)
     {
@@ -53,7 +53,7 @@ class Team extends Model
     }
 
     /**
-     * Get currency symbol for the team's default currency
+     * Vrátí symbol výchozí měny týmu
      */
     public function getCurrencySymbol(): string
     {
@@ -61,7 +61,7 @@ class Team extends Model
     }
 
     /**
-     * Convert amount to team's default currency
+     * Převede částku do výchozí měny týmu
      */
     public function convertToDefaultCurrency(float $amount, string $fromCurrency, $date = null): float
     {

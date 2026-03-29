@@ -117,7 +117,7 @@ class DataController extends Controller
                         'currency' => ['required', 'string', 'size:3', $currencyRule],
                     ]);
                     if ($validator->fails()) {
-                        continue; // Skip invalid rows
+                        continue;
                     }
                     $validTransactions[] = $rowData;
                 }

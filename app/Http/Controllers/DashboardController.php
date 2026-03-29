@@ -206,7 +206,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Sum transactions in default currency
+     * Sečte transakce ve výchozí měně týmu
      */
     private function sumTransactionsInDefaultCurrency($transactions, $team): float
     {

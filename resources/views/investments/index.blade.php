@@ -79,11 +79,11 @@
                             $value = $lastPrice ? $lastPrice * $investment->quantity : null;
                             $valueInDefault = $value ? $team->convertToDefaultCurrency($value, $lastPriceCurrency) : null;
 
-                            // Convert cost to default currency from investment's stored currency
+                            // Přepočet pořizovací ceny do výchozí měny
                             $costInOriginal = $investment->average_price * $investment->quantity;
                             $costInDefault = $team->convertToDefaultCurrency($costInOriginal, $investment->currency);
 
-                            // P/L computed in default currency to avoid mixing currencies
+                            // Zisk/ztráta ve výchozí měně
                             $plInDefault = $valueInDefault !== null ? $valueInDefault - $costInDefault : null;
                             $plPct = $costInDefault > 0 && $valueInDefault !== null
                                 ? (($valueInDefault - $costInDefault) / $costInDefault) * 100 : null;
@@ -473,9 +473,8 @@
             });
         }
 
-        // ── Live price auto-update ───────────────────────────────────────
         const LIVE_PRICES_URL = '{{ route('investments.live-prices') }}';
-        const POLL_MS = 900000; // refresh every 15 mins (limit API usage)
+        const POLL_MS = 900000; // obnovit každých 15 min (šetří API požadavky)
 
         function plColorClass(val) {
             return (val ?? 0) >= 0
@@ -495,7 +494,7 @@
                     const sym         = data.currency_symbol;
                     const defCurrency = data.default_currency;
 
-                    // ── Summary stats ────────────────────────────────────
+                    
                     const pvEl = document.getElementById('stat-portfolio-value');
                     if (pvEl) pvEl.textContent = fmtNum(data.total_value) + '\u00a0' + sym;
 
@@ -519,11 +518,10 @@
                                 : ' text-red-500 dark:text-red-400');
                     }
 
-                    // ── Per-investment rows ──────────────────────────────
+
                     data.investments.forEach(inv => {
                         const id = inv.id;
 
-                        // Unified Card – last price
                         const lpEl = document.getElementById('inv-last-price-' + id);
                         if (lpEl) {
                             lpEl.textContent = inv.last_price !== null
@@ -531,7 +529,6 @@
                                 : '--';
                         }
 
-                        // Unified Card – value
                         const valEl = document.getElementById('inv-value-' + id);
                         if (valEl) {
                             if (inv.value_in_default !== null) {
@@ -542,7 +539,6 @@
                             }
                         }
 
-                        // Unified Card – P/L
                         const plEl = document.getElementById('inv-pl-' + id);
                         if (plEl) {
                             if (inv.pl_in_default !== null) {
@@ -562,7 +558,7 @@
                         }
                     });
 
-                    // ── Indicator: success ──────────────────────────────
+                    // Indikátor úspěchu
                     if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-emerald-500';
                     if (label) {
                         const now = new Date();
@@ -578,7 +574,7 @@
                 });
         }
 
-        // First poll 5 s after page load, then every 30 s
+        // První načtení po 5 s, pak pravidelně
         setTimeout(updateLivePrices, 5000);
         setInterval(updateLivePrices, POLL_MS);
     </script>

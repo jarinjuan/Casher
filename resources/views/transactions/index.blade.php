@@ -138,7 +138,7 @@ document.addEventListener('alpine:init', () => {
             const url = new URL(window.location.href);
             if (this.search) {
                 url.searchParams.set('search', this.search);
-                url.searchParams.delete('page'); // reset to page 1 on new search
+                url.searchParams.delete('page'); // při novém hledání přepne na 1. stránku
             } else {
                 url.searchParams.delete('search');
             }

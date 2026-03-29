@@ -10,7 +10,7 @@
     <div class="card p-6">
         <h3 class="text-lg font-bold t-primary mb-4">{{ $team->name }}</h3>
         <div class="space-y-6">
-            <!-- Owner Profile -->
+            <!-- Profil vlastníka -->
             <div>
                 <p class="text-xs uppercase tracking-widest t-muted font-bold mb-3">{{ __('Owner') }}</p>
                 <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10">
@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <!-- Members List -->
+            <!-- Seznam členů -->
             <div>
                 <p class="text-xs uppercase tracking-widest t-muted font-bold mb-3">{{ __('Members') }}</p>
                 <div class="bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 divide-y divide-gray-200 dark:divide-white/10 overflow-hidden">

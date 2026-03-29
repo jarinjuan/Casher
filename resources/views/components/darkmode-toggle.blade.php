@@ -3,7 +3,7 @@
 <div x-data="{
     dark: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && true),
     toggle() {
-        // Disable all transitions on the entire page
+        // Dočasně vypne všechny animace na stránce
         const css = document.createElement('style');
         css.appendChild(document.createTextNode(`*, *::before, *::after {
             -webkit-transition: none !important;
@@ -18,10 +18,10 @@
         localStorage.setItem('theme', this.dark ? 'dark' : 'light');
         document.documentElement.classList.toggle('dark', this.dark);
 
-        // Force a browser repaint so the new styles calculate instantly without transitions
+        // Vynutí překreslení, aby se styly přepnuly bez animací
         window.getComputedStyle(css).opacity;
         
-        // Remove the style tag, restoring normal transitions everywhere
+        // odstraní dočasný styl a vrátí běžné animace
         document.head.removeChild(css);
     },
     init() {

@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    
     use HasFactory, Notifiable;
 
     /**
@@ -47,10 +46,7 @@ class User extends Authenticatable
         ];
     }
     
-    /**
-     * User has many transactions.
-     */
-    public function transactions()
+    public function transactions() 
     {
         return $this->hasMany(\App\Models\Transaction::class);
     }
@@ -81,9 +77,7 @@ class User extends Authenticatable
         return $this->belongsTo(Team::class, 'current_team_id');
     }
 
-    /**
-     * Check if user has a specific role in a specific team.
-     */
+    
     public function hasRole(string $role, int $teamId): bool
     {
         if ($this->ownedTeams()->where('id', $teamId)->exists()) {
@@ -96,9 +90,6 @@ class User extends Authenticatable
             ->exists();
     }
 
-    /**
-     * Check if user can edit in a specific team (Owner or Editor).
-     */
     public function canEdit(int $teamId): bool
     {
         if ($this->ownedTeams()->where('id', $teamId)->exists()) {

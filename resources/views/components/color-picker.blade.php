@@ -27,7 +27,7 @@
             </button>
         </template>
         
-        {{-- Advanced Picker --}}
+        {{-- Pokročilý výběr --}}
         <div class="relative group">
             <input 
                 type="color" 
@@ -45,7 +45,7 @@
             </button>
         </div>
 
-        {{-- Selected Color Display --}}
+        {{-- Zobrazení vybrané barvy --}}
         <div class="ml-auto flex items-center gap-2 py-1 px-2.5 bg-white dark:bg-white/10 rounded-lg border border-gray-200 dark:border-white/10 shadow-sm">
             <div class="w-3.5 h-3.5 rounded-full border border-black/5 dark:border-white/20 shadow-sm" :style="'background-color: ' + selected"></div>
             <span class="text-[10px] font-mono font-bold t-primary uppercase tracking-tighter" x-text="selected"></span>

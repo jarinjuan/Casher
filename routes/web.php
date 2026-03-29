@@ -43,13 +43,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('investments/{investment}', [\App\Http\Controllers\InvestmentController::class, 'destroy'])->name('investments.destroy');
     Route::post('investments/refresh', [\App\Http\Controllers\InvestmentController::class, 'refresh'])->name('investments.refresh');
 
-    // Data Import/Export routes
+    // Routy pro import / export dat
     Route::get('data', [\App\Http\Controllers\DataController::class, 'index'])->name('data.index');
     Route::get('data/template', [\App\Http\Controllers\DataController::class, 'template'])->name('data.template');
     Route::post('data/export', [\App\Http\Controllers\DataController::class, 'export'])->name('data.export');
     Route::post('data/import', [\App\Http\Controllers\DataController::class, 'import'])->name('data.import');
 
-    // Workspace routes
+    // Routy pro pracovní prostor
     Route::get('workspace/settings', [\App\Http\Controllers\WorkspaceController::class, 'settings'])->name('workspace.settings');
     Route::post('workspace/generate-invite', [\App\Http\Controllers\WorkspaceController::class, 'generateInviteCode'])->name('workspace.generate-invite');
     Route::put('workspace/currency', [\App\Http\Controllers\WorkspaceController::class, 'updateCurrency'])->name('workspace.update-currency');

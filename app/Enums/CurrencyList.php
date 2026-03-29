@@ -5,7 +5,7 @@ namespace App\Enums;
 class CurrencyList
 {
     /**
-     * All supported currency codes.
+     * Seznam podporovaných kódů měn.
      */
     public const CODES = [
         'CZK', 'EUR', 'USD', 'GBP', 'JPY', 'CHF',
@@ -15,7 +15,7 @@ class CurrencyList
     ];
 
     /**
-     * Laravel validation "in:" rule string.
+     * Validační pravidlo Laravelu ve formátu "in:".
      */
     public static function validationRule(): string
     {
